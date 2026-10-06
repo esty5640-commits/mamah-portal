@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, TrendingUp, Users, ExternalLink } from 'lucide-react';
 import { DirectoryView } from '@/components/DirectoryView';
+import { ContactForm } from '@/components/ContactForm';
 
 export default function HomePage() {
   return (
@@ -189,44 +190,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="max-w-xl mx-auto bg-card border border-border rounded-2xl p-8 tactile-border space-y-4">
-            <form action="#" className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-mono font-medium">שם ההורה *</label>
-                  <input required placeholder="ישראל ישראלי" className="w-full p-2.5 bg-background border border-border rounded-md text-xs" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-mono font-medium">שם התלמיד/ה</label>
-                  <input placeholder="שם הילד/ה" className="w-full p-2.5 bg-background border border-border rounded-md text-xs" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-mono font-medium">מספר טלפון *</label>
-                  <input type="tel" required placeholder="050-0000000" className="w-full p-2.5 bg-background border border-border rounded-md text-xs" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-mono font-medium">עיר מגורים *</label>
-                  <input required placeholder="ירושלים / בית שמש..." className="w-full p-2.5 bg-background border border-border rounded-md text-xs" />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-mono font-medium">פירוט הפנייה *</label>
-                <textarea rows={3} required placeholder="פרט את נושא הפנייה..." className="w-full p-2.5 bg-background border border-border rounded-md text-xs" />
-              </div>
-
-              <button 
-                type="button" 
-                onClick={() => alert('פנייתך נשלחה בהצלחה לרכז האגודה!')}
-                className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-lg text-xs hover:bg-primary/90 transition-colors"
-              >
-                שליחת פנייה לצוות האגודה ←
-              </button>
-            </form>
-          </div>
+          <ContactForm />
         </section>
 
       </main>
