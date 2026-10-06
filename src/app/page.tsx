@@ -14,6 +14,10 @@ import {
 } from 'lucide-react';
 import { DirectoryView } from '@/components/DirectoryView';
 import { ContactForm } from '@/components/ContactForm';
+import { AnimatedHero } from '@/components/AnimatedHero';
+import { AnimatedPillars } from '@/components/AnimatedPillars';
+import { AnimatedActivities } from '@/components/AnimatedActivities';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 
@@ -85,19 +89,6 @@ const DEFAULT_ACTIVITIES = [
   },
 ];
 
-const COLOR_CLASSES: Record<string, { border: string; bg: string; text: string }> = {
-  purple: { border: 'border-t-brand-purple', bg: 'bg-brand-purple/10 text-brand-purple', text: 'text-brand-purple' },
-  green: { border: 'border-t-brand-green', bg: 'bg-brand-green/10 text-brand-green', text: 'text-brand-green' },
-  cyan: { border: 'border-t-brand-cyan', bg: 'bg-brand-cyan/10 text-brand-cyan', text: 'text-brand-cyan' },
-  orange: { border: 'border-t-brand-orange', bg: 'bg-brand-orange/10 text-brand-orange', text: 'text-brand-orange' },
-  red: { border: 'border-t-brand-red', bg: 'bg-brand-red/10 text-brand-red', text: 'text-brand-red' },
-  gold: { border: 'border-t-brand-gold', bg: 'bg-brand-gold/10 text-brand-gold', text: 'text-brand-gold' },
-};
-
-const STAT_ICON_LIST = [BookOpen, Users, Award, Sparkles];
-const PILLAR_ICON_LIST = [ShieldCheck, TrendingUp, Users];
-const ACTIVITY_ICON_LIST = [BookOpen, Sparkles, HeartHandshake, Users, Award, Scale];
-
 async function getHomePageData() {
   try {
     const payload = await getPayload({ config: configPromise });
@@ -138,7 +129,7 @@ export default async function HomePage() {
       <div className="h-1.5 w-full logo-rainbow-strip" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 sm:h-28 flex items-center justify-between">
           
           {/* Prominent Logo on the right side (RTL start) */}
@@ -147,7 +138,7 @@ export default async function HomePage() {
               <img 
                 src="/logo.png" 
                 alt="אגודת ידידי הממ״ח - הבית של הורי הממ״ח" 
-                className="h-16 sm:h-20 md:h-[84px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02] drop-shadow-sm"
+                className="h-16 sm:h-20 md:h-[84px] w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
               />
             </div>
             <div className="hidden xl:flex flex-col border-r-2 border-slate-200 pr-4 mr-1 text-right">
@@ -169,7 +160,7 @@ export default async function HomePage() {
             {/* CMS Admin Link */}
             <Link 
               href="/admin" 
-              className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-300 hover:border-brand-navy text-slate-800 hover:text-brand-navy text-xs sm:text-sm font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-300 hover:border-brand-navy text-slate-800 hover:text-brand-navy text-xs sm:text-sm font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs hover:scale-105 active:scale-95"
               title="מערכת ניהול תוכן (Payload CMS)"
             >
               <Settings className="w-4 h-4 text-brand-navy" />
@@ -185,7 +176,7 @@ export default async function HomePage() {
               href="https://www.guidestar.org.il/organization/580758324" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm hover:shadow transition-all"
+              className="btn-shimmer inline-flex items-center gap-1.5 px-4 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm hover:shadow transition-all hover:scale-105 active:scale-95"
             >
               <span>תרומה</span>
               <ExternalLink className="w-3.5 h-3.5 text-brand-gold" />
@@ -197,152 +188,17 @@ export default async function HomePage() {
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-24">
         
-        {/* HERO & KEY NUMBERS SECTION */}
-        <section className="relative pt-6 sm:pt-10 pb-8 space-y-14 border-b border-slate-200/80">
-          {/* Subtle Ambient Light Glows matching the Sun and Palette */}
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-          <div className="absolute top-1/3 left-10 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+        {/* HERO & KEY NUMBERS SECTION (ANIMATED) */}
+        <AnimatedHero hero={hero} stats={stats} />
 
-          {/* Hero Content */}
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            {/* Badge with the spectrum dots + sun */}
-            <div className="inline-flex items-center gap-2.5 border border-brand-navy/15 text-brand-navy font-bold text-sm sm:text-base px-5 py-2 rounded-full bg-brand-navy/5 shadow-sm">
-              <span className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-brand-gold shadow-sm" />
-                <span className="w-3 h-3 rounded-full bg-brand-purple shadow-sm" />
-                <span className="w-3 h-3 rounded-full bg-brand-green shadow-sm" />
-                <span className="w-3 h-3 rounded-full bg-brand-cyan shadow-sm" />
-                <span className="w-3 h-3 rounded-full bg-brand-orange shadow-sm" />
-                <span className="w-3 h-3 rounded-full bg-brand-red shadow-sm" />
-              </span>
-              <span>{hero.badge}</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] text-brand-navy max-w-4xl mx-auto">
-              {hero.titleLine1}<br />
-              <span className="relative inline-block text-brand-navy">
-                {hero.highlightText}
-                <span className="absolute bottom-1.5 right-0 left-0 h-3 bg-brand-gold/30 -z-10 rounded-full" />
-              </span>{' '}
-              <span className="inline-block whitespace-nowrap text-slate-800">{hero.titleLine2}</span>
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed max-w-3xl mx-auto font-normal">
-              {hero.subtitle}
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
-              <a 
-                href="#directory" 
-                className="px-8 py-4 bg-brand-navy hover:bg-brand-navyLight text-white font-bold rounded-xl text-base sm:text-lg inline-flex items-center gap-2.5 shadow-md shadow-brand-navy/20 hover:shadow-lg transition-all hover:-translate-y-0.5"
-              >
-                איתור מוסד חינוכי באינדקס ↓
-              </a>
-              <a 
-                href="#contact" 
-                className="px-7 py-4 border-2 border-slate-300 hover:border-brand-navy text-brand-navy bg-white hover:bg-slate-50 rounded-xl text-base sm:text-lg font-bold shadow-sm transition-all hover:-translate-y-0.5"
-              >
-                פנייה ישירה למוקד ההורים ←
-              </a>
-            </div>
-          </div>
-
-          {/* Numbers / Live Stats - Spanning Full Row Under Hero */}
-          <div className="w-full pt-2">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {stats.map((s: any, idx: number) => {
-                const colorConfig = COLOR_CLASSES[s.color] || COLOR_CLASSES.purple;
-                const IconComp = STAT_ICON_LIST[idx % STAT_ICON_LIST.length];
-                return (
-                  <div 
-                    key={idx} 
-                    className={`bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 ${colorConfig.border} hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between`}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-base sm:text-lg text-slate-800 font-bold">{s.label}</span>
-                      <div className={`w-10 h-10 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
-                        <IconComp className="w-5 h-5" />
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 my-2 font-black text-brand-navy" dir="ltr">
-                      <span className="text-4xl sm:text-5xl lg:text-6xl tracking-tight">{s.number}</span>
-                      {s.suffix && (
-                        <span className={`text-3xl sm:text-4xl lg:text-5xl ${colorConfig.text}`}>{s.suffix}</span>
-                      )}
-                    </div>
-                    <span className="text-sm sm:text-base text-slate-600 font-medium text-center block leading-snug">{s.sublabel}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 1: WHAT IS MAMACH */}
-        <section id="about" className="space-y-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
-            <div>
-              <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">01 // מהות ומדיניות</span>
-              <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">מה זה ממ״ח? החינוך הממלכתי-חרדי</h2>
-            </div>
-            <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
-              מסגרת חינוכית רשמית של מדינת ישראל המשלבת קודש ולימודי חול ברמה הגבוהה ביותר.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pillars.map((p: any, idx: number) => {
-              const colorConfig = COLOR_CLASSES[p.color] || COLOR_CLASSES.purple;
-              const IconComp = PILLAR_ICON_LIST[idx % PILLAR_ICON_LIST.length];
-              return (
-                <div 
-                  key={idx} 
-                  className={`bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-4 hover:shadow-elevated transition-all`}
-                >
-                  <div className={`w-14 h-14 rounded-2xl ${colorConfig.bg} flex items-center justify-center`}>
-                    <IconComp className="w-7 h-7" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900">{p.title}</h3>
-                  <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
-                    {p.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* SECTION 1: WHAT IS MAMACH (ANIMATED) */}
+        <AnimatedPillars pillars={pillars} />
 
         {/* SECTION 2: INTERACTIVE DIRECTORY */}
         <DirectoryView />
 
-        {/* SECTION 3: ACTIVITIES */}
-        <section id="activities" className="space-y-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
-            <div>
-              <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">03 // תחומי פעילות מקצועיים</span>
-              <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">פעילויות אגודת ידידי הממ״ח</h2>
-            </div>
-            <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
-              מעטפת של ליווי הורים, ייעוץ משפטי, לובינג בכנסת והכשרת ועדי הורים מוסדיים.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activities.map((a: any, idx: number) => {
-              const colorConfig = COLOR_CLASSES[a.color] || COLOR_CLASSES.purple;
-              const IconComp = ACTIVITY_ICON_LIST[idx % ACTIVITY_ICON_LIST.length];
-              return (
-                <div key={idx} className={`bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-3 hover:shadow-elevated transition-all hover:-translate-y-0.5`}>
-                  <div className={`w-12 h-12 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
-                    <IconComp className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-lg sm:text-xl text-slate-900">{a.title}</h4>
-                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">{a.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* SECTION 3: ACTIVITIES (ANIMATED) */}
+        <AnimatedActivities activities={activities} />
 
         {/* SECTION 4: CONTACT & INQUIRIES */}
         <section id="contact" className="space-y-8 border-t border-slate-200/80 pt-16">
@@ -358,6 +214,9 @@ export default async function HomePage() {
         </section>
 
       </main>
+
+      {/* Floating Scroll to Top Button */}
+      <ScrollToTop />
 
       {/* Footer */}
       <footer className="mt-20 border-t border-slate-800 bg-[#0a0447] text-white">
@@ -384,14 +243,14 @@ export default async function HomePage() {
               <a href="#directory" className="hover:text-white transition-colors">אינדקס מוסדות</a>
               <a href="#activities" className="hover:text-white transition-colors">פעילות האגודה</a>
               <a href="#contact" className="hover:text-white transition-colors">פניות הורים</a>
-              <Link href="/admin" className="hover:text-brand-gold text-amber-300 font-bold transition-colors inline-flex items-center gap-1">
+              <Link href="/admin" className="hover:text-brand-gold text-amber-300 font-bold transition-colors inline-flex items-center gap-1 hover:scale-105 active:scale-95">
                 <span>מערכת ניהול (CMS) ⚙</span>
               </Link>
               <a 
                 href="https://www.guidestar.org.il/organization/580758324" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-brand-gold text-slate-900 font-bold rounded-lg hover:bg-yellow-400 transition-colors text-sm"
+                className="btn-shimmer px-4 py-2 bg-brand-gold text-slate-900 font-bold rounded-lg hover:bg-yellow-400 transition-all text-sm hover:scale-105 active:scale-95"
               >
                 גיידסטאר ישראל ↗
               </a>
