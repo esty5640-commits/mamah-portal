@@ -28,25 +28,23 @@ function parseCsvLine(text: string): string[] {
 
 export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]> {
   const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || DEFAULT_SHEET_ID;
-  const url = ;
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent('מוסדות')}`;
 
   try {
     const res = await fetch(url, { next: { revalidate: 60 } });
     if (!res.ok) return institutionsList;
 
     const csvText = await res.text();
-    const lines = csvText.split('
-').filter(l => l.trim().length > 0);
+    const lines = csvText.split('\n').filter(l => l.trim().length > 0);
     if (lines.length <= 1) return institutionsList;
 
     const parsed: Institution[] = [];
-    // Skip header line 0
     for (let i = 1; i < lines.length; i++) {
       const cols = parseCsvLine(lines[i]);
       if (cols.length < 5 || !cols[1]) continue;
 
       parsed.push({
-        id: cols[0] || ,
+        id: cols[0] || `inst-${i}`,
         name: cols[1],
         category: cols[2] || 'boys_elementary',
         categoryName: cols[3] || 'מוסד חינוכי',
