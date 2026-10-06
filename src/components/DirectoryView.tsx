@@ -70,19 +70,19 @@ export function DirectoryView() {
     <section id="directory" className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <span className="text-xs text-brand-navy font-bold tracking-wider block">02 // אינדקס מוסדות ארצי</span>
-          <h2 className="text-3xl font-black text-brand-navy tracking-tight mt-1">אינדקס מוסדות הממ״ח בישראל</h2>
+          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">02 // אינדקס מוסדות ארצי</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">אינדקס מוסדות הממ״ח בישראל</h2>
         </div>
-        <div className="text-sm text-slate-600 font-medium flex items-center gap-1.5">
+        <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
           <span>מוצגים</span>
-          <span className="text-brand-navy font-bold bg-brand-navy/10 px-2.5 py-0.5 rounded-full">{filtered.length}</span>
-          <span>מוסדות</span>
+          <span className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg">{filtered.length}</span>
+          <span>מוסדות חינוך</span>
         </div>
       </div>
 
       {/* Filter Pills */}
       <div className="space-y-4">
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2.5 flex-wrap">
           {[
             { id: 'all', label: 'כל המוסדות' },
             { id: 'boys_elementary', label: 'בי״ס יסודי / ת״ת בנים' },
@@ -96,10 +96,10 @@ export function DirectoryView() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2.5 rounded-xl border text-xs font-semibold transition-all ${
+              className={`px-4.5 py-3 rounded-xl border text-sm sm:text-base font-bold transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-brand-navy text-white border-brand-navy font-bold shadow-md shadow-brand-navy/20'
-                  : 'bg-white text-slate-700 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
+                  ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/20'
+                  : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
               }`}
             >
               {cat.label}
@@ -109,23 +109,23 @@ export function DirectoryView() {
 
         {/* Sub Filters */}
         <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-soft flex flex-wrap gap-4 items-center">
-          <div className="flex-1 min-w-[200px] relative">
-            <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+          <div className="flex-1 min-w-[240px] relative">
+            <Search className="w-5 h-5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="חיפוש לפי שם, עיר או סמל מוסד..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pr-9 pl-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
+              className="w-full pr-11 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">מחוז:</span>
+            <span className="text-sm sm:text-base text-slate-700 font-bold">מחוז:</span>
             <select
               value={selectedDistrict}
               onChange={e => setSelectedDistrict(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl p-2 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
+              className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
             >
               <option value="all">כל הארץ</option>
               <option value="ירושלים">ירושלים ובית שמש</option>
@@ -137,11 +137,11 @@ export function DirectoryView() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">מאפיין:</span>
+            <span className="text-sm sm:text-base text-slate-700 font-bold">מאפיין:</span>
             <select
               value={selectedTrait}
               onChange={e => setSelectedTrait(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl p-2 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
+              className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all"
             >
               <option value="all">הכל</option>
               <option value="מונטסורי">מונטסורי תורני</option>
@@ -153,20 +153,20 @@ export function DirectoryView() {
             </select>
           </div>
 
-          <label className="text-xs text-slate-700 font-medium flex items-center gap-1.5 cursor-pointer">
+          <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              className="accent-[#110771] rounded"
+              className="w-4 h-4 accent-[#110771] rounded"
               checked={continuityOnly}
               onChange={e => setContinuityOnly(e.target.checked)}
             />
             רצף גן / בית ספר
           </label>
 
-          <label className="text-xs text-slate-700 font-medium flex items-center gap-1.5 cursor-pointer">
+          <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              className="accent-[#110771] rounded"
+              className="w-4 h-4 accent-[#110771] rounded"
               checked={specialEdOnly}
               onChange={e => setSpecialEdOnly(e.target.checked)}
             />
@@ -180,47 +180,47 @@ export function DirectoryView() {
         {filtered.map(inst => (
           <div
             key={inst.id}
-            className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-soft hover:shadow-elevated hover:border-brand-navy/40 transition-all flex flex-col justify-between group"
+            className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-soft hover:shadow-elevated hover:border-brand-navy/40 transition-all flex flex-col justify-between group"
           >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs gap-2">
-                <span className="font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+            <div className="space-y-3.5">
+              <div className="flex items-center justify-between text-sm gap-2">
+                <span className="font-mono px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold">
                   סמל: {inst.symbol}
                 </span>
                 <div className="flex items-center gap-1.5">
                   {inst.isMixed && (
-                    <span className="border border-brand-gold/40 text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-md font-mono text-[10px] font-bold">
+                    <span className="border border-brand-gold/40 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm font-black">
                       גן מעורב
                     </span>
                   )}
                   {inst.specialTrait && inst.specialTrait !== 'none' && (
-                    <span className="border border-brand-cyan/40 text-brand-cyan bg-brand-cyan/10 px-2 py-0.5 rounded-md font-mono text-[10px] font-bold">
+                    <span className="border border-brand-cyan/40 text-brand-cyan bg-brand-cyan/10 px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm font-black">
                       {inst.specialTraitHe}
                     </span>
                   )}
                 </div>
               </div>
 
-              <h3 className="font-bold text-lg leading-tight text-slate-900 group-hover:text-brand-navy transition-colors">{inst.name}</h3>
+              <h3 className="font-black text-xl sm:text-2xl leading-tight text-slate-900 group-hover:text-brand-navy transition-colors">{inst.name}</h3>
 
-              <div className="space-y-1.5 text-xs text-slate-600">
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-brand-cyan shrink-0" />
+              <div className="space-y-2 text-sm sm:text-base text-slate-700">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-brand-cyan shrink-0" />
                   <span>{inst.city} ({inst.address})</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
                   <span>{inst.categoryName}</span>
                 </div>
-                <div>👤 הנהלה: {inst.principal}</div>
+                <div>👤 הנהלה: <span className="font-semibold">{inst.principal}</span></div>
               </div>
             </div>
 
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
-              <span className="text-slate-500">{inst.phone}</span>
+            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base font-mono">
+              <span className="text-slate-600 font-semibold">{inst.phone}</span>
               <button
                 onClick={() => setSelectedInst(inst)}
-                className="text-brand-navy font-bold hover:text-brand-gold inline-flex items-center gap-1 transition-colors"
+                className="text-brand-navy font-black hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base"
               >
                 פרטים מלאים ←
               </button>
@@ -247,16 +247,16 @@ export function DirectoryView() {
             </button>
 
             <div>
-              <span className="inline-block px-3 py-1 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy font-mono text-xs font-bold mb-2">
+              <span className="inline-block px-3.5 py-1.5 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy font-bold text-sm mb-2">
                 {selectedInst.categoryName}
               </span>
-              <h2 className="text-2xl font-black text-brand-navy">{selectedInst.name}</h2>
-              <div className="text-xs font-mono text-slate-500 mt-1">
+              <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">{selectedInst.name}</h2>
+              <div className="text-sm sm:text-base font-mono text-slate-600 font-medium mt-1">
                 סמל מוסד משרד החינוך: {selectedInst.symbol}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800">
               <div><strong>עיר וכתובת:</strong> {selectedInst.city}, {selectedInst.address}</div>
               <div><strong>טלפון:</strong> <a href={`tel:${selectedInst.phone}`} className="text-brand-navy font-bold hover:underline">{selectedInst.phone}</a></div>
               <div><strong>דוא״ל:</strong> <a href={`mailto:${selectedInst.email}`} className="text-brand-navy font-bold hover:underline">{selectedInst.email}</a></div>
@@ -268,37 +268,37 @@ export function DirectoryView() {
             </div>
 
             {selectedInst.about && (
-              <div className="space-y-1.5">
-                <h4 className="font-bold text-sm text-slate-900">אודות המוסד</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">{selectedInst.about}</p>
+              <div className="space-y-2">
+                <h4 className="font-bold text-base sm:text-lg text-slate-900">אודות המוסד</h4>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{selectedInst.about}</p>
               </div>
             )}
 
             {selectedInst.parentsCommittee && selectedInst.parentsCommittee.length > 0 && (
-              <div className="space-y-1.5">
-                <h4 className="font-bold text-sm text-slate-900">נציגות ועד הורים</h4>
+              <div className="space-y-2">
+                <h4 className="font-bold text-base sm:text-lg text-slate-900">נציגות ועד הורים</h4>
                 <div className="flex gap-2 flex-wrap">
                   {selectedInst.parentsCommittee.map((m, idx) => (
-                    <span key={idx} className="px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-700 rounded-lg text-xs">{m}</span>
+                    <span key={idx} className="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-800 rounded-lg text-sm sm:text-base font-medium">{m}</span>
                   ))}
                 </div>
               </div>
             )}
 
             <div className="pt-4 border-t border-slate-100 flex gap-3 flex-wrap">
-              <a href={selectedInst.waze} target="_blank" rel="noopener" className="px-3.5 py-2 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-xs font-bold transition-all">
+              <a href={selectedInst.waze} target="_blank" rel="noopener" className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold transition-all">
                 🚗 Waze
               </a>
-              <a href={selectedInst.maps} target="_blank" rel="noopener" className="px-3.5 py-2 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-xs font-bold transition-all">
+              <a href={selectedInst.maps} target="_blank" rel="noopener" className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold transition-all">
                 🗺 Google Maps
               </a>
               {selectedInst.rama && (
-                <a href={selectedInst.rama} target="_blank" rel="noopener" className="px-3.5 py-2 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-xs font-bold transition-all">
+                <a href={selectedInst.rama} target="_blank" rel="noopener" className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold transition-all">
                   📊 נתוני ראמ״ה
                 </a>
               )}
               {selectedInst.registration && (
-                <a href={selectedInst.registration} target="_blank" rel="noopener" className="px-3.5 py-2 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-xs font-bold shadow-sm transition-all">
+                <a href={selectedInst.registration} target="_blank" rel="noopener" className="px-4 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all">
                   📝 רישום בעירייה ↗
                 </a>
               )}

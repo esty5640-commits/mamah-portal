@@ -133,7 +133,7 @@ export default async function HomePage() {
   const activities = (pageDoc?.activities && pageDoc.activities.length > 0) ? pageDoc.activities : DEFAULT_ACTIVITIES;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground text-base">
       {/* Top Colorful Accent Strip matching Logo's Stacked Bars */}
       <div className="h-1.5 w-full logo-rainbow-strip" />
 
@@ -151,13 +151,13 @@ export default async function HomePage() {
               />
             </div>
             <div className="hidden xl:flex flex-col border-r-2 border-slate-200 pr-4 mr-1 text-right">
-              <span className="text-xs font-bold text-brand-navy tracking-tight">הפורטל הלאומי לחינוך ממ״ח</span>
-              <span className="text-[11px] text-slate-500 font-medium">ע״ר 580758324</span>
+              <span className="text-sm font-black text-brand-navy tracking-tight">הפורטל הלאומי לחינוך ממ״ח</span>
+              <span className="text-xs text-slate-500 font-semibold">ע״ר 580758324</span>
             </div>
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold text-slate-700">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-base font-bold text-slate-800">
             <a href="#about" className="hover:text-brand-navy transition-colors relative py-1 hover:underline underline-offset-8 decoration-brand-gold decoration-2">מה זה ממ״ח?</a>
             <a href="#directory" className="hover:text-brand-navy transition-colors relative py-1 hover:underline underline-offset-8 decoration-brand-cyan decoration-2">אינדקס מוסדות</a>
             <a href="#activities" className="hover:text-brand-navy transition-colors relative py-1 hover:underline underline-offset-8 decoration-brand-green decoration-2">פעילות האגודה</a>
@@ -169,15 +169,15 @@ export default async function HomePage() {
             {/* CMS Admin Link */}
             <Link 
               href="/admin" 
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-300 hover:border-brand-navy text-slate-700 hover:text-brand-navy text-xs font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-300 hover:border-brand-navy text-slate-800 hover:text-brand-navy text-xs sm:text-sm font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs"
               title="מערכת ניהול תוכן (Payload CMS)"
             >
-              <Settings className="w-3.5 h-3.5 text-brand-navy" />
+              <Settings className="w-4 h-4 text-brand-navy" />
               <span className="hidden sm:inline">ניהול CMS</span>
             </Link>
 
-            <div className="flex border border-slate-200 rounded-lg overflow-hidden text-xs font-medium shadow-sm">
-              <span className="px-2.5 py-1.5 bg-brand-navy text-white font-bold">HE</span>
+            <div className="flex border border-slate-200 rounded-lg overflow-hidden text-xs sm:text-sm font-bold shadow-sm">
+              <span className="px-2.5 py-1.5 bg-brand-navy text-white">HE</span>
               <Link href="/en" className="px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 transition-colors">EN</Link>
               <Link href="/fr" className="px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 transition-colors">FR</Link>
             </div>
@@ -185,7 +185,7 @@ export default async function HomePage() {
               href="https://www.guidestar.org.il/organization/580758324" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm hover:shadow transition-all"
             >
               <span>תרומה</span>
               <ExternalLink className="w-3.5 h-3.5 text-brand-gold" />
@@ -206,14 +206,14 @@ export default async function HomePage() {
           {/* Hero Content */}
           <div className="max-w-4xl mx-auto text-center space-y-6">
             {/* Badge with the spectrum dots + sun */}
-            <div className="inline-flex items-center gap-2 border border-brand-navy/15 text-brand-navy font-semibold text-xs px-4 py-1.5 rounded-full bg-brand-navy/5 shadow-sm">
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-gold shadow-sm" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-purple shadow-sm" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-green shadow-sm" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan shadow-sm" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-orange shadow-sm" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-red shadow-sm" />
+            <div className="inline-flex items-center gap-2.5 border border-brand-navy/15 text-brand-navy font-bold text-sm sm:text-base px-5 py-2 rounded-full bg-brand-navy/5 shadow-sm">
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-brand-gold shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-brand-purple shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-brand-green shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-brand-cyan shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-brand-orange shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-brand-red shadow-sm" />
               </span>
               <span>{hero.badge}</span>
             </div>
@@ -227,20 +227,20 @@ export default async function HomePage() {
               <span className="inline-block whitespace-nowrap text-slate-800">{hero.titleLine2}</span>
             </h1>
             
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
+            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed max-w-3xl mx-auto font-normal">
               {hero.subtitle}
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
               <a 
                 href="#directory" 
-                className="px-7 py-3.5 bg-brand-navy hover:bg-brand-navyLight text-white font-bold rounded-xl text-sm inline-flex items-center gap-2 shadow-md shadow-brand-navy/20 hover:shadow-lg transition-all hover:-translate-y-0.5"
+                className="px-8 py-4 bg-brand-navy hover:bg-brand-navyLight text-white font-bold rounded-xl text-base sm:text-lg inline-flex items-center gap-2.5 shadow-md shadow-brand-navy/20 hover:shadow-lg transition-all hover:-translate-y-0.5"
               >
                 איתור מוסד חינוכי באינדקס ↓
               </a>
               <a 
                 href="#contact" 
-                className="px-6 py-3.5 border-2 border-slate-200 hover:border-brand-navy text-brand-navy bg-white hover:bg-slate-50 rounded-xl text-sm font-bold shadow-sm transition-all hover:-translate-y-0.5"
+                className="px-7 py-4 border-2 border-slate-300 hover:border-brand-navy text-brand-navy bg-white hover:bg-slate-50 rounded-xl text-base sm:text-lg font-bold shadow-sm transition-all hover:-translate-y-0.5"
               >
                 פנייה ישירה למוקד ההורים ←
               </a>
@@ -259,18 +259,18 @@ export default async function HomePage() {
                     className={`bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 ${colorConfig.border} hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between`}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs sm:text-sm text-slate-700 font-bold">{s.label}</span>
-                      <div className={`w-9 h-9 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
-                        <IconComp className="w-4 h-4" />
+                      <span className="text-base sm:text-lg text-slate-800 font-bold">{s.label}</span>
+                      <div className={`w-10 h-10 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
+                        <IconComp className="w-5 h-5" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
-                      <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">{s.number}</span>
+                    <div className="flex items-center justify-center gap-1 my-2 font-black text-brand-navy" dir="ltr">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl tracking-tight">{s.number}</span>
                       {s.suffix && (
-                        <span className={`text-2xl sm:text-3xl lg:text-4xl ${colorConfig.text}`}>{s.suffix}</span>
+                        <span className={`text-3xl sm:text-4xl lg:text-5xl ${colorConfig.text}`}>{s.suffix}</span>
                       )}
                     </div>
-                    <span className="text-xs text-slate-500 font-medium text-center block">{s.sublabel}</span>
+                    <span className="text-sm sm:text-base text-slate-600 font-medium text-center block leading-snug">{s.sublabel}</span>
                   </div>
                 );
               })}
@@ -282,10 +282,10 @@ export default async function HomePage() {
         <section id="about" className="space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
             <div>
-              <span className="text-xs text-brand-navy font-bold tracking-wider block">01 // מהות ומדיניות</span>
-              <h2 className="text-3xl font-black text-brand-navy tracking-tight mt-1">מה זה ממ״ח? החינוך הממלכתי-חרדי</h2>
+              <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">01 // מהות ומדיניות</span>
+              <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">מה זה ממ״ח? החינוך הממלכתי-חרדי</h2>
             </div>
-            <p className="text-sm text-slate-600 max-w-md">
+            <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
               מסגרת חינוכית רשמית של מדינת ישראל המשלבת קודש ולימודי חול ברמה הגבוהה ביותר.
             </p>
           </div>
@@ -299,11 +299,11 @@ export default async function HomePage() {
                   key={idx} 
                   className={`bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-4 hover:shadow-elevated transition-all`}
                 >
-                  <div className={`w-12 h-12 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
-                    <IconComp className="w-6 h-6" />
+                  <div className={`w-14 h-14 rounded-2xl ${colorConfig.bg} flex items-center justify-center`}>
+                    <IconComp className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900">{p.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900">{p.title}</h3>
+                  <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
                     {p.description}
                   </p>
                 </div>
@@ -319,10 +319,10 @@ export default async function HomePage() {
         <section id="activities" className="space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
             <div>
-              <span className="text-xs text-brand-navy font-bold tracking-wider block">03 // תחומי פעילות מקצועיים</span>
-              <h2 className="text-3xl font-black text-brand-navy tracking-tight mt-1">פעילויות אגודת ידידי הממ״ח</h2>
+              <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">03 // תחומי פעילות מקצועיים</span>
+              <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">פעילויות אגודת ידידי הממ״ח</h2>
             </div>
-            <p className="text-sm text-slate-600 max-w-md">
+            <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
               מעטפת של ליווי הורים, ייעוץ משפטי, לובינג בכנסת והכשרת ועדי הורים מוסדיים.
             </p>
           </div>
@@ -332,12 +332,12 @@ export default async function HomePage() {
               const colorConfig = COLOR_CLASSES[a.color] || COLOR_CLASSES.purple;
               const IconComp = ACTIVITY_ICON_LIST[idx % ACTIVITY_ICON_LIST.length];
               return (
-                <div key={idx} className={`bg-white border border-slate-200/80 rounded-2xl p-6 shadow-soft border-t-4 ${colorConfig.border} space-y-3 hover:shadow-elevated transition-all hover:-translate-y-0.5`}>
-                  <div className={`w-10 h-10 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
-                    <IconComp className="w-5 h-5" />
+                <div key={idx} className={`bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-3 hover:shadow-elevated transition-all hover:-translate-y-0.5`}>
+                  <div className={`w-12 h-12 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
+                    <IconComp className="w-6 h-6" />
                   </div>
-                  <h4 className="font-bold text-base text-slate-900">{a.title}</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">{a.desc}</p>
+                  <h4 className="font-bold text-lg sm:text-xl text-slate-900">{a.title}</h4>
+                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">{a.desc}</p>
                 </div>
               );
             })}
@@ -346,10 +346,10 @@ export default async function HomePage() {
 
         {/* SECTION 4: CONTACT & INQUIRIES */}
         <section id="contact" className="space-y-8 border-t border-slate-200/80 pt-16">
-          <div className="text-center max-w-xl mx-auto space-y-2">
-            <span className="text-xs text-brand-navy font-bold tracking-wider block">04 // אנחנו כאן בשבילכם</span>
-            <h2 className="text-3xl font-black text-brand-navy tracking-tight">מוקד סיוע ופניות הורים</h2>
-            <p className="text-sm text-slate-600">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">04 // אנחנו כאן בשבילכם</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight">מוקד סיוע ופניות הורים</h2>
+            <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
               מתמודדים עם קושי ברישום ברשות המקומית? מעוניינים להקים מוסד ממ״ח? השאירו פרטים ונחזור אליכם בהקדם.
             </p>
           </div>
@@ -365,21 +365,21 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-8 border-b border-white/10">
             <div className="md:col-span-6 flex items-center gap-4">
-              <div className="bg-white p-2 rounded-xl shadow-sm">
+              <div className="bg-white p-2.5 rounded-xl shadow-sm">
                 <img 
                   src="/logo.png" 
                   alt="אגודת ידידי הממ״ח" 
-                  className="h-14 w-auto object-contain"
+                  className="h-16 w-auto object-contain"
                 />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-white">אגודת ידידי הממ״ח</h3>
-                <p className="text-xs text-slate-300">הבית של הורי הממ״ח · ע״ר 580758324</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">קידום, פיתוח וליווי החינוך הממלכתי-חרדי בישראל</p>
+                <h3 className="font-bold text-xl text-white">אגודת ידידי הממ״ח</h3>
+                <p className="text-sm sm:text-base text-slate-200 mt-0.5">הבית של הורי הממ״ח · ע״ר 580758324</p>
+                <p className="text-sm text-slate-400 mt-0.5">קידום, פיתוח וליווי החינוך הממלכתי-חרדי בישראל</p>
               </div>
             </div>
 
-            <div className="md:col-span-6 flex flex-wrap items-center justify-start md:justify-end gap-6 text-xs text-slate-300">
+            <div className="md:col-span-6 flex flex-wrap items-center justify-start md:justify-end gap-6 text-sm sm:text-base text-slate-200">
               <a href="#about" className="hover:text-white transition-colors">מה זה ממ״ח?</a>
               <a href="#directory" className="hover:text-white transition-colors">אינדקס מוסדות</a>
               <a href="#activities" className="hover:text-white transition-colors">פעילות האגודה</a>
@@ -391,14 +391,14 @@ export default async function HomePage() {
                 href="https://www.guidestar.org.il/organization/580758324" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-brand-gold text-slate-900 font-bold rounded-lg hover:bg-yellow-400 transition-colors"
+                className="px-4 py-2 bg-brand-gold text-slate-900 font-bold rounded-lg hover:bg-yellow-400 transition-colors text-sm"
               >
                 גיידסטאר ישראל ↗
               </a>
             </div>
           </div>
 
-          <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
+          <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-300 font-mono">
             <div>
               © 2026 אגודת ידידי הממ״ח (ע״ר 580758324). כל הזכויות שמורות.
             </div>
