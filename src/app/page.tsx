@@ -61,7 +61,7 @@ export default function HomePage() {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-24">
         
         {/* HERO & KEY NUMBERS SECTION */}
-        <section className="relative pt-6 pb-6 space-y-12 border-b border-slate-200/80">
+        <section className="relative pt-6 sm:pt-10 pb-8 space-y-14 border-b border-slate-200/80">
           {/* Subtle Ambient Light Glows matching the Sun and Palette */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl -z-10 pointer-events-none" />
           <div className="absolute top-1/3 left-10 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl -z-10 pointer-events-none" />
@@ -81,16 +81,16 @@ export default function HomePage() {
               <span>עצמאות פדגוגית · פיקוח ממלכתי מלא · קהילה ארצית</span>
             </div>
             
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.16] text-brand-navy">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] text-brand-navy max-w-4xl mx-auto">
               החינוך הממלכתי-חרדי:<br />
               <span className="relative inline-block text-brand-navy">
                 מצוינות תורנית.
-                <span className="absolute bottom-1 right-0 left-0 h-3 bg-brand-gold/30 -z-10 rounded-full" />
+                <span className="absolute bottom-1.5 right-0 left-0 h-3 bg-brand-gold/30 -z-10 rounded-full" />
               </span>{' '}
-              <span className="text-slate-800">עתיד מבטיח.</span>
+              <span className="inline-block whitespace-nowrap text-slate-800">עתיד מבטיח.</span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
               הבית של עשרות אלפי הורי ותלמידי הממ״ח בישראל. ריכוז מוסדות רשמיים, ליווי פדגוגי ומשפטי להקמת בתי ספר, ואינדקס מוסדות ארצי מעודכן.
             </p>
 
@@ -111,63 +111,66 @@ export default function HomePage() {
           </div>
 
           {/* Numbers / Live Stats - Spanning Full Row Under Hero */}
-          <div className="w-full pt-4">
+          <div className="w-full pt-2">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               
               {/* Card 1 - Official Institutions */}
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-purple hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-600 font-bold">מוסדות רשמיים</span>
+                  <span className="text-xs sm:text-sm text-slate-700 font-bold">מוסדות רשמיים</span>
                   <div className="w-9 h-9 rounded-xl bg-brand-purple/10 text-brand-purple flex items-center justify-center">
                     <BookOpen className="w-4 h-4" />
                   </div>
                 </div>
-                <div>
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-navy my-1 tracking-tight">88+</div>
-                  <span className="text-xs text-slate-500 font-medium block">בפריסה ארצית מגנים עד חט״ב</span>
+                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">88</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-purple">+</span>
                 </div>
+                <span className="text-xs text-slate-500 font-medium text-center block">בפריסה ארצית מגנים עד חט״ב</span>
               </div>
 
               {/* Card 2 - Students */}
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-green hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-600 font-bold">תלמידים ותלמידות</span>
+                  <span className="text-xs sm:text-sm text-slate-700 font-bold">תלמידים ותלמידות</span>
                   <div className="w-9 h-9 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center">
                     <Users className="w-4 h-4" />
                   </div>
                 </div>
-                <div>
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-navy my-1 tracking-tight">18,500+</div>
-                  <span className="text-xs text-slate-500 font-medium block">בצמיחה שנתית של מעל 15%</span>
+                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">18,500</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-green">+</span>
                 </div>
+                <span className="text-xs text-slate-500 font-medium text-center block">בצמיחה שנתית של מעל 15%</span>
               </div>
 
               {/* Card 3 - Core Curriculum */}
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-cyan hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-600 font-bold">לימודי יסוד מלאים</span>
+                  <span className="text-xs sm:text-sm text-slate-700 font-bold">לימודי יסוד מלאים</span>
                   <div className="w-9 h-9 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center">
                     <Award className="w-4 h-4" />
                   </div>
                 </div>
-                <div>
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-navy my-1 tracking-tight">100%</div>
-                  <span className="text-xs text-slate-500 font-medium block">בפיקוח מלא של משרד החינוך</span>
+                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">100</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-cyan">%</span>
                 </div>
+                <span className="text-xs text-slate-500 font-medium text-center block">בפיקוח מלא של משרד החינוך</span>
               </div>
 
               {/* Card 4 - Initiatives */}
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-orange hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-600 font-bold">יוזמות הקמה</span>
+                  <span className="text-xs sm:text-sm text-slate-700 font-bold">יוזמות הקמה</span>
                   <div className="w-9 h-9 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
                     <Sparkles className="w-4 h-4" />
                   </div>
                 </div>
-                <div>
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-navy my-1 tracking-tight">24</div>
-                  <span className="text-xs text-slate-500 font-medium block">יוזמות הורים לשנה״ל הבאה</span>
+                <div className="flex items-center justify-center my-2 font-black text-brand-navy" dir="ltr">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">24</span>
                 </div>
+                <span className="text-xs text-slate-500 font-medium text-center block">יוזמות הורים לשנה״ל הבאה</span>
               </div>
 
             </div>
