@@ -1,0 +1,40 @@
+import { buildConfig } from 'payload';
+import { mongooseAdapter } from '@payloadcms/db-mongodb';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import sharp from 'sharp';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import { Users } from './collections/Users';
+import { Institutions } from './collections/Institutions';
+import { Pages } from './collections/Pages';
+import { Inquiries } from './collections/Inquiries';
+import { Media } from './collections/Media';
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+
+export default buildConfig({
+  sharp,
+  admin: {
+    user: Users.slug,
+    meta: {
+      titleSuffix: ' - פורטל ידידי הממ״ח',
+    },
+  },
+  collections: [
+    Users,
+    Institutions,
+    Pages,
+    Inquiries,
+    Media,
+  ],
+  editor: lexicalEditor(),
+  secret: process.env.PAYLOAD_SECRET || 'mamah-portal-payload-super-secret-key-2026',
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
+  db: mongooseAdapter({
+    url: process.env.MONGODB_URI || 'mongodb+srv://admin:rhfRSvyYPwBgdQfh@cluster0.2qdoidx.mongodb.net/mamah_portal?retryWrites=true&w=majority&appName=Cluster0',
+  }),
+});

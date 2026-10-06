@@ -1,10 +1,137 @@
 import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, TrendingUp, Users, ExternalLink, Sparkles, BookOpen, Scale, Award, HeartHandshake } from 'lucide-react';
+import { 
+  ShieldCheck, 
+  TrendingUp, 
+  Users, 
+  ExternalLink, 
+  Sparkles, 
+  BookOpen, 
+  Scale, 
+  Award, 
+  HeartHandshake,
+  Settings
+} from 'lucide-react';
 import { DirectoryView } from '@/components/DirectoryView';
 import { ContactForm } from '@/components/ContactForm';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+
+const DEFAULT_HERO = {
+  badge: 'עצמאות פדגוגית · פיקוח ממלכתי מלא · קהילה ארצית',
+  titleLine1: 'החינוך הממלכתי-חרדי:',
+  highlightText: 'מצוינות תורנית.',
+  titleLine2: 'עתיד מבטיח.',
+  subtitle: 'הבית של עשרות אלפי הורי ותלמידי הממ״ח בישראל. ריכוז מוסדות רשמיים, ליווי פדגוגי ומשפטי להקמת בתי ספר, ואינדקס מוסדות ארצי מעודכן.',
+};
+
+const DEFAULT_STATS = [
+  { number: '88', suffix: '+', label: 'מוסדות רשמיים', sublabel: 'בפריסה ארצית מגנים עד חט״ב', color: 'purple' },
+  { number: '18,500', suffix: '+', label: 'תלמידים ותלמידות', sublabel: 'בצמיחה שנתית של מעל 15%', color: 'green' },
+  { number: '100', suffix: '%', label: 'לימודי יסוד מלאים', sublabel: 'בפיקוח מלא של משרד החינוך', color: 'cyan' },
+  { number: '24', suffix: '', label: 'יוזמות הקמה', sublabel: 'יוזמות הורים לשנה״ל הבאה', color: 'orange' },
+];
+
+const DEFAULT_PILLARS = [
+  {
+    title: 'צביון חרדי אותנטי',
+    description: 'שמירה קפדנית על אורח החיים החרדי, תפילות, יראת שמיים, שיעורי גמרא והלכה, תוך ליווי מפקחים וצוות חינוכי שומר מצוות.',
+    color: 'purple',
+  },
+  {
+    title: 'לימודי יסוד מלאים (100%)',
+    description: 'מתמטיקה, אנגלית, מדעים ועברית ברמה אקדמית תקנית, המאפשרים לתלמיד עתיד פתוח לרכישת תואר והשתלבות מקצועית מובילה.',
+    color: 'green',
+  },
+  {
+    title: 'מימון שוויוני ומבנים תקניים',
+    description: 'מוסדות רשמיים נהנים מתקצוב ממלכתי מלא של הרשויות ומשרד החינוך: ימי לימודים ארוכים, כיתות קטנות ומעטפת פרא-רפואית.',
+    color: 'cyan',
+  },
+];
+
+const DEFAULT_ACTIVITIES = [
+  {
+    title: 'פעילות מדיניות והסברה',
+    desc: 'הסדרת מעמד הממ״ח בחקיקה ראשית ובחוזר מנכ״ל מול משרד החינוך והכנסת.',
+    color: 'purple',
+  },
+  {
+    title: 'הקמת מוסדות ממ״ח חדשים',
+    desc: 'ליווי קבוצות הורים: איסוף חתימות, הגשת דרישות לרשות המקומית ואיתור מבנים.',
+    color: 'green',
+  },
+  {
+    title: 'ליווי הורים ברישום וערעורים',
+    desc: 'סיוע מול סירובי רישום, הגשת ערעורים למחוז החרדי והבטחת שיבוץ הוגן.',
+    color: 'cyan',
+  },
+  {
+    title: 'ליווי והכשרת ועדי הורים',
+    desc: 'סדנאות ניהול תקציב, פיקוח על תשלומי הורים וחיבור ארצי בין ועדי מוסדות.',
+    color: 'orange',
+  },
+  {
+    title: 'ליווי קהילות עולים (Olim)',
+    desc: 'סיוע לעולים מארה״ב, בריטניה וצרפת בשילוב חינוכי תורני עם אנגלית מלאה.',
+    color: 'red',
+  },
+  {
+    title: 'ייעוץ משפטי ורגולציה',
+    desc: 'הגנה על זכויות התלמידים מול הרשויות המקומיות וחוק לימוד חובה.',
+    color: 'gold',
+  },
+];
+
+const COLOR_CLASSES: Record<string, { border: string; bg: string; text: string }> = {
+  purple: { border: 'border-t-brand-purple', bg: 'bg-brand-purple/10 text-brand-purple', text: 'text-brand-purple' },
+  green: { border: 'border-t-brand-green', bg: 'bg-brand-green/10 text-brand-green', text: 'text-brand-green' },
+  cyan: { border: 'border-t-brand-cyan', bg: 'bg-brand-cyan/10 text-brand-cyan', text: 'text-brand-cyan' },
+  orange: { border: 'border-t-brand-orange', bg: 'bg-brand-orange/10 text-brand-orange', text: 'text-brand-orange' },
+  red: { border: 'border-t-brand-red', bg: 'bg-brand-red/10 text-brand-red', text: 'text-brand-red' },
+  gold: { border: 'border-t-brand-gold', bg: 'bg-brand-gold/10 text-brand-gold', text: 'text-brand-gold' },
+};
+
+const STAT_ICON_LIST = [BookOpen, Users, Award, Sparkles];
+const PILLAR_ICON_LIST = [ShieldCheck, TrendingUp, Users];
+const ACTIVITY_ICON_LIST = [BookOpen, Sparkles, HeartHandshake, Users, Award, Scale];
+
+async function getHomePageData() {
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const result = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: { equals: 'home' },
+      },
+      limit: 1,
+    });
+    if (result.docs && result.docs.length > 0) {
+      return result.docs[0] as any;
+    }
+  } catch (error) {
+    console.error('Error fetching home page from Payload CMS:', error);
+  }
+  return null;
+}
+
+export default async function HomePage() {
+  const pageDoc = await getHomePageData();
+
+  const hero = pageDoc?.hero ? {
+    badge: pageDoc.hero.badge || DEFAULT_HERO.badge,
+    titleLine1: pageDoc.hero.titleLine1 || DEFAULT_HERO.titleLine1,
+    highlightText: pageDoc.hero.highlightText || DEFAULT_HERO.highlightText,
+    titleLine2: pageDoc.hero.titleLine2 || DEFAULT_HERO.titleLine2,
+    subtitle: pageDoc.hero.subtitle || DEFAULT_HERO.subtitle,
+  } : DEFAULT_HERO;
+
+  const stats = (pageDoc?.stats && pageDoc.stats.length > 0) ? pageDoc.stats : DEFAULT_STATS;
+  const pillars = (pageDoc?.pillars && pageDoc.pillars.length > 0) ? pageDoc.pillars : DEFAULT_PILLARS;
+  const activities = (pageDoc?.activities && pageDoc.activities.length > 0) ? pageDoc.activities : DEFAULT_ACTIVITIES;
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Top Colorful Accent Strip matching Logo's Stacked Bars */}
@@ -38,7 +165,17 @@ export default function HomePage() {
           </nav>
 
           {/* Header Action & Languages */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* CMS Admin Link */}
+            <Link 
+              href="/admin" 
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-300 hover:border-brand-navy text-slate-700 hover:text-brand-navy text-xs font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs"
+              title="מערכת ניהול תוכן (Payload CMS)"
+            >
+              <Settings className="w-3.5 h-3.5 text-brand-navy" />
+              <span className="hidden sm:inline">ניהול CMS</span>
+            </Link>
+
             <div className="flex border border-slate-200 rounded-lg overflow-hidden text-xs font-medium shadow-sm">
               <span className="px-2.5 py-1.5 bg-brand-navy text-white font-bold">HE</span>
               <Link href="/en" className="px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 transition-colors">EN</Link>
@@ -48,9 +185,9 @@ export default function HomePage() {
               href="https://www.guidestar.org.il/organization/580758324" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-brand-navy hover:bg-brand-navyLight text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition-all"
             >
-              תרומה לאגודה
+              <span>תרומה</span>
               <ExternalLink className="w-3.5 h-3.5 text-brand-gold" />
             </a>
           </div>
@@ -68,7 +205,7 @@ export default function HomePage() {
 
           {/* Hero Content */}
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            {/* Badge with the 5 spectrum dots + sun */}
+            {/* Badge with the spectrum dots + sun */}
             <div className="inline-flex items-center gap-2 border border-brand-navy/15 text-brand-navy font-semibold text-xs px-4 py-1.5 rounded-full bg-brand-navy/5 shadow-sm">
               <span className="flex items-center gap-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-gold shadow-sm" />
@@ -78,20 +215,20 @@ export default function HomePage() {
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-orange shadow-sm" />
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-red shadow-sm" />
               </span>
-              <span>עצמאות פדגוגית · פיקוח ממלכתי מלא · קהילה ארצית</span>
+              <span>{hero.badge}</span>
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] text-brand-navy max-w-4xl mx-auto">
-              החינוך הממלכתי-חרדי:<br />
+              {hero.titleLine1}<br />
               <span className="relative inline-block text-brand-navy">
-                מצוינות תורנית.
+                {hero.highlightText}
                 <span className="absolute bottom-1.5 right-0 left-0 h-3 bg-brand-gold/30 -z-10 rounded-full" />
               </span>{' '}
-              <span className="inline-block whitespace-nowrap text-slate-800">עתיד מבטיח.</span>
+              <span className="inline-block whitespace-nowrap text-slate-800">{hero.titleLine2}</span>
             </h1>
             
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
-              הבית של עשרות אלפי הורי ותלמידי הממ״ח בישראל. ריכוז מוסדות רשמיים, ליווי פדגוגי ומשפטי להקמת בתי ספר, ואינדקס מוסדות ארצי מעודכן.
+              {hero.subtitle}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
@@ -113,66 +250,30 @@ export default function HomePage() {
           {/* Numbers / Live Stats - Spanning Full Row Under Hero */}
           <div className="w-full pt-2">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              
-              {/* Card 1 - Official Institutions */}
-              <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-purple hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-700 font-bold">מוסדות רשמיים</span>
-                  <div className="w-9 h-9 rounded-xl bg-brand-purple/10 text-brand-purple flex items-center justify-center">
-                    <BookOpen className="w-4 h-4" />
+              {stats.map((s: any, idx: number) => {
+                const colorConfig = COLOR_CLASSES[s.color] || COLOR_CLASSES.purple;
+                const IconComp = STAT_ICON_LIST[idx % STAT_ICON_LIST.length];
+                return (
+                  <div 
+                    key={idx} 
+                    className={`bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 ${colorConfig.border} hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs sm:text-sm text-slate-700 font-bold">{s.label}</span>
+                      <div className={`w-9 h-9 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
+                        <IconComp className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
+                      <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">{s.number}</span>
+                      {s.suffix && (
+                        <span className={`text-2xl sm:text-3xl lg:text-4xl ${colorConfig.text}`}>{s.suffix}</span>
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-500 font-medium text-center block">{s.sublabel}</span>
                   </div>
-                </div>
-                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">88</span>
-                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-purple">+</span>
-                </div>
-                <span className="text-xs text-slate-500 font-medium text-center block">בפריסה ארצית מגנים עד חט״ב</span>
-              </div>
-
-              {/* Card 2 - Students */}
-              <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-green hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-700 font-bold">תלמידים ותלמידות</span>
-                  <div className="w-9 h-9 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center">
-                    <Users className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">18,500</span>
-                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-green">+</span>
-                </div>
-                <span className="text-xs text-slate-500 font-medium text-center block">בצמיחה שנתית של מעל 15%</span>
-              </div>
-
-              {/* Card 3 - Core Curriculum */}
-              <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-cyan hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-700 font-bold">לימודי יסוד מלאים</span>
-                  <div className="w-9 h-9 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center">
-                    <Award className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-center gap-0.5 my-2 font-black text-brand-navy" dir="ltr">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">100</span>
-                  <span className="text-2xl sm:text-3xl lg:text-4xl text-brand-cyan">%</span>
-                </div>
-                <span className="text-xs text-slate-500 font-medium text-center block">בפיקוח מלא של משרד החינוך</span>
-              </div>
-
-              {/* Card 4 - Initiatives */}
-              <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-soft border-t-4 border-t-brand-orange hover:shadow-elevated transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm text-slate-700 font-bold">יוזמות הקמה</span>
-                  <div className="w-9 h-9 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-center my-2 font-black text-brand-navy" dir="ltr">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl tracking-tight">24</span>
-                </div>
-                <span className="text-xs text-slate-500 font-medium text-center block">יוזמות הורים לשנה״ל הבאה</span>
-              </div>
-
+                );
+              })}
             </div>
           </div>
         </section>
@@ -190,35 +291,24 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 border-t-brand-purple space-y-4 hover:shadow-elevated transition-all">
-              <div className="w-12 h-12 rounded-xl bg-brand-purple/10 flex items-center justify-center text-brand-purple">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">צביון חרדי אותנטי</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                שמירה קפדנית על אורח החיים החרדי, תפילות, יראת שמיים, שיעורי גמרא והלכה, תוך ליווי מפקחים וצוות חינוכי שומר מצוות.
-              </p>
-            </div>
-
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 border-t-brand-green space-y-4 hover:shadow-elevated transition-all">
-              <div className="w-12 h-12 rounded-xl bg-brand-green/10 flex items-center justify-center text-brand-green">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">לימודי יסוד מלאים (100%)</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                מתמטיקה, אנגלית, מדעים ועברית ברמה אקדמית תקנית, המאפשרים לתלמיד עתיד פתוח לרכישת תואר והשתלבות מקצועית מובילה.
-              </p>
-            </div>
-
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 border-t-brand-cyan space-y-4 hover:shadow-elevated transition-all">
-              <div className="w-12 h-12 rounded-xl bg-brand-cyan/10 flex items-center justify-center text-brand-cyan">
-                <Users className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">מימון שוויוני ומבנים תקניים</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                מוסדות רשמיים נהנים מתקצוב ממלכתי מלא של הרשויות ומשרד החינוך: ימי לימודים ארוכים, כיתות קטנות ומעטפת פרא-רפואית.
-              </p>
-            </div>
+            {pillars.map((p: any, idx: number) => {
+              const colorConfig = COLOR_CLASSES[p.color] || COLOR_CLASSES.purple;
+              const IconComp = PILLAR_ICON_LIST[idx % PILLAR_ICON_LIST.length];
+              return (
+                <div 
+                  key={idx} 
+                  className={`bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-4 hover:shadow-elevated transition-all`}
+                >
+                  <div className={`w-12 h-12 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
+                    <IconComp className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">{p.title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    {p.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -238,54 +328,12 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { 
-                title: 'פעילות מדיניות והסברה', 
-                desc: 'הסדרת מעמד הממ״ח בחקיקה ראשית ובחוזר מנכ״ל מול משרד החינוך והכנסת.',
-                color: 'border-t-brand-purple',
-                badgeBg: 'bg-brand-purple/10 text-brand-purple',
-                icon: BookOpen
-              },
-              { 
-                title: 'הקמת מוסדות ממ״ח חדשים', 
-                desc: 'ליווי קבוצות הורים: איסוף חתימות, הגשת דרישות לרשות המקומית ואיתור מבנים.',
-                color: 'border-t-brand-green',
-                badgeBg: 'bg-brand-green/10 text-brand-green',
-                icon: Sparkles
-              },
-              { 
-                title: 'ליווי הורים ברישום וערעורים', 
-                desc: 'סיוע מול סירובי רישום, הגשת ערעורים למחוז החרדי והבטחת שיבוץ הוגן.',
-                color: 'border-t-brand-cyan',
-                badgeBg: 'bg-brand-cyan/10 text-brand-cyan',
-                icon: HeartHandshake
-              },
-              { 
-                title: 'ליווי והכשרת ועדי הורים', 
-                desc: 'סדנאות ניהול תקציב, פיקוח על תשלומי הורים וחיבור ארצי בין ועדי מוסדות.',
-                color: 'border-t-brand-orange',
-                badgeBg: 'bg-brand-orange/10 text-brand-orange',
-                icon: Users
-              },
-              { 
-                title: 'ליווי קהילות עולים (Olim)', 
-                desc: 'סיוע לעולים מארה״ב, בריטניה וצרפת בשילוב חינוכי תורני עם אנגלית מלאה.',
-                color: 'border-t-brand-red',
-                badgeBg: 'bg-brand-red/10 text-brand-red',
-                icon: Award
-              },
-              { 
-                title: 'ייעוץ משפטי ורגולציה', 
-                desc: 'הגנה על זכויות התלמידים מול הרשויות המקומיות וחוק לימוד חובה.',
-                color: 'border-t-brand-gold',
-                badgeBg: 'bg-brand-gold/10 text-brand-gold',
-                icon: Scale
-              },
-            ].map((a, idx) => {
-              const IconComp = a.icon;
+            {activities.map((a: any, idx: number) => {
+              const colorConfig = COLOR_CLASSES[a.color] || COLOR_CLASSES.purple;
+              const IconComp = ACTIVITY_ICON_LIST[idx % ACTIVITY_ICON_LIST.length];
               return (
-                <div key={idx} className={`bg-white border border-slate-200/80 rounded-2xl p-6 shadow-soft border-t-4 ${a.color} space-y-3 hover:shadow-elevated transition-all hover:-translate-y-0.5`}>
-                  <div className={`w-10 h-10 rounded-xl ${a.badgeBg} flex items-center justify-center`}>
+                <div key={idx} className={`bg-white border border-slate-200/80 rounded-2xl p-6 shadow-soft border-t-4 ${colorConfig.border} space-y-3 hover:shadow-elevated transition-all hover:-translate-y-0.5`}>
+                  <div className={`w-10 h-10 rounded-xl ${colorConfig.bg} flex items-center justify-center`}>
                     <IconComp className="w-5 h-5" />
                   </div>
                   <h4 className="font-bold text-base text-slate-900">{a.title}</h4>
@@ -336,6 +384,9 @@ export default function HomePage() {
               <a href="#directory" className="hover:text-white transition-colors">אינדקס מוסדות</a>
               <a href="#activities" className="hover:text-white transition-colors">פעילות האגודה</a>
               <a href="#contact" className="hover:text-white transition-colors">פניות הורים</a>
+              <Link href="/admin" className="hover:text-brand-gold text-amber-300 font-bold transition-colors inline-flex items-center gap-1">
+                <span>מערכת ניהול (CMS) ⚙</span>
+              </Link>
               <a 
                 href="https://www.guidestar.org.il/organization/580758324" 
                 target="_blank" 
@@ -352,6 +403,7 @@ export default function HomePage() {
               © 2026 אגודת ידידי הממ״ח (ע״ר 580758324). כל הזכויות שמורות.
             </div>
             <div className="flex gap-6">
+              <Link href="/admin" className="hover:text-white transition-colors">ניהול פורטל</Link>
               <a href="#" className="hover:text-white transition-colors">תנאי שימוש</a>
               <a href="#" className="hover:text-white transition-colors">מדיניות פרטיות</a>
               <a href="#" className="hover:text-white transition-colors">הצהרת נגישות</a>
