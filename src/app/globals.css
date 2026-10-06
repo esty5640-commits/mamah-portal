@@ -1,36 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Heebo:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 220 14% 96%;
-    --foreground: 220 20% 10%;
+    --background: 216 25% 97%;
+    --foreground: 245 45% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
-    --primary: 74 100% 40%;
-    --primary-foreground: 220 20% 8%;
-    --muted: 220 10% 92%;
-    --muted-foreground: 220 10% 40%;
-    --border: 220 13% 86%;
+    --card-foreground: 245 45% 15%;
+    --primary: 245 88% 24%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 245 88% 18%;
+    --muted: 220 16% 94%;
+    --muted-foreground: 224 15% 44%;
+    --border: 220 16% 89%;
   }
 
-  .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 96%;
-    --card: 240 8% 7%;
-    --card-foreground: 0 0% 96%;
-    --primary: 74 100% 50%;
-    --primary-foreground: 240 10% 4%;
-    --muted: 240 6% 14%;
-    --muted-foreground: 240 5% 58%;
-    --border: 240 6% 18%;
+  body {
+    font-family: 'Rubik', 'Heebo', system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer utilities {
   .tactile-border {
     border: 1px solid hsl(var(--border));
-    box-shadow: 2px 2px 0px 0px hsl(var(--border));
+    box-shadow: 0 1px 3px 0 rgba(17, 7, 113, 0.05), 0 1px 2px -1px rgba(17, 7, 113, 0.03);
+  }
+
+  .logo-rainbow-strip {
+    background: linear-gradient(
+      90deg,
+      #eea600 0%,
+      #4e0a6c 20%,
+      #66c329 40%,
+      #309ac0 60%,
+      #ee4c00 80%,
+      #c00500 100%
+    );
+  }
+
+  .logo-rainbow-strip-vertical {
+    background: linear-gradient(
+      180deg,
+      #eea600 0%,
+      #4e0a6c 20%,
+      #66c329 40%,
+      #309ac0 60%,
+      #ee4c00 80%,
+      #c00500 100%
+    );
   }
 }
