@@ -12,9 +12,21 @@ export function DirectoryView() {
   const [specialEdOnly, setSpecialEdOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null);
+  const [dataList, setDataList] = useState<Institution[]>(institutionsList);
+
+  React.useEffect(() => {
+    fetch('/api/institutions')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setDataList(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
-    return institutionsList.filter(inst => {
+    return dataList.filter(inst => {
       if (activeCategory !== 'all') {
         if (activeCategory === 'kindergarten_boys' && inst.isMixed) {
           // Mixed appears in boys
