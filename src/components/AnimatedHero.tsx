@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { InteractivePieChart } from './InteractivePieChart';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface AnimatedHeroProps {
   hero: {
@@ -22,6 +23,7 @@ interface AnimatedHeroProps {
 }
 
 export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
+  const { t, locale, dir } = useI18n();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -135,14 +137,14 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
             </motion.p>
 
             {/* CTA Buttons with hover & click physics */}
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+            <motion.div variants={itemVariants} className={`flex flex-wrap items-center justify-center ${dir === 'rtl' ? 'lg:justify-start' : 'lg:justify-start'} gap-4 pt-2`}>
               <motion.a 
                 href="#directory" 
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 className="btn-shimmer px-7 py-3.5 sm:py-4 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-xl text-base sm:text-lg inline-flex items-center gap-2.5 shadow-xl shadow-amber-500/25 hover:shadow-2xl transition-all"
               >
-                <span>איתור מוסד חינוכי באינדקס</span>
+                <span>{locale === 'he' ? 'איתור מוסד חינוכי באינדקס' : locale === 'fr' ? 'Trouver une école dans l\'annuaire' : 'Locate a School in Directory'}</span>
                 <motion.span 
                   animate={{ y: [0, 4, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
@@ -156,8 +158,10 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
                 whileTap={{ scale: 0.95 }}
                 className="px-6 py-3.5 sm:py-4 border-2 border-white/40 hover:border-white text-white bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-xl text-base sm:text-lg font-bold shadow-lg transition-all"
               >
-                <span>פנייה ישירה למוקד ההורים</span>
-                <span className="mr-1.5 inline-block transition-transform group-hover:-translate-x-1">←</span>
+                <span>{locale === 'he' ? 'פנייה ישירה למוקד ההורים' : locale === 'fr' ? 'Contacter la permanence parents' : 'Direct Inquiry to Parents Hotline'}</span>
+                <span className={`${dir === 'rtl' ? 'mr-1.5' : 'ml-1.5'} inline-block transition-transform`}>
+                  {dir === 'rtl' ? '←' : '→'}
+                </span>
               </motion.a>
             </motion.div>
           </motion.div>

@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Send } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 export function ContactForm() {
+  const { t, dir, locale } = useI18n();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,9 +61,9 @@ export function ContactForm() {
             >
               <CheckCircle2 className="w-12 h-12" />
             </motion.div>
-            <h3 className="text-2xl sm:text-3xl font-black text-brand-navy">הפנייה נשמרה במערכת בהצלחה!</h3>
+            <h3 className="text-2xl sm:text-3xl font-black text-brand-navy">{t('contactForm.successTitle')}</h3>
             <p className="text-base sm:text-lg text-slate-700 leading-relaxed max-w-lg mx-auto">
-              תודה על פנייתך. הפנייה נקלטה ישירות במוקד ניהול הפניות של אגודת ידידי הממ״ח ורכז יחזור אליך בהקדם.
+              {t('contactForm.successMessage')}
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -73,7 +75,7 @@ export function ContactForm() {
               }}
               className="mt-4 px-7 py-3.5 bg-slate-100 hover:bg-slate-200 text-brand-navy rounded-xl text-sm sm:text-base font-bold transition-colors cursor-pointer shadow-2xs"
             >
-              שליחת פנייה נוספת
+              {locale === 'he' ? 'שליחת פנייה נוספת' : locale === 'fr' ? 'Envoyer une autre demande' : 'Submit Another Inquiry'}
             </motion.button>
           </motion.div>
         ) : (
@@ -82,26 +84,26 @@ export function ContactForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-white border border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-elevated space-y-6"
+            className={`bg-white border border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-elevated space-y-6 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
           >
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm sm:text-base font-bold text-slate-800">שם ההורה *</label>
+                  <label className="text-sm sm:text-base font-bold text-slate-800">{t('contactForm.parentName')}</label>
                   <input
                     required
                     value={formData.parentName}
                     onChange={(e) => setFormData({ ...formData, parentName: e.target.value })}
-                    placeholder="ישראל ישראלי"
+                    placeholder={locale === 'he' ? 'ישראל ישראלי' : 'Full Name'}
                     className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all hover:border-slate-300"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm sm:text-base font-bold text-slate-800">שם התלמיד/ה</label>
+                  <label className="text-sm sm:text-base font-bold text-slate-800">{t('contactForm.studentName')}</label>
                   <input
                     value={formData.studentName}
                     onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
-                    placeholder="שם הילד/ה"
+                    placeholder={locale === 'he' ? 'שם הילד/ה' : 'Student Name'}
                     className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all hover:border-slate-300"
                   />
                 </div>
@@ -109,7 +111,7 @@ export function ContactForm() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm sm:text-base font-bold text-slate-800">מספר טלפון *</label>
+                  <label className="text-sm sm:text-base font-bold text-slate-800">{t('contactForm.phone')}</label>
                   <input
                     type="tel"
                     required
@@ -120,25 +122,25 @@ export function ContactForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm sm:text-base font-bold text-slate-800">עיר מגורים *</label>
+                  <label className="text-sm sm:text-base font-bold text-slate-800">{t('contactForm.city')}</label>
                   <input
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="ירושלים / בית שמש..."
+                    placeholder={locale === 'he' ? 'ירושלים / בית שמש...' : 'City'}
                     className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all hover:border-slate-300"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm sm:text-base font-bold text-slate-800">פירוט הפנייה *</label>
+                <label className="text-sm sm:text-base font-bold text-slate-800">{t('contactForm.details')}</label>
                 <textarea
                   rows={4}
                   required
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="פרט את נושא הפנייה (רישום, בעיה מול הרשות, הקמת מוסד...)"
+                  placeholder={t('contactForm.detailsPlaceholder')}
                   className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all hover:border-slate-300 resize-none"
                 />
               </div>
@@ -151,11 +153,11 @@ export function ContactForm() {
                 className="btn-shimmer w-full py-4.5 bg-brand-navy hover:bg-brand-navyLight text-white font-bold rounded-xl text-base sm:text-lg transition-all shadow-md shadow-brand-navy/25 hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 {loading ? (
-                  <span>שולח פנייה...</span>
+                  <span>{t('contactForm.submitting')}</span>
                 ) : (
                   <>
-                    <span>שליחת פנייה לצוות האגודה</span>
-                    <Send className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                    <span>{t('contactForm.submit')}</span>
+                    <Send className={`w-5 h-5 transition-transform ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                   </>
                 )}
               </motion.button>

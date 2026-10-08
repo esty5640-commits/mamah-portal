@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Users, School, ArrowUpRight } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface GrowthPoint {
   year: string;
@@ -25,6 +26,7 @@ const DEFAULT_GROWTH_DATA: GrowthPoint[] = [
 ];
 
 export function GrowthChart({ data = DEFAULT_GROWTH_DATA }: GrowthChartProps) {
+  const { t, locale, dir } = useI18n();
   const [metric, setMetric] = useState<'students' | 'institutions'>('students');
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -41,13 +43,15 @@ export function GrowthChart({ data = DEFAULT_GROWTH_DATA }: GrowthChartProps) {
         <div>
           <div className="flex items-center gap-2 text-xs font-black text-brand-navy uppercase tracking-wider mb-1">
             <TrendingUp className="w-4 h-4 text-brand-green" />
-            <span>מגמת צמיחה ארצית</span>
+            <span>{t('growthChart.title')}</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            הזינוק בחינוך הממלכתי-חרדי לאורך השנים
+            {locale === 'he' ? 'הזינוק בחינוך הממלכתי-חרדי לאורך השנים' : locale === 'fr' ? 'L\'essor de l\'enseignement étatique ultra-orthodoxe au fil des ans' : 'The Surge in State-Haredi Education Over the Years'}
           </h3>
           <p className="text-sm text-slate-500 mt-1">
-            {metric === 'students' ? 'גידול של למעלה מ-1,400% במספר התלמידים ממועד הקמת הזרם' : 'מ-14 מוסדות חלוציים ל-88+ בתי ספר וגנים בפריסה ארצית'}
+            {metric === 'students' 
+              ? (locale === 'he' ? 'גידול של למעלה מ-1,400% במספר התלמידים ממועד הקמת הזרם' : locale === 'fr' ? 'Plus de 1 400 % d\'augmentation des effectifs d\'élèves depuis la création' : 'Over 1,400% increase in student enrollment since founding') 
+              : (locale === 'he' ? 'מ-14 מוסדות חלוציים ל-88+ בתי ספר וגנים בפריסה ארצית' : locale === 'fr' ? 'De 14 écoles pionnières à plus de 88 établissements à l\'échelle nationale' : 'From 14 pioneering schools to 88+ schools nationwide')}
           </p>
         </div>
 
@@ -63,7 +67,7 @@ export function GrowthChart({ data = DEFAULT_GROWTH_DATA }: GrowthChartProps) {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>תלמידים ותלמידות</span>
+            <span>{t('growthChart.studentsTab')}</span>
           </button>
           <button
             type="button"
@@ -75,7 +79,7 @@ export function GrowthChart({ data = DEFAULT_GROWTH_DATA }: GrowthChartProps) {
             }`}
           >
             <School className="w-4 h-4" />
-            <span>מספר מוסדות</span>
+            <span>{t('growthChart.institutionsTab')}</span>
           </button>
         </div>
       </div>
@@ -144,27 +148,27 @@ export function GrowthChart({ data = DEFAULT_GROWTH_DATA }: GrowthChartProps) {
       <div className="relative z-10 mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">
           <div>
-            <span className="text-xs text-slate-500 font-bold block">שנת הקמה ראשונה</span>
-            <span className="text-lg font-black text-brand-navy">תשע״ד (2014)</span>
+            <span className="text-xs text-slate-500 font-bold block">{locale === 'he' ? 'שנת הקמה ראשונה' : locale === 'fr' ? 'Année de fondation' : 'Founding Year'}</span>
+            <span className="text-lg font-black text-brand-navy">2014 (תשע״ד)</span>
           </div>
-          <span className="text-xs font-bold px-2.5 py-1 bg-white rounded-lg border border-slate-200">14 מוסדות</span>
+          <span className="text-xs font-bold px-2.5 py-1 bg-white rounded-lg border border-slate-200">14 {t('growthChart.institutionsUnit')}</span>
         </div>
         <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">
           <div>
-            <span className="text-xs text-slate-500 font-bold block">תלמידים כיום (2026)</span>
+            <span className="text-xs text-slate-500 font-bold block">{locale === 'he' ? 'תלמידים כיום (2026)' : locale === 'fr' ? 'Élèves aujourd\'hui (2026)' : 'Students Today (2026)'}</span>
             <span className="text-lg font-black text-brand-navy" dir="ltr">18,500+</span>
           </div>
           <span className="text-xs font-bold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg flex items-center gap-0.5">
-            <span>+15% שנתי</span>
+            <span>+15% {locale === 'he' ? 'שנתי' : 'annuel'}</span>
             <ArrowUpRight className="w-3 h-3" />
           </span>
         </div>
         <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">
           <div>
-            <span className="text-xs text-slate-500 font-bold block">מוסדות רשמיים כיום</span>
-            <span className="text-lg font-black text-brand-navy">88 מוסדות</span>
+            <span className="text-xs text-slate-500 font-bold block">{locale === 'he' ? 'מוסדות רשמיים כיום' : locale === 'fr' ? 'Écoles officielles' : 'Official Schools'}</span>
+            <span className="text-lg font-black text-brand-navy">88 {t('growthChart.institutionsUnit')}</span>
           </div>
-          <span className="text-xs font-bold px-2.5 py-1 bg-brand-cyan/15 text-brand-navy rounded-lg">בכל הארץ</span>
+          <span className="text-xs font-bold px-2.5 py-1 bg-brand-cyan/15 text-brand-navy rounded-lg">{t('hero.searchCity')}</span>
         </div>
       </div>
     </div>
