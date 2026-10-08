@@ -53,7 +53,7 @@ async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
     // Try by name slug or fallback to institutionsList
     const decoded = decodeURIComponent(idOrSymbol).toLowerCase();
     const fallback = institutionsList.find(
-      inst => inst.symbol === idOrSymbol || inst.name.toLowerCase() === decoded || inst.name.includes(decoded)
+      inst => inst.id === idOrSymbol || inst.symbol === idOrSymbol || inst.name.toLowerCase() === decoded || inst.name.includes(decoded)
     );
     if (fallback) return fallback;
 
@@ -62,7 +62,7 @@ async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
   }
 
   // Final fallback to mock data
-  const fallback = institutionsList.find(inst => inst.symbol === idOrSymbol);
+  const fallback = institutionsList.find(inst => inst.id === idOrSymbol || inst.symbol === idOrSymbol);
   return fallback || null;
 }
 

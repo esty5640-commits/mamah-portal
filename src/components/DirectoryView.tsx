@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Building2, ExternalLink, X, ArrowLeft } from 'lucide-react';
 import { institutionsList, Institution } from '@/data/institutions';
@@ -327,7 +328,14 @@ export function DirectoryView() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-slate-100 flex gap-3 flex-wrap">
+              <div className="pt-4 border-t border-slate-100 flex gap-3 flex-wrap items-center">
+                <Link
+                  href={`/institutions/${selectedInst.symbol || selectedInst.id}`}
+                  className="px-5 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                >
+                  <span>לדף המוסד המלא</span>
+                  <span>←</span>
+                </Link>
                 <motion.a
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
@@ -367,7 +375,7 @@ export function DirectoryView() {
                     href={selectedInst.registration}
                     target="_blank"
                     rel="noopener"
-                    className="btn-shimmer px-4 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all"
+                    className="btn-shimmer px-4 py-2.5 bg-brand-cyan hover:bg-brand-cyanDark text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all"
                   >
                     📝 רישום בעירייה ↗
                   </motion.a>
