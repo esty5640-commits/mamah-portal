@@ -25,6 +25,36 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+function formatInstitutionDoc(doc: any): Institution {
+  return {
+    id: String(doc.id || doc._id),
+    name: doc.name || '',
+    category: doc.category || '',
+    categoryName: doc.categoryName || '',
+    city: doc.city || '',
+    district: doc.district || '',
+    symbol: doc.symbol || '',
+    specialTrait: doc.specialTrait || '',
+    specialTraitHe: doc.specialTraitHe || '',
+    isMixed: Boolean(doc.isMixed),
+    phone: doc.phone || '',
+    email: doc.email || '',
+    address: doc.address || '',
+    principal: doc.principal || '',
+    inspector: doc.inspector || '',
+    specialEd: doc.specialEd || '',
+    continuity: doc.continuity || '',
+    parentsCommittee: Array.isArray(doc.parentsCommittee)
+      ? doc.parentsCommittee.map((p: any) => (typeof p === 'string' ? p : p?.name || '')).filter(Boolean)
+      : [],
+    about: doc.about || '',
+    waze: doc.waze || '',
+    maps: doc.maps || '',
+    rama: doc.rama || '',
+    registration: doc.registration || '',
+  };
+}
+
 async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
   try {
     const payload = await getPayload({ config: configPromise });
@@ -36,7 +66,7 @@ async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
           collection: 'institutions',
           id: idOrSymbol,
         });
-        if (doc) return doc as any;
+        if (doc) return formatInstitutionDoc(doc);
       } catch (e) {}
     }
 
@@ -47,7 +77,7 @@ async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
       limit: 1,
     });
     if (bySymbol.docs && bySymbol.docs.length > 0) {
-      return bySymbol.docs[0] as any;
+      return formatInstitutionDoc(bySymbol.docs[0]);
     }
 
     // Try by name slug or fallback to institutionsList
@@ -252,11 +282,15 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
                       <h3 className="text-sm font-bold text-slate-900">ועד הורים מוסדי פעיל:</h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {inst.parentsCommittee.map((p, i) => (
-                        <span key={i} className="px-3 py-1 bg-slate-100 text-slate-800 rounded-lg text-xs font-semibold">
-                          {p.name}
-                        </span>
-                      ))}
+                      {inst.parentsCommittee.map((p, i) => {
+                        const name = typeof p === 'string' ? p : (p as any)?.name;
+                        if (!name) return null;
+                        return (
+                          <span key={i} className="px-3 py-1 bg-slate-100 text-slate-800 rounded-lg text-xs font-semibold">
+                            {name}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

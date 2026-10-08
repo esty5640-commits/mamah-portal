@@ -25,6 +25,15 @@ export default buildConfig({
       titleSuffix: ' - פורטל ידידי הממ״ח',
     },
   },
+  localization: {
+    locales: [
+      { label: 'עברית', code: 'he', rtl: true },
+      { label: 'English', code: 'en', rtl: false },
+      { label: 'Français', code: 'fr', rtl: false },
+    ],
+    defaultLocale: 'he',
+    fallback: true,
+  },
   collections: [
     Users,
     Institutions,
