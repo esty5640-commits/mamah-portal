@@ -185,12 +185,12 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-24">
-        
-        {/* HERO & KEY NUMBERS SECTION (ANIMATED) */}
-        <AnimatedHero hero={hero} stats={stats} />
+      {/* HERO & KEY NUMBERS SECTION (FULL WIDTH & FULL PAGE HEIGHT) */}
+      <AnimatedHero hero={hero} stats={stats} />
 
+      {/* Main Content */}
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 space-y-24">
+        
         {/* SECTION 1: WHAT IS MAMACH (ANIMATED) */}
         <AnimatedPillars pillars={pillars} />
 
