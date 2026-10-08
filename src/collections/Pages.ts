@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload';
 export const Pages: CollectionConfig = {
   slug: 'pages',
   labels: {
-    singular: 'עמוד תוכן / דף בית',
+    singular: 'עמוד תוכן',
     plural: 'עמודי תוכן ותצוגה',
   },
   admin: {
@@ -28,39 +28,44 @@ export const Pages: CollectionConfig = {
       label: 'מזהה עמוד (Slug)',
     },
     {
+      name: 'subtitle',
+      type: 'textarea',
+      label: 'תת-כותרת / פסקת מבוא',
+    },
+    {
+      name: 'content',
+      type: 'textarea',
+      label: 'תוכן העמוד (טקסט ראשי)',
+    },
+    {
       name: 'hero',
       type: 'group',
-      label: 'אזור ה-Hero הראשי',
+      label: 'אזור ה-Hero הראשי (עבור עמוד הבית או כותרת ראשית)',
       fields: [
         {
           name: 'badge',
           type: 'text',
           label: 'תגית עליונה',
-          defaultValue: 'עצמאות פדגוגית · פיקוח ממלכתי מלא · קהילה ארצית',
         },
         {
           name: 'titleLine1',
           type: 'text',
           label: 'כותרת שורה 1',
-          defaultValue: 'החינוך הממלכתי-חרדי:',
         },
         {
           name: 'highlightText',
           type: 'text',
           label: 'טקסט מודגש בצבע',
-          defaultValue: 'מצוינות תורנית.',
         },
         {
           name: 'titleLine2',
           type: 'text',
           label: 'סיום כותרת',
-          defaultValue: 'עתיד מבטיח.',
         },
         {
           name: 'subtitle',
           type: 'textarea',
           label: 'פסקת פתיחה / תיאור הפורטל',
-          defaultValue: 'הבית של עשרות אלפי הורי ותלמידי הממ״ח בישראל. ריכוז מוסדות רשמיים, ליווי פדגוגי ומשפטי להקמת בתי ספר, ואינדקס מוסדות ארצי מעודכן.',
         },
       ],
     },
@@ -95,21 +100,76 @@ export const Pages: CollectionConfig = {
           name: 'color',
           type: 'select',
           defaultValue: 'purple',
-          label: 'צבע הדגשה (לפי צבעי הלוגו)',
+          label: 'צבע הדגשה',
           options: [
             { label: 'סגול (Purple)', value: 'purple' },
             { label: 'ירוק (Green)', value: 'green' },
             { label: 'תכלת (Cyan)', value: 'cyan' },
             { label: 'כתום (Orange)', value: 'orange' },
             { label: 'זהב (Gold)', value: 'gold' },
+            { label: 'אדום (Red)', value: 'red' },
           ],
+        },
+      ],
+    },
+    {
+      name: 'growthData',
+      type: 'array',
+      label: 'נתוני צמיחה לפי שנים (גרף צמיחה)',
+      fields: [
+        {
+          name: 'year',
+          type: 'text',
+          required: true,
+          label: 'שנה (למשל תשע״ד / 2014)',
+        },
+        {
+          name: 'students',
+          type: 'number',
+          required: true,
+          label: 'מספר תלמידים',
+        },
+        {
+          name: 'institutions',
+          type: 'number',
+          required: true,
+          label: 'מספר מוסדות',
+        },
+      ],
+    },
+    {
+      name: 'team',
+      type: 'array',
+      label: 'חברי צוות האגודה (עבור דף אודות)',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+          label: 'שם מלא',
+        },
+        {
+          name: 'role',
+          type: 'text',
+          required: true,
+          label: 'תפקיד',
+        },
+        {
+          name: 'bio',
+          type: 'textarea',
+          label: 'תיאור קצר ורקע מקצועי',
+        },
+        {
+          name: 'image',
+          type: 'text',
+          label: 'קישור לתמונה',
         },
       ],
     },
     {
       name: 'pillars',
       type: 'array',
-      label: 'מה זה ממ״ח (עמודי תווך)',
+      label: 'עמודי תווך / עקרונות פדגוגיים',
       fields: [
         {
           name: 'title',
@@ -132,6 +192,9 @@ export const Pages: CollectionConfig = {
             { label: 'סגול', value: 'purple' },
             { label: 'ירוק', value: 'green' },
             { label: 'תכלת', value: 'cyan' },
+            { label: 'כתום', value: 'orange' },
+            { label: 'זהב', value: 'gold' },
+            { label: 'אדום', value: 'red' },
           ],
         },
       ],
@@ -139,7 +202,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'activities',
       type: 'array',
-      label: 'פעילויות האגודה',
+      label: 'פעילויות / סעיפי פעילות',
       fields: [
         {
           name: 'title',
@@ -166,6 +229,25 @@ export const Pages: CollectionConfig = {
             { label: 'אדום', value: 'red' },
             { label: 'זהב', value: 'gold' },
           ],
+        },
+      ],
+    },
+    {
+      name: 'faq',
+      type: 'array',
+      label: 'שאלות נפוצות ותשובות',
+      fields: [
+        {
+          name: 'question',
+          type: 'text',
+          required: true,
+          label: 'שאלה',
+        },
+        {
+          name: 'answer',
+          type: 'textarea',
+          required: true,
+          label: 'תשובה',
         },
       ],
     },

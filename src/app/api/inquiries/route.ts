@@ -11,20 +11,20 @@ export async function POST(req: Request) {
       collection: 'inquiries',
       data: {
         fullName: body.parentName || body.fullName || 'פנייה ללא שם',
+        studentName: body.studentName || '',
         phone: body.phone || '',
         email: body.email || '',
-        city: body.city || '',
-        institutionInterest: body.studentName ? `תלמיד/ה: ${body.studentName}` : (body.institutionInterest || ''),
+        city: body.institutionCity || body.city || '',
+        institutionName: body.institutionName || body.institutionInterest || '',
         inquiryType: body.inquiryType || 'general',
-        message: body.message || '',
+        message: body.message || body.inquiryDetails || '',
         status: 'new',
       },
     });
 
     return NextResponse.json({ success: true, id: doc.id });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating inquiry in Payload CMS:', error);
-    // Return 200 with success so user gets a reassuring response even in network edge cases
     return NextResponse.json({ success: true, offline: true });
   }
 }

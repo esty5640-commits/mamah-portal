@@ -10,6 +10,9 @@ import { Institutions } from './collections/Institutions';
 import { Pages } from './collections/Pages';
 import { Inquiries } from './collections/Inquiries';
 import { Media } from './collections/Media';
+import { MediaCoverage } from './collections/MediaCoverage';
+import { Updates } from './collections/Updates';
+import { Events } from './collections/Events';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -27,6 +30,9 @@ export default buildConfig({
     Institutions,
     Pages,
     Inquiries,
+    MediaCoverage,
+    Updates,
+    Events,
     Media,
   ],
   editor: lexicalEditor(),

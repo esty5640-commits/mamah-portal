@@ -3,12 +3,12 @@ import type { CollectionConfig } from 'payload';
 export const Inquiries: CollectionConfig = {
   slug: 'inquiries',
   labels: {
-    singular: 'פניית הורים',
-    plural: 'פניות הורים (מוקד סיוע)',
+    singular: 'פנייה',
+    plural: 'פניות הורים ויצירת קשר',
   },
   admin: {
     useAsTitle: 'fullName',
-    defaultColumns: ['fullName', 'phone', 'city', 'inquiryType', 'status', 'createdAt'],
+    defaultColumns: ['fullName', 'studentName', 'phone', 'city', 'inquiryType', 'status', 'createdAt'],
   },
   access: {
     create: () => true, // Publicly submittable via contact form
@@ -18,7 +18,12 @@ export const Inquiries: CollectionConfig = {
       name: 'fullName',
       type: 'text',
       required: true,
-      label: 'שם מלא של ההורה',
+      label: 'שם מלא (הורה / פונה)',
+    },
+    {
+      name: 'studentName',
+      type: 'text',
+      label: 'שם התלמיד/ה (עבור פניות הורים)',
     },
     {
       name: 'phone',
@@ -34,7 +39,12 @@ export const Inquiries: CollectionConfig = {
     {
       name: 'city',
       type: 'text',
-      label: 'עיר / רשות מקומית',
+      label: 'עיר המוסד / מגורים',
+    },
+    {
+      name: 'institutionName',
+      type: 'text',
+      label: 'שם המוסד הרלוונטי',
     },
     {
       name: 'inquiryType',
@@ -42,21 +52,18 @@ export const Inquiries: CollectionConfig = {
       defaultValue: 'general',
       label: 'סוג הפנייה',
       options: [
-        { label: 'קושי ברישום מול הרשות / ערעור', value: 'registration' },
-        { label: 'יוזמה להקמת מוסד ממ״ח חדש', value: 'founding' },
-        { label: 'קהילת עולים (Olim Assistance)', value: 'olim' },
-        { label: 'פנייה כללית / ייעוץ פדגוגי', value: 'general' },
+        { label: 'פניית הורים - קושי ברישום מול הרשות / ערעור', value: 'registration' },
+        { label: 'פניית הורים - יוזמה להקמת מוסד ממ״ח חדש', value: 'founding' },
+        { label: 'פניית הורים - קהילת עולים (Olim Assistance)', value: 'olim' },
+        { label: 'פניית הורים - ייעוץ פדגוגי / שילוב', value: 'pedagogical' },
+        { label: 'יצירת קשר כללית עם האגודה', value: 'general' },
       ],
-    },
-    {
-      name: 'institutionInterest',
-      type: 'text',
-      label: 'מוסד מבוקש (אם רלוונטי)',
     },
     {
       name: 'message',
       type: 'textarea',
-      label: 'תוכן הפנייה / פירוט הבעיה',
+      required: true,
+      label: 'תוכן הפנייה / פירוט',
     },
     {
       name: 'status',

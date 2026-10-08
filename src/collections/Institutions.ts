@@ -28,14 +28,12 @@ export const Institutions: CollectionConfig = {
       options: [
         { label: 'בי"ס יסודי / ת"ת בנים', value: 'boys_elementary' },
         { label: 'בי"ס יסודי בנות', value: 'girls_elementary' },
-        { label: 'גני ילדים - בנים', value: 'kindergarten_boys' },
-        { label: 'גני ילדים - בנות', value: 'kindergarten_girls' },
+        { label: 'גני בנים', value: 'kindergarten_boys' },
+        { label: 'גני בנות', value: 'kindergarten_girls' },
         { label: 'גני ילדים מעורב', value: 'kindergarten_mixed' },
-        { label: 'חטיבת ביניים / ישיבה', value: 'middle_school' },
-        { label: 'מרכז מחוננים ומצטיינים', value: 'gifted_center' },
-        { label: 'גן לחינוך מיוחד', value: 'special_ed_kindergarten' },
-        { label: 'חב"ד בנים', value: 'boys_chabad' },
-        { label: 'ישיבה תיכונית', value: 'highschool_yeshiva' },
+        { label: 'חט״ב - מכינה ז׳-ח׳', value: 'middle_school' },
+        { label: 'מרכזי מחוננים', value: 'gifted_center' },
+        { label: 'גני חינוך מיוחד', value: 'special_ed_kindergarten' },
         { label: 'אחר', value: 'other' },
       ],
     },
@@ -70,6 +68,11 @@ export const Institutions: CollectionConfig = {
       label: 'סמל מוסד משרד החינוך',
     },
     {
+      name: 'imageUrl',
+      type: 'text',
+      label: 'תמונה / לוגו של המוסד',
+    },
+    {
       name: 'specialTrait',
       type: 'text',
       label: 'מאפיין ייחודי (קוד/מזהה)',
@@ -77,7 +80,7 @@ export const Institutions: CollectionConfig = {
     {
       name: 'specialTraitHe',
       type: 'text',
-      label: 'מאפיין ייחודי (בעברית)',
+      label: 'מאפיין ייחודי (חסידי / יידיש / מונטסורי / רוח חב״ד / חרד״לי / קירוב)',
     },
     {
       name: 'isMixed',
@@ -103,7 +106,7 @@ export const Institutions: CollectionConfig = {
     {
       name: 'principal',
       type: 'text',
-      label: 'מנהל/ת המוסד',
+      label: 'מנהל/ת המוסד (או שם הגננת)',
     },
     {
       name: 'inspector',
@@ -118,7 +121,7 @@ export const Institutions: CollectionConfig = {
     {
       name: 'continuity',
       type: 'text',
-      label: 'רצף חינוכי (גנים/חטיבה)',
+      label: 'רצף חינוכי (גן צמוד / בי״ס צמוד)',
     },
     {
       name: 'parentsCommittee',
@@ -155,7 +158,12 @@ export const Institutions: CollectionConfig = {
     {
       name: 'registration',
       type: 'text',
-      label: 'קישור לרישום מקומי ברשות',
+      label: 'קישור לרישום דרך העירייה',
+    },
+    {
+      name: 'regulationsUrl',
+      type: 'text',
+      label: 'תקנון בית הספר - קישור לקובץ PDF',
     },
   ],
 };

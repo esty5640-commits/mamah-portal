@@ -23,7 +23,7 @@ export function DirectoryView() {
           setDataList(data);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const filtered = useMemo(() => {
@@ -70,7 +70,7 @@ export function DirectoryView() {
   return (
     <section id="directory" className="space-y-8">
       {/* Header with scroll reveal */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
@@ -83,7 +83,7 @@ export function DirectoryView() {
         </div>
         <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
           <span>מוצגים</span>
-          <motion.span 
+          <motion.span
             key={filtered.length}
             initial={{ scale: 1.3, color: '#110771' }}
             animate={{ scale: 1 }}
@@ -113,11 +113,10 @@ export function DirectoryView() {
               onClick={() => setActiveCategory(cat.id)}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.94 }}
-              className={`px-4.5 py-3 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${
-                activeCategory === cat.id
-                  ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
-                  : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
-              }`}
+              className={`px-4.5 py-3 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${activeCategory === cat.id
+                ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
+                : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
+                }`}
             >
               {cat.label}
             </motion.button>
@@ -125,7 +124,7 @@ export function DirectoryView() {
         </div>
 
         {/* Sub Filters */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -198,7 +197,7 @@ export function DirectoryView() {
       </div>
 
       {/* Cards Grid with Framer Motion layout animations */}
-      <motion.div 
+      <motion.div
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
@@ -218,17 +217,17 @@ export function DirectoryView() {
             >
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between text-sm gap-2">
-                  <span className="font-mono px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold group-hover:bg-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                  <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold group-hover:bg-brand-navy/10 group-hover:text-brand-navy transition-colors">
                     סמל: {inst.symbol}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {inst.isMixed && (
-                      <span className="border border-brand-gold/40 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm font-black">
+                      <span className="border border-brand-gold/40 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-black">
                         גן מעורב
                       </span>
                     )}
                     {inst.specialTrait && inst.specialTrait !== 'none' && (
-                      <span className="border border-brand-cyan/40 text-brand-cyan bg-brand-cyan/10 px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm font-black">
+                      <span className="border border-brand-cyan/40 text-brand-cyan bg-brand-cyan/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-black">
                         {inst.specialTraitHe}
                       </span>
                     )}
@@ -250,7 +249,7 @@ export function DirectoryView() {
                 </div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base font-mono">
+              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base">
                 <span className="text-slate-600 font-semibold">{inst.phone}</span>
                 <span className="text-brand-navy font-black group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
                   <span>פרטים מלאים</span>
@@ -265,14 +264,14 @@ export function DirectoryView() {
       {/* Modal Detail with spring enter/exit animation */}
       <AnimatePresence>
         {selectedInst && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedInst(null)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
@@ -280,7 +279,7 @@ export function DirectoryView() {
               className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto shadow-2xl"
               onClick={e => e.stopPropagation()}
             >
-              <motion.button 
+              <motion.button
                 whileHover={{ rotate: 90, scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setSelectedInst(null)}
@@ -294,7 +293,7 @@ export function DirectoryView() {
                   {selectedInst.categoryName}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">{selectedInst.name}</h2>
-                <div className="text-sm sm:text-base font-mono text-slate-600 font-medium mt-1">
+                <div className="text-sm sm:text-base text-slate-600 font-medium mt-1">
                   סמל מוסד משרד החינוך: {selectedInst.symbol}
                 </div>
               </div>
@@ -329,45 +328,45 @@ export function DirectoryView() {
               )}
 
               <div className="pt-4 border-t border-slate-100 flex gap-3 flex-wrap">
-                <motion.a 
+                <motion.a
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  href={selectedInst.waze} 
-                  target="_blank" 
-                  rel="noopener" 
+                  href={selectedInst.waze}
+                  target="_blank"
+                  rel="noopener"
                   className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
                 >
                   🚗 Waze
                 </motion.a>
-                <motion.a 
+                <motion.a
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  href={selectedInst.maps} 
-                  target="_blank" 
-                  rel="noopener" 
+                  href={selectedInst.maps}
+                  target="_blank"
+                  rel="noopener"
                   className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
                 >
                   🗺 Google Maps
                 </motion.a>
                 {selectedInst.rama && (
-                  <motion.a 
+                  <motion.a
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    href={selectedInst.rama} 
-                    target="_blank" 
-                    rel="noopener" 
+                    href={selectedInst.rama}
+                    target="_blank"
+                    rel="noopener"
                     className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
                   >
                     📊 נתוני ראמ״ה
                   </motion.a>
                 )}
                 {selectedInst.registration && (
-                  <motion.a 
+                  <motion.a
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    href={selectedInst.registration} 
-                    target="_blank" 
-                    rel="noopener" 
+                    href={selectedInst.registration}
+                    target="_blank"
+                    rel="noopener"
                     className="btn-shimmer px-4 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all"
                   >
                     📝 רישום בעירייה ↗

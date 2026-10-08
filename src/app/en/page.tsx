@@ -1,44 +1,93 @@
 import React from 'react';
 import Link from 'next/link';
+import { SiteShell } from '@/components/SiteShell';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+import { Globe, Mail, CheckCircle2, ArrowRight } from 'lucide-react';
 
-export default function EnglishPage() {
+export const dynamic = 'force-dynamic';
+
+async function getEnglishPageData() {
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const res = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'en' } },
+      limit: 1,
+    });
+    if (res.docs && res.docs.length > 0) return res.docs[0] as any;
+  } catch (e) {}
+  return null;
+}
+
+export default async function EnglishPage() {
+  const page = await getEnglishPageData();
+  const title = page?.title || 'Welcome to Mamah Friends Association';
+  const subtitle = page?.subtitle || 'State Haredi Education in Israel - Torah Excellence & Academic Foundations';
+  const content = page?.content || '';
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col" dir="ltr">
-      <div className="h-1.5 w-full logo-rainbow-strip" />
-      <header className="bg-white border-b border-slate-200/80 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Mamach Association Logo" className="h-14 w-auto object-contain" />
-          </Link>
-          <Link href="/" className="text-xs font-bold text-brand-navy hover:underline">
-            ← חזרה לפורטל הראשי (עברית)
-          </Link>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-4xl mx-auto p-8 space-y-8 w-full">
-        <div>
-          <span className="inline-block px-3 py-1 bg-brand-navy/10 text-brand-navy rounded-full text-xs font-bold mb-3">
-            State Haredi Education (Mamach)
+    <SiteShell>
+      {/* English Banner with Hebrew Header intact */}
+      <section className="bg-[#090342] text-white py-16 sm:py-20" dir="ltr">
+        <div className="max-w-4xl mx-auto px-6 text-left space-y-4">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-brand-gold text-xs font-bold border border-white/20">
+            <Globe className="w-3.5 h-3.5" />
+            <span>International & Olim Community</span>
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand-navy">Friends of State Haredi Education</h1>
-          <p className="text-base text-slate-600 leading-relaxed mt-3">
-            State Haredi Education combines authentic Torah excellence with a complete, accredited state core curriculum (fluent English, mathematics, science, and computing) under full Ministry of Education supervision.
+          <h1 className="text-3xl sm:text-5xl font-black">
+            {title}
+          </h1>
+          <p className="text-base sm:text-lg text-slate-200">
+            {subtitle}
           </p>
         </div>
+      </section>
 
-        <div className="p-8 bg-white border border-slate-200/80 rounded-2xl shadow-soft border-t-4 border-t-brand-cyan space-y-3">
-          <h3 className="font-bold text-lg text-slate-900">Olim Communities Support</h3>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            We assist Anglo-Saxon and international Olim families finding schools in Jerusalem, Beit Shemesh, Rehovot, and nationwide.
-          </p>
-          <div className="pt-2">
-            <Link href="/#contact" className="inline-flex px-4 py-2 bg-brand-navy text-white text-xs font-bold rounded-xl hover:bg-brand-navyLight transition-colors">
-              Contact Parent Support Desk
-            </Link>
+      {/* English Content (LTR) */}
+      <div className="max-w-4xl mx-auto px-6 py-14 space-y-10 text-left" dir="ltr">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-6 text-slate-700 leading-relaxed text-base">
+          {content ? (
+            content.split('\n\n').map((paragraph: string, i: number) => (
+              <p key={i}>{paragraph}</p>
+            ))
+          ) : (
+            <>
+              <p>
+                The Mamah Friends Association is the leading national organization representing and advocating for State-Haredi (Mamah) education in Israel.
+              </p>
+              <p>
+                Mamah schools combine authentic Haredi Jewish values, intensive Torah studies, and uncompromised devotion with a full, rigorous academic curriculum (100% core studies: advanced mathematics, sciences, fluent English, and Hebrew).
+              </p>
+            </>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+            <div className="p-4 bg-slate-50 rounded-2xl space-y-1">
+              <span className="text-sm font-bold text-slate-900 block">Torah & Halacha</span>
+              <p className="text-xs text-slate-600">Full observance, daily prayers, Yirat Shamayim and Rabbinic supervision.</p>
+            </div>
+            <div className="p-4 bg-slate-50 rounded-2xl space-y-1">
+              <span className="text-sm font-bold text-slate-900 block">100% Core Studies</span>
+              <p className="text-xs text-slate-600">Certified teachers, modern science labs, math and standard English curriculum.</p>
+            </div>
           </div>
         </div>
-      </main>
-    </div>
+
+        {/* Contact Olim Desk */}
+        <div className="bg-slate-50 rounded-3xl p-8 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h3 className="text-lg font-black text-slate-900">Need Guidance with School Registration?</h3>
+            <p className="text-xs sm:text-sm text-slate-600">Our English-speaking coordinators guide Olim families through municipal bureaucracy.</p>
+          </div>
+          <a
+            href="mailto:olim@mamah.org.il"
+            className="btn-shimmer px-6 py-3 bg-brand-navy text-white text-xs font-bold rounded-xl shadow hover:bg-brand-navyLight shrink-0"
+          >
+            Email Olim Desk: olim@mamah.org.il
+          </a>
+        </div>
+      </div>
+    </SiteShell>
   );
 }
