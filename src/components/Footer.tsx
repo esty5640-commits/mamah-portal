@@ -11,17 +11,17 @@ export function Footer() {
     <footer className="mt-20 border-t border-slate-800 bg-[#0a0447] text-white">
       <div className="h-1.5 w-full logo-rainbow-strip" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        
+
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-10 border-b border-white/10">
-          
+
           {/* Col 1: Brand & About */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="bg-white p-2.5 rounded-xl shadow-xs">
-                <img 
-                  src="/logo.png" 
-                  alt={t('footer.aboutTitle')} 
+                <img
+                  src="/logo.png"
+                  alt={t('footer.aboutTitle')}
                   className="h-14 w-auto object-contain"
                 />
               </div>
@@ -34,20 +34,14 @@ export function Footer() {
               {t('footer.aboutDesc')}
             </p>
             <div className="flex items-center gap-3 pt-1">
-              <a 
-                href="https://www.guidestar.org.il/organization/580758324" 
-                target="_blank" 
+              <a
+                href="https://www.guidestar.org.il/organization/580758324"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="btn-shimmer px-4 py-2 bg-brand-gold text-slate-950 font-bold rounded-lg text-xs hover:bg-yellow-400 transition-all"
               >
                 {t('footer.guidestar')}
               </a>
-              <Link 
-                href="/admin" 
-                className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-lg text-xs transition-all"
-              >
-                {t('header.admin')} ⚙
-              </Link>
             </div>
           </div>
 
@@ -99,7 +93,7 @@ export function Footer() {
             <Link href="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
             <Link href="/accessibility" className="hover:text-white transition-colors">{t('footer.accessibility')}</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">{t('footer.privacy')}</Link>
-            <Link href="/admin" className="hover:text-white transition-colors">{t('footer.cmsAdmin')}</Link>
+            {/* <Link href="/admin" className="hover:text-white transition-colors">{t('footer.cmsAdmin')}</Link> */}
           </div>
         </div>
 

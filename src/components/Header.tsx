@@ -143,7 +143,7 @@ export function Header() {
               alt={t('common.siteTitle')}
               className="h-14 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs"
             />
-            <div className={`hidden 2xl:flex flex-col ${dir === 'rtl' ? 'border-r-2 border-slate-200 pr-3.5 mr-1 text-right' : 'border-l-2 border-slate-200 pl-3.5 ml-1 text-left'}`}>
+            <div className={`hidden 2xl:flex flex-col max-w-52 ${dir === 'rtl' ? 'border-r-2 border-slate-200 pr-3.5 mr-1 text-right' : 'border-l-2 border-slate-200 pl-3.5 ml-1 text-left'}`}>
               <span className="text-xs font-black text-brand-navy tracking-tight">{t('common.siteSubtitle')}</span>
               <span className="text-[10px] text-slate-500 font-semibold">ע״ר 580758324</span>
             </div>
@@ -165,18 +165,16 @@ export function Header() {
                 >
                   <Link
                     href={item.href}
-                    className={`inline-flex items-center gap-1 px-2.5 2xl:px-3 py-2 rounded-lg transition-all ${
-                      active
-                        ? 'text-brand-navy font-black bg-slate-100/80 shadow-2xs'
-                        : 'hover:text-brand-navy hover:bg-slate-50'
-                    }`}
+                    className={`inline-flex items-center gap-1 px-2.5 2xl:px-3 py-2 rounded-lg transition-all ${active
+                      ? 'text-brand-navy font-black bg-slate-100/80 shadow-2xs'
+                      : 'hover:text-brand-navy hover:bg-slate-50'
+                      }`}
                   >
                     <span>{title}</span>
                     {hasSub && (
                       <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                          openDropdown === item.titleKey ? 'rotate-180 text-brand-navy' : 'text-slate-400'
-                        }`}
+                        className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === item.titleKey ? 'rotate-180 text-brand-navy' : 'text-slate-400'
+                          }`}
                       />
                     )}
                   </Link>
@@ -214,15 +212,7 @@ export function Header() {
 
           {/* Action Tools & Languages */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* CMS Admin Link */}
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 border border-slate-200 hover:border-brand-navy text-slate-700 hover:text-brand-navy text-xs font-bold rounded-xl transition-all hover:bg-slate-50 shadow-2xs hover:scale-105 active:scale-95"
-              title="Payload CMS Admin"
-            >
-              <Settings className="w-3.5 h-3.5 text-brand-navy" />
-              <span className="hidden sm:inline">{t('header.admin')}</span>
-            </Link>
+
 
             {/* Language Switcher Buttons (HE, EN, FR) */}
             <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden text-xs font-bold shadow-2xs bg-slate-50" role="group" aria-label="Language selection">
@@ -233,11 +223,10 @@ export function Header() {
                     key={loc}
                     type="button"
                     onClick={() => handleLanguageSwitch(loc)}
-                    className={`px-2.5 py-1.5 transition-all font-black text-xs ${
-                      isSelected
-                        ? 'bg-brand-navy text-white shadow-2xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
-                    }`}
+                    className={`px-2.5 py-1.5 transition-all font-black text-xs ${isSelected
+                      ? 'bg-brand-navy text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+                      }`}
                     title={SUPPORTED_LOCALES[loc].label}
                   >
                     {SUPPORTED_LOCALES[loc].shortLabel}
@@ -282,9 +271,8 @@ export function Header() {
                       key={loc}
                       type="button"
                       onClick={() => handleLanguageSwitch(loc)}
-                      className={`px-3 py-1.5 transition-all ${
-                        locale === loc ? 'bg-brand-navy text-white font-black' : 'text-slate-700 hover:bg-slate-200'
-                      }`}
+                      className={`px-3 py-1.5 transition-all ${locale === loc ? 'bg-brand-navy text-white font-black' : 'text-slate-700 hover:bg-slate-200'
+                        }`}
                     >
                       {SUPPORTED_LOCALES[loc].label}
                     </button>

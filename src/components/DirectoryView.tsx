@@ -216,47 +216,57 @@ export function DirectoryView() {
               transition={{ duration: 0.25 }}
               key={inst.id}
               onClick={() => setSelectedInst(inst)}
-              className="group bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:border-brand-navy/40 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+              className="group relative bg-white border border-slate-100 rounded-md p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
             >
-              <div className="space-y-4">
+              <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
+              <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
                 <div className="flex items-start justify-between gap-2 text-xs sm:text-sm">
-                  <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold group-hover:bg-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                  <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600 font-bold group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
                     {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {inst.isMixed && (
-                      <span className="border border-brand-gold/40 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-black">
+                      <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
                         {locale === 'he' ? 'גן מעורב' : 'Mixed'}
                       </span>
                     )}
                     {inst.specialTrait && inst.specialTrait !== 'none' && (
-                      <span className="border border-brand-cyan/40 text-brand-cyan bg-brand-cyan/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-black">
+                      <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
                         {inst.specialTraitHe}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <h3 className="font-black text-xl sm:text-2xl leading-tight text-slate-900 group-hover:text-brand-navy transition-colors">{inst.name}</h3>
+                <h3 className="font-black text-xl sm:text-2xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
 
-                <div className="space-y-2 text-sm sm:text-base text-slate-700">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-brand-cyan shrink-0 transition-transform group-hover:scale-120" />
+                <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-cyan/10 transition-colors">
+                      <MapPin className="w-4 h-4 text-slate-400 group-hover:text-brand-cyan transition-colors" />
+                    </div>
                     <span>{inst.city} ({inst.address})</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-purple/10 transition-colors">
+                      <Building2 className="w-4 h-4 text-slate-400 group-hover:text-brand-purple transition-colors" />
+                    </div>
                     <span>{inst.categoryName}</span>
                   </div>
-                  <div>👤 {locale === 'he' ? 'הנהלה:' : 'Principal:'} <span className="font-semibold">{inst.principal}</span></div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
+                      <span className="text-sm">👤</span>
+                    </div>
+                    <span>{locale === 'he' ? 'הנהלה:' : 'Principal:'} <span className="font-bold text-slate-800">{inst.principal}</span></span>
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base">
-                <span className="text-slate-600 font-semibold">{inst.phone}</span>
+              <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
+                <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
                 <span className="text-brand-navy font-black group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
                   <span>{t('directory.cardFullDetails')}</span>
-                  <span className={`inline-block transition-transform duration-200 ${dir === 'rtl' ? 'group-hover:-translate-x-1.5' : 'group-hover:translate-x-1.5'}`}>
+                  <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
                     {dir === 'rtl' ? '←' : '→'}
                   </span>
                 </span>

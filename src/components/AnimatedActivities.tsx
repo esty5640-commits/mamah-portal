@@ -6,13 +6,13 @@ import { BookOpen, Sparkles, HeartHandshake, Users, Award, Scale } from 'lucide-
 
 const ACTIVITY_ICONS = [BookOpen, Sparkles, HeartHandshake, Users, Award, Scale];
 
-const COLOR_CLASSES: Record<string, { border: string; bg: string }> = {
-  purple: { border: 'border-t-brand-purple', bg: 'bg-brand-purple/10 text-brand-purple' },
-  green: { border: 'border-t-brand-green', bg: 'bg-brand-green/10 text-brand-green' },
-  cyan: { border: 'border-t-brand-cyan', bg: 'bg-brand-cyan/10 text-brand-cyan' },
-  orange: { border: 'border-t-brand-orange', bg: 'bg-brand-orange/10 text-brand-orange' },
-  red: { border: 'border-t-brand-red', bg: 'bg-brand-red/10 text-brand-red' },
-  gold: { border: 'border-t-brand-gold', bg: 'bg-brand-gold/10 text-brand-gold' },
+const COLOR_CLASSES: Record<string, { cardBg: string; iconBg: string; iconText: string; titleText: string; descText: string }> = {
+  purple: { cardBg: 'bg-brand-purple', iconBg: 'bg-white/20', iconText: 'text-white', titleText: 'text-white', descText: 'text-white/90' },
+  green: { cardBg: 'bg-brand-green', iconBg: 'bg-white/20', iconText: 'text-white', titleText: 'text-white', descText: 'text-white/90' },
+  cyan: { cardBg: 'bg-brand-cyan', iconBg: 'bg-white/20', iconText: 'text-white', titleText: 'text-white', descText: 'text-white/90' },
+  orange: { cardBg: 'bg-brand-orange', iconBg: 'bg-white/20', iconText: 'text-white', titleText: 'text-white', descText: 'text-white/90' },
+  red: { cardBg: 'bg-brand-red', iconBg: 'bg-white/20', iconText: 'text-white', titleText: 'text-white', descText: 'text-white/90' },
+  gold: { cardBg: 'bg-brand-gold', iconBg: 'bg-slate-900/10', iconText: 'text-slate-900', titleText: 'text-slate-900', descText: 'text-slate-800' },
 };
 
 interface Activity {
@@ -48,7 +48,7 @@ export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
   return (
     <section id="activities" className="space-y-8">
       {/* Header with slide-in */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
@@ -65,7 +65,7 @@ export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
       </motion.div>
 
       {/* Cards Grid */}
-      <motion.div 
+      <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         variants={container}
         initial="hidden"
@@ -76,18 +76,28 @@ export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
           const colorConfig = COLOR_CLASSES[a.color] || COLOR_CLASSES.purple;
           const IconComp = ACTIVITY_ICONS[idx % ACTIVITY_ICONS.length];
           return (
-            <motion.div 
-              key={idx} 
+            <motion.div
+              key={idx}
               variants={item}
-              whileHover={{ y: -6, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`group bg-white border border-slate-200/80 rounded-2xl p-7 shadow-soft border-t-4 ${colorConfig.border} space-y-3.5 hover:shadow-elevated transition-all duration-300 cursor-pointer`}
+              className={`group relative ${colorConfig.cardBg} rounded-md p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 cursor-pointer overflow-hidden flex flex-col gap-3`}
             >
-              <div className={`w-12 h-12 rounded-xl ${colorConfig.bg} flex items-center justify-center transition-transform duration-300 group-hover:scale-115 group-hover:rotate-6`}>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-bl-[3rem]" />
+              <div className={`w-12 h-12 rounded-2xl ${colorConfig.iconBg} ${colorConfig.iconText} flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 relative z-10`}>
                 <IconComp className="w-6 h-6" />
               </div>
-              <h4 className="font-bold text-lg sm:text-xl text-slate-900 group-hover:text-brand-navy transition-colors">{a.title}</h4>
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">{a.desc}</p>
+              <h4 className={`font-bold text-lg sm:text-xl ${colorConfig.titleText} tracking-tight mt-1 relative z-10 transition-transform duration-500`}>
+                <span className="relative inline-block">
+                  {a.title}
+                  <motion.span
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + idx * 0.1, duration: 0.6, ease: 'easeOut' }}
+                    className="absolute bottom-1 right-0 left-0 h-2 bg-white/25 -z-10 rounded-full origin-right"
+                  />
+                </span>
+              </h4>
+              <p className={`text-sm sm:text-base ${colorConfig.descText} leading-relaxed font-normal relative z-10 transition-transform duration-500 delay-75`}>{a.desc}</p>
             </motion.div>
           );
         })}
