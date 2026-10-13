@@ -147,7 +147,7 @@ export function DirectoryView() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מחוז:' : locale === 'fr' ? 'District :' : 'District:'}</span>
+            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'עיר:' : locale === 'fr' ? 'District :' : 'District:'}</span>
             <select
               value={selectedDistrict}
               onChange={e => setSelectedDistrict(e.target.value)}
