@@ -52,7 +52,7 @@ export const Institutions: CollectionConfig = {
       name: 'district',
       type: 'select',
       required: true,
-      label: 'מחוז',
+      label: 'עיר',
       options: [
         { label: 'ירושלים', value: 'ירושלים' },
         { label: 'מרכז', value: 'מרכז' },
