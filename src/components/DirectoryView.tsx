@@ -17,25 +17,44 @@ export function DirectoryView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null);
   const [dataList, setDataList] = useState<Institution[]>(institutionsList);
+  const [isLoading, setIsLoading] = useState(true);
 
   React.useEffect(() => {
     fetch('/api/institutions')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setDataList(data);
         }
       })
-      .catch(() => { });
+      .catch((err) => {
+        console.error('Failed to load institutions:', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
+
+  const uniqueTraits = useMemo(() => {
+    const set = new Set<string>();
+    dataList.forEach(inst => {
+      if (inst.specialTraitHe && inst.specialTraitHe !== 'none' && inst.specialTraitHe !== 'כללי') {
+        inst.specialTraitHe.split(/[,/]/).forEach(t => {
+          const tr = t.trim();
+          if (tr) set.add(tr);
+        });
+      }
+    });
+    return Array.from(set).sort();
+  }, [dataList]);
 
   const filtered = useMemo(() => {
     return dataList.filter(inst => {
       if (activeCategory !== 'all') {
         if (activeCategory === 'boys_elementary' && inst.category !== 'boys_elementary') return false;
         if (activeCategory === 'girls_elementary' && inst.category !== 'girls_elementary') return false;
-        if (activeCategory === 'kindergarten_boys' && (inst.category !== 'kindergarten' || inst.isMixed)) return false;
-        if (activeCategory === 'kindergarten_girls' && (inst.category !== 'kindergarten' || !inst.isMixed)) return false;
+        if (activeCategory === 'kindergarten_boys' && inst.category !== 'kindergarten_boys') return false;
+        if (activeCategory === 'kindergarten_girls' && inst.category !== 'kindergarten_girls') return false;
         if (activeCategory === 'special_ed_kindergarten' && inst.category !== 'special_ed_kindergarten') return false;
         if (activeCategory === 'gifted_center' && inst.category !== 'gifted_center') return false;
         if (activeCategory === 'middle_school' && inst.category !== 'middle_school') return false;
@@ -45,15 +64,17 @@ export function DirectoryView() {
         return false;
       }
 
-      if (selectedTrait !== 'all' && inst.specialTrait !== selectedTrait) {
+      if (selectedTrait !== 'all') {
+        if (!inst.specialTraitHe || !inst.specialTraitHe.toLowerCase().includes(selectedTrait.toLowerCase())) {
+          return false;
+        }
+      }
+
+      if (continuityOnly && inst.continuity !== 'כן' && !inst.continuity.includes('יש')) {
         return false;
       }
 
-      if (continuityOnly && !inst.continuity.includes('יש')) {
-        return false;
-      }
-
-      if (specialEdOnly && inst.specialEd === 'אין') {
+      if (specialEdOnly && inst.specialEd !== 'כן' && !inst.specialEd.includes('יש') && inst.category !== 'special_ed_kindergarten') {
         return false;
       }
 
@@ -63,7 +84,8 @@ export function DirectoryView() {
         const matchCity = inst.city.toLowerCase().includes(q);
         const matchSymbol = inst.symbol.includes(q);
         const matchTrait = inst.specialTraitHe.toLowerCase().includes(q);
-        if (!matchName && !matchCity && !matchSymbol && !matchTrait) return false;
+        const matchPrincipal = inst.principal?.toLowerCase().includes(q);
+        if (!matchName && !matchCity && !matchSymbol && !matchTrait && !matchPrincipal) return false;
       }
 
       return true;
@@ -147,18 +169,19 @@ export function DirectoryView() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'עיר:' : locale === 'fr' ? 'District :' : 'District:'}</span>
+            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מחוז:' : locale === 'fr' ? 'District :' : 'District:'}</span>
             <select
               value={selectedDistrict}
               onChange={e => setSelectedDistrict(e.target.value)}
               className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
             >
               <option value="all">{t('directory.allDistricts')}</option>
-              <option value="ירושלים">{locale === 'he' ? 'ירושלים ובית שמש' : 'Jerusalem & Beit Shemesh'}</option>
-              <option value="מרכז">{locale === 'he' ? 'מרכז (רחובות, פ״ת, ב״ב)' : 'Center'}</option>
-              <option value="תל אביב">{locale === 'he' ? 'תל אביב' : 'Tel Aviv'}</option>
-              <option value="חיפה">{locale === 'he' ? 'חיפה וחריש' : 'Haifa & Harish'}</option>
-              <option value="צפון">{locale === 'he' ? 'צפון (צפת)' : 'North'}</option>
+              <option value="ירושלים">{locale === 'he' ? 'מחוז ירושלים' : 'Jerusalem'}</option>
+              <option value="מרכז">{locale === 'he' ? 'מחוז מרכז' : 'Center'}</option>
+              <option value="תל אביב">{locale === 'he' ? 'מחוז תל אביב' : 'Tel Aviv'}</option>
+              <option value="חיפה">{locale === 'he' ? 'מחוז חיפה' : 'Haifa'}</option>
+              <option value="צפון">{locale === 'he' ? 'מחוז צפון' : 'North'}</option>
+              <option value="דרום">{locale === 'he' ? 'מחוז דרום' : 'South'}</option>
             </select>
           </div>
 
@@ -170,12 +193,10 @@ export function DirectoryView() {
               className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
             >
               <option value="all">{t('directory.allTraits')}</option>
-              <option value="מונטסורי">מונטסורי תורני</option>
-              <option value="חסידי">חסידי</option>
-              <option value="chabad">רוח חב״ד</option>
-              <option value="hardal">חרד״לי / מדעי</option>
-              <option value="kiruv">קירוב וקהילה</option>
-              <option value="yiddish">יידיש</option>
+              <option value="כללי">כללי</option>
+              {uniqueTraits.map(tr => (
+                <option key={tr} value={tr}>{tr}</option>
+              ))}
             </select>
           </div>
 
@@ -201,80 +222,126 @@ export function DirectoryView() {
         </motion.div>
       </div>
 
-      {/* Cards Grid with Framer Motion layout animations */}
-      <motion.div
-        layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        <AnimatePresence>
-          {filtered.map(inst => (
-            <motion.div
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.25 }}
-              key={inst.id}
-              onClick={() => setSelectedInst(inst)}
-              className="group relative bg-white border border-slate-100 rounded-md p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
-              <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
-                <div className="flex items-start justify-between gap-2 text-xs sm:text-sm">
-                  <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600  group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
-                    {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {inst.isMixed && (
-                      <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
-                        {locale === 'he' ? 'גן מעורב' : 'Mixed'}
-                      </span>
-                    )}
-                    {inst.specialTrait && inst.specialTrait !== 'none' && (
-                      <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-bold shadow-sm">
-                        {inst.specialTraitHe}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <h3 className="font-bold text-lg sm:text-xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
-
-                <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-cyan/10 transition-colors">
-                      <MapPin className="w-4 h-4 text-slate-400 group-hover:text-brand-cyan transition-colors" />
-                    </div>
-                    <span>{inst.city} ({inst.address})</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-purple/10 transition-colors">
-                      <Building2 className="w-4 h-4 text-slate-400 group-hover:text-brand-purple transition-colors" />
-                    </div>
-                    <span>{inst.categoryName}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
-                      <span className="text-sm">👤</span>
-                    </div>
-                    <span>{locale === 'he' ? 'הנהלה:' : 'Principal:'} <span className="font-bold text-slate-800">{inst.principal}</span></span>
-                  </div>
-                </div>
+      {/* Loading Skeleton */}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="animate-pulse bg-white border border-slate-100 rounded-2xl p-7 space-y-4 shadow-sm">
+              <div className="flex justify-between items-center">
+                <div className="h-6 w-20 bg-slate-200 rounded-xl" />
+                <div className="h-6 w-24 bg-slate-200 rounded-xl" />
               </div>
-
-              <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
-                <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
-                <span className="text-brand-navy  group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
-                  <span>{t('directory.cardFullDetails')}</span>
-                  <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
-                    {dir === 'rtl' ? '←' : '→'}
-                  </span>
-                </span>
+              <div className="h-7 w-3/4 bg-slate-200 rounded" />
+              <div className="space-y-2 pt-2">
+                <div className="h-4 w-1/2 bg-slate-100 rounded" />
+                <div className="h-4 w-2/3 bg-slate-100 rounded" />
               </div>
-            </motion.div>
+            </div>
           ))}
-        </AnimatePresence>
-      </motion.div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && filtered.length === 0 && (
+        <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl p-8 space-y-4 shadow-sm">
+          <div className="w-16 h-16 mx-auto rounded-full bg-brand-navy/5 flex items-center justify-center text-brand-navy">
+            <Building2 className="w-8 h-8" />
+          </div>
+          <h3 className="text-xl sm:text-2xl font-black text-slate-800">
+            {dataList.length === 0 ? 'לא נטענו מוסדות עדיין' : 'לא נמצאו מוסדות התואמים את הסינון'}
+          </h3>
+          <p className="text-sm sm:text-base text-slate-500 max-w-md mx-auto">
+            {dataList.length === 0
+              ? 'מתבצע ניסיון טעינה ישיר מטבלת Google Sheets. אנא ודאו שהגיליון מוגדר בהרשאות כ-"כל מי שקיבל את הקישור יכול לצפות".'
+              : 'נסו להסיר חלק מהמסננים או לחפש עיר או מוסד אחר.'}
+          </p>
+        </div>
+      )}
+
+      {/* Cards Grid with Framer Motion layout animations */}
+      {!isLoading && filtered.length > 0 && (
+        <motion.div
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <AnimatePresence>
+            {filtered.map(inst => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.25 }}
+                key={inst.id}
+                onClick={() => setSelectedInst(inst)}
+                className="group relative bg-white border border-slate-100 rounded-md p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
+                <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
+                  <div className="flex items-start justify-between gap-2 text-xs sm:text-sm">
+                    {inst.symbol ? (
+                      <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600  group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                        {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
+                      </span>
+                    ) : <span />}
+                    <div className="flex items-center gap-1.5">
+                      {inst.isMixed && (
+                        <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
+                          {locale === 'he' ? 'גן מעורב' : 'Mixed'}
+                        </span>
+                      )}
+                      {inst.specialTraitHe && inst.specialTraitHe !== 'none' && (
+                        <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-bold shadow-sm">
+                          {inst.specialTraitHe}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-lg sm:text-xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
+
+                  <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
+                    {inst.city && (
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-cyan/10 transition-colors">
+                          <MapPin className="w-4 h-4 text-slate-400 group-hover:text-brand-cyan transition-colors" />
+                        </div>
+                        <span>{inst.city} {inst.address ? `(${inst.address})` : ''}</span>
+                      </div>
+                    )}
+                    {inst.categoryName && (
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-purple/10 transition-colors">
+                          <Building2 className="w-4 h-4 text-slate-400 group-hover:text-brand-purple transition-colors" />
+                        </div>
+                        <span>{inst.categoryName}</span>
+                      </div>
+                    )}
+                    {inst.principal && (
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
+                          <span className="text-sm">👤</span>
+                        </div>
+                        <span>{locale === 'he' ? 'הנהלה:' : 'Principal:'} <span className="font-bold text-slate-800">{inst.principal}</span></span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
+                  <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
+                  <span className="text-brand-navy  group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
+                    <span>{t('directory.cardFullDetails')}</span>
+                    <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
+                      {dir === 'rtl' ? '←' : '→'}
+                    </span>
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      )}
 
       {/* Modal Detail with spring enter/exit animation */}
       <AnimatePresence>

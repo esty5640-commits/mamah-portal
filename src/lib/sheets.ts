@@ -62,26 +62,63 @@ export function parseCsv(text: string): string[][] {
  * Normalizes header string for comparison
  */
 function normalizeHeader(h: string): string {
-  return h.toLowerCase().replace(/[\s\-_"'/\\״״׳()״]/g, '').trim();
+  return h.toLowerCase().replace(/[\s\-_"'/\\״״׳()״|]/g, '').trim();
 }
 
 /**
- * Determines category code based on text description
+ * Maps city to official Israeli district
  */
-function deriveCategoryCode(val: string, isMixed: boolean): string {
-  const v = val.toLowerCase();
-  if (v.includes('מחוננ')) return 'gifted_center';
-  if (v.includes('מיוחד')) return 'special_ed_kindergarten';
-  if (v.includes('חטיב') || v.includes('חט״ב') || v.includes('מכינה')) return 'middle_school';
-  if (v.includes('גן') || v.includes('גני')) {
-    if (isMixed || v.includes('מעורב')) return 'kindergarten_mixed';
-    if (v.includes('בנות') || v.includes('בת')) return 'kindergarten_girls';
-    if (v.includes('בנים') || v.includes('בן')) return 'kindergarten_boys';
-    return 'kindergarten_boys';
+export function getDistrictByCity(city: string): string {
+  const c = city.trim();
+  if (/ירושלים|בית שמש|גבעת זאב|ביתר|תל ציון|פסגות|עלי|קרית ארבע|קריית ארבע|יצהר|נחליאל|שמעה|מיצד|אספר/.test(c)) {
+    return 'ירושלים';
   }
-  if (v.includes('בנות') || v.includes('בת')) return 'girls_elementary';
-  if (v.includes('בנים') || v.includes('בן') || v.includes('תלמוד תורה') || v.includes('ת"ת')) return 'boys_elementary';
-  return 'boys_elementary';
+  if (/באר שבע|אשדוד|אשקלון|נתיבות|דימונה|ערד|ניצן|גת|מלאכי/.test(c)) {
+    return 'דרום';
+  }
+  if (/צפת|טבריה|עפולה|נוף הגליל|הר יונה|מגדל העמק|כרמיאל|חצור|מעלות|אור הגנוז|מרום הגליל|שמונה/.test(c)) {
+    return 'צפון';
+  }
+  if (/חיפה|עתלית|חריש|קרית ים/.test(c)) {
+    return 'חיפה';
+  }
+  if (/תל אביב/.test(c)) {
+    return 'תל אביב';
+  }
+  return 'מרכז'; // פתח תקווה, בני ברק, אלעד, רחובות, ראשון לציון, נס ציונה, חולון, לוד, גדרה, יבנה, יד בנימין, קרית עקרון, נחל שורק, נתניה, כפר חב"ד
+}
+
+/**
+ * Determines category code and display name based on stage, gender, and name
+ */
+export function deriveCategory(stage: string, gender: string, name: string): { code: string; name: string } {
+  const s = stage.trim();
+  const g = gender.trim();
+  const n = name.trim();
+
+  if (s.includes('מחוננ') || n.includes('מחוננ')) {
+    return { code: 'gifted_center', name: 'מרכזי מחוננים' };
+  }
+  if (s.includes('חנ"מ') || s.includes('מיוחד') || n.includes('חנ"מ') || n.includes('מיוחד')) {
+    return { code: 'special_ed_kindergarten', name: 'חינוך מיוחד' };
+  }
+  if (s.includes('חט"ב') || s.includes('חטיב') || n.includes('חט"ב') || n.includes('מכינה')) {
+    return { code: 'middle_school', name: 'חט״ב' };
+  }
+  if (s.includes('גן') || n.includes('גן ') || n.includes('גני ')) {
+    if (g.includes('בנות') || n.includes('בנות')) return { code: 'kindergarten_girls', name: 'גני בנות' };
+    if (g.includes('בנים') || n.includes('בנים')) return { code: 'kindergarten_boys', name: 'גני בנים' };
+    return { code: 'kindergarten_mixed', name: 'גני ילדים' };
+  }
+  if (s.includes('יסודי') || n.includes('ת"ת') || n.includes('תלמוד תורה') || n.includes('בית ספר')) {
+    if (g.includes('בנות') || n.includes('בנות')) return { code: 'girls_elementary', name: 'בי״ס יסודי בנות' };
+    if (g.includes('בנים') || n.includes('בנים') || n.includes('ת"ת')) return { code: 'boys_elementary', name: 'בי״ס יסודי / ת״ת בנים' };
+    if (g.includes('מעורב')) return { code: 'boys_elementary', name: 'בי״ס יסודי' };
+    return { code: 'boys_elementary', name: 'בי״ס יסודי' };
+  }
+  if (g.includes('בנות')) return { code: 'girls_elementary', name: s ? `${s} בנות` : 'בי״ס יסודי בנות' };
+  if (g.includes('בנים')) return { code: 'boys_elementary', name: s ? `${s} בנים` : 'בי״ס יסודי בנים' };
+  return { code: 'boys_elementary', name: s || 'מוסד חינוכי' };
 }
 
 /**
@@ -91,81 +128,99 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
   if (rows.length < 2) return [];
 
   const headers = rows[0].map(h => normalizeHeader(h));
-  const rawHeaders = rows[0];
 
-  // Helper to find column index by multiple keyword variations
+  // Helper to find column index safely by multiple keyword variations
   const findCol = (...keywords: string[]): number => {
     for (const kw of keywords) {
       const normKw = normalizeHeader(kw);
-      const idx = headers.findIndex(h => h.includes(normKw) || normKw.includes(h));
-      if (idx !== -1) return idx;
+      if (!normKw) continue;
+      // 1. Exact match
+      const exactIdx = headers.findIndex(h => h === normKw);
+      if (exactIdx !== -1) return exactIdx;
+      // 2. Substring match only if header is not empty
+      const subIdx = headers.findIndex(h => h.length > 0 && (h.includes(normKw) || normKw.includes(h)));
+      if (subIdx !== -1) return subIdx;
     }
     return -1;
   };
 
-  const nameIdx = findCol('שם המוסד', 'שם מוסד', 'שם בית הספר', 'שם', 'מוסד', 'name');
-  const symbolIdx = findCol('סמל מוסד', 'סמל', 'קוד מוסד', 'symbol', 'code');
-  const cityIdx = findCol('ישוב', 'יישוב', 'עיר', 'רשות מקומית', 'רשות', 'city');
-  const districtIdx = findCol('מחוז', 'district');
-  const addressIdx = findCol('כתובת', 'רחוב', 'מיקום', 'address');
-  const phoneIdx = findCol('טלפון', 'נייד', 'טלפון במוסד', 'phone', 'tel');
-  const emailIdx = findCol('אימייל', 'מייל', 'דואל', 'דוא״ל', 'email');
-  const principalIdx = findCol('מנהל', 'מנהלת', 'שם מנהל', 'שם מנהלת', 'principal');
-  const inspectorIdx = findCol('מפקח', 'מפקחת', 'שם מפקח', 'inspector');
-  const categoryIdx = findCol('סוג מוסד', 'שלב חינוך', 'סוג', 'קטגוריה', 'category');
-  const specialTraitIdx = findCol('מאפיין ייחודי', 'מאפיין', 'ייחודיות', 'trait');
-  const mixedIdx = findCol('מעורב', 'מין', 'מגדר', 'mixed');
-  const specialEdIdx = findCol('חינוך מיוחד', 'כיתות קטנות', 'שילוב', 'specialed');
-  const continuityIdx = findCol('רצף חינוכי', 'רצף', 'גן צמוד', 'continuity');
-  const parentsCommitteeIdx = findCol('ועד הורים', 'נציג הורים', 'הורים', 'parents');
-  const aboutIdx = findCol('אודות', 'תיאור', 'על המוסד', 'about');
-  const wazeIdx = findCol('waze', 'וייז', 'וויז');
-  const mapsIdx = findCol('maps', 'מפות', 'גוגל מפות');
-  const ramaIdx = findCol('rama', 'ראמה', 'ראמ״ה', 'מדלן');
-  const registrationIdx = findCol('רישום', 'קישור לרישום', 'הרשמה', 'registration');
+  // Find column indices with known positional fallbacks based on exact sheet layout:
+  // [0] פיקוח מחוז חרדי, [1] סמל מוסד, [2] שם המוסד, [3] עיר, [4] כתובת, [5] טלפון,
+  // [6] שלב חינוך, [7] מגדר, [8] מגדר מנהל/ת, [9] שם המנהל/ת, [10] חינוך מיוחד,
+  // [11] רצף חינוכי, [12] דוא״ל, [13] מאפיין מיוחד, [14] תנועת נוער, [15] אודות המוסד,
+  // [16] נציגות ועד הורים, [17] לדף המוסד המלא, [18] ניווט בwaze, [19] google maps,
+  // [20] רישום בעירייה, [21] לוגו
+  const inspectorIdx = findCol('פיקוח מחוז חרדי', 'מפקח', 'מפקחת') !== -1 ? findCol('פיקוח מחוז חרדי', 'מפקח', 'מפקחת') : 0;
+  const symbolIdx = findCol('סמל מוסד', 'סמל', 'קוד מוסד') !== -1 ? findCol('סמל מוסד', 'סמל', 'קוד מוסד') : 1;
+  const nameIdx = findCol('שם המוסד', 'שם מוסד', 'שם') !== -1 ? findCol('שם המוסד', 'שם מוסד', 'שם') : 2;
+  const cityIdx = findCol('עיר', 'יישוב', 'ישוב') !== -1 ? findCol('עיר', 'יישוב', 'ישוב') : 3;
+  const addressIdx = findCol('כתובת', 'רחוב') !== -1 ? findCol('כתובת', 'רחוב') : 4;
+  const phoneIdx = findCol('טלפון', 'נייד') !== -1 ? findCol('טלפון', 'נייד') : 5;
+  const stageIdx = findCol('שלב חינוך', 'שלב') !== -1 ? findCol('שלב חינוך', 'שלב') : 6;
+  const genderIdx = findCol('מגדר', 'מין') !== -1 ? findCol('מגדר', 'מין') : 7;
+  const principalIdx = findCol('שם המנהלת', 'שם המנהל', 'מנהלת', 'מנהל') !== -1 ? findCol('שם המנהלת', 'שם המנהל', 'מנהלת', 'מנהל') : 9;
+  const specialEdIdx = findCol('חינוך מיוחד', 'חנמ') !== -1 ? findCol('חינוך מיוחד', 'חנמ') : 10;
+  const continuityIdx = findCol('רצף חינוכי', 'רצף') !== -1 ? findCol('רצף חינוכי', 'רצף') : 11;
+  const emailIdx = findCol('דואל', 'אימייל', 'מייל') !== -1 ? findCol('דואל', 'אימייל', 'מייל') : 12;
+  const specialTraitIdx = findCol('מאפיין מיוחד', 'מאפיין', 'ייחודיות') !== -1 ? findCol('מאפיין מיוחד', 'מאפיין', 'ייחודיות') : 13;
+  const aboutIdx = findCol('אודות המוסד', 'אודות', 'תיאור') !== -1 ? findCol('אודות המוסד', 'אודות', 'תיאור') : 15;
+  const parentsCommitteeIdx = findCol('נציגות ועד הורים', 'ועד הורים', 'הורים') !== -1 ? findCol('נציגות ועד הורים', 'ועד הורים', 'הורים') : 16;
+  const websiteIdx = findCol('קישור לאתר', 'לדף המוסד המלא', 'אתר') !== -1 ? findCol('קישור לאתר', 'לדף המוסד המלא', 'אתר') : 17;
+  const wazeIdx = findCol('ניווט בwaze', 'waze', 'וייז', 'וויז') !== -1 ? findCol('ניווט בwaze', 'waze', 'וייז', 'וויז') : 18;
+  const mapsIdx = findCol('google maps', 'maps', 'מפות') !== -1 ? findCol('google maps', 'maps', 'מפות') : 19;
+  const registrationIdx = findCol('רישום בעירייה', 'רישום', 'הרשמה') !== -1 ? findCol('רישום בעירייה', 'רישום', 'הרשמה') : 20;
+  const logoIdx = findCol('לוגו', 'תמונה') !== -1 ? findCol('לוגו', 'תמונה') : 21;
 
   const institutions: Institution[] = [];
 
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
-    // If row doesn't have at least one significant field, skip
-    const nameVal = nameIdx !== -1 ? row[nameIdx]?.trim() : (row[1] || row[0]);
+    const nameVal = (nameIdx < row.length ? row[nameIdx] : row[2])?.trim();
     if (!nameVal || nameVal === 'שם מוסד' || nameVal === 'שם המוסד') continue;
 
-    const symbolVal = symbolIdx !== -1 ? (row[symbolIdx]?.trim() || '') : '';
-    const cityVal = cityIdx !== -1 ? (row[cityIdx]?.trim() || '') : '';
-    const districtVal = districtIdx !== -1 ? (row[districtIdx]?.trim() || '') : '';
-    const addressVal = addressIdx !== -1 ? (row[addressIdx]?.trim() || '') : '';
-    const phoneVal = phoneIdx !== -1 ? (row[phoneIdx]?.trim() || '') : '';
-    const emailVal = emailIdx !== -1 ? (row[emailIdx]?.trim() || '') : '';
-    const principalVal = principalIdx !== -1 ? (row[principalIdx]?.trim() || '') : '';
-    const inspectorVal = inspectorIdx !== -1 ? (row[inspectorIdx]?.trim() || '') : '';
-    const categoryNameVal = categoryIdx !== -1 ? (row[categoryIdx]?.trim() || '') : '';
-    const specialTraitVal = specialTraitIdx !== -1 ? (row[specialTraitIdx]?.trim() || '') : '';
-    const isMixedVal = mixedIdx !== -1 ? (row[mixedIdx]?.includes('כן') || row[mixedIdx]?.includes('מעורב') || false) : false;
-    const specialEdVal = specialEdIdx !== -1 ? (row[specialEdIdx]?.trim() || '') : '';
-    const continuityVal = continuityIdx !== -1 ? (row[continuityIdx]?.trim() || '') : '';
-    const parentsVal = parentsCommitteeIdx !== -1 && row[parentsCommitteeIdx]
-      ? row[parentsCommitteeIdx].split(/[,;\n]/).map(s => s.trim()).filter(Boolean)
-      : [];
-    const aboutVal = aboutIdx !== -1 ? (row[aboutIdx]?.trim() || '') : '';
-    const wazeVal = wazeIdx !== -1 ? (row[wazeIdx]?.trim() || '') : (cityVal ? `https://waze.com/ul?q=${encodeURIComponent(addressVal || nameVal || cityVal)}` : '');
-    const mapsVal = mapsIdx !== -1 ? (row[mapsIdx]?.trim() || '') : (cityVal ? `https://maps.google.com/?q=${encodeURIComponent(addressVal || nameVal || cityVal)}` : '');
-    const ramaVal = ramaIdx !== -1 ? (row[ramaIdx]?.trim() || '') : '';
-    const regVal = registrationIdx !== -1 ? (row[registrationIdx]?.trim() || '') : '';
+    const symbolVal = (symbolIdx < row.length ? row[symbolIdx] : row[1])?.trim() || '';
+    const cityVal = (cityIdx < row.length ? row[cityIdx] : row[3])?.trim() || '';
+    const addressVal = (addressIdx < row.length ? row[addressIdx] : row[4])?.trim() || '';
+    const phoneVal = (phoneIdx < row.length ? row[phoneIdx] : row[5])?.trim() || '';
+    const stageVal = (stageIdx < row.length ? row[stageIdx] : row[6])?.trim() || '';
+    const genderVal = (genderIdx < row.length ? row[genderIdx] : row[7])?.trim() || '';
+    const principalVal = (principalIdx < row.length ? row[principalIdx] : row[9])?.trim() || '';
+    const specialEdVal = (specialEdIdx < row.length ? row[specialEdIdx] : row[10])?.trim() || '';
+    const continuityVal = (continuityIdx < row.length ? row[continuityIdx] : row[11])?.trim() || '';
+    const emailVal = (emailIdx < row.length ? row[emailIdx] : row[12])?.trim() || '';
+    const specialTraitVal = (specialTraitIdx < row.length ? row[specialTraitIdx] : row[13])?.trim() || '';
+    const aboutVal = (aboutIdx < row.length ? row[aboutIdx] : row[15])?.trim() || '';
+    const parentsRaw = (parentsCommitteeIdx < row.length ? row[parentsCommitteeIdx] : row[16])?.trim() || '';
+    const parentsVal = parentsRaw ? parentsRaw.split(/[/,;\n]/).map(s => s.trim()).filter(Boolean) : [];
+    const websiteVal = (websiteIdx < row.length ? row[websiteIdx] : row[17])?.trim() || '';
+    let wazeVal = (wazeIdx < row.length ? row[wazeIdx] : row[18])?.trim() || '';
+    let mapsVal = (mapsIdx < row.length ? row[mapsIdx] : row[19])?.trim() || '';
+    const regVal = (registrationIdx < row.length ? row[registrationIdx] : row[20])?.trim() || '';
+    const logoVal = (logoIdx < row.length ? row[logoIdx] : row[21])?.trim() || '';
+    const inspectorVal = (inspectorIdx < row.length ? row[inspectorIdx] : row[0])?.trim() || '';
 
-    const categoryCode = deriveCategoryCode(categoryNameVal || nameVal, isMixedVal);
+    // Auto-generate navigation links if not provided in sheet
+    if (!wazeVal && cityVal) {
+      wazeVal = `https://waze.com/ul?q=${encodeURIComponent(`${nameVal} ${addressVal} ${cityVal}`.trim())}`;
+    }
+    if (!mapsVal && cityVal) {
+      mapsVal = `https://maps.google.com/?q=${encodeURIComponent(`${nameVal} ${addressVal} ${cityVal}`.trim())}`;
+    }
+
+    const isMixedVal = genderVal.includes('מעורב') || stageVal.includes('מעורב') || false;
+    const districtVal = getDistrictByCity(cityVal);
+    const { code: categoryCode, name: categoryName } = deriveCategory(stageVal, genderVal, nameVal);
 
     institutions.push({
       id: symbolVal || `inst-${r}`,
       name: nameVal,
       category: categoryCode,
-      categoryName: categoryNameVal || nameVal,
+      categoryName: categoryName,
       city: cityVal,
       district: districtVal,
       symbol: symbolVal,
-      specialTrait: specialTraitVal,
-      specialTraitHe: specialTraitVal,
+      specialTrait: specialTraitVal || 'none',
+      specialTraitHe: specialTraitVal || '',
       isMixed: isMixedVal,
       phone: phoneVal,
       email: emailVal,
@@ -176,10 +231,14 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
       continuity: continuityVal,
       parentsCommittee: parentsVal,
       about: aboutVal,
+      website: websiteVal,
       waze: wazeVal,
       maps: mapsVal,
-      rama: ramaVal,
+      rama: '',
       registration: regVal,
+      logo: logoVal,
+      gender: genderVal,
+      stage: stageVal,
     });
   }
 
@@ -189,7 +248,7 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
 export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]> {
   const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || DEFAULT_SHEET_ID;
 
-  // Try fetching live from Google Sheets
+  // 1. Try fetching live from Google Sheets
   const endpoints = [
     `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`,
     `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=0`,
@@ -206,7 +265,7 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
 
       if (res.ok) {
         const text = await res.text();
-        // If response is HTML login page, it's not publicly accessible yet
+        // Check that response is CSV data and not an HTML login/redirect page
         if (!text.includes('<!DOCTYPE html>') && text.includes(',')) {
           const rows = parseCsv(text);
           const parsed = parseInstitutionsFromRows(rows);
@@ -220,7 +279,7 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
     }
   }
 
-  // Check if a local cached CSV exists (e.g. src/data/institutions.csv)
+  // 2. Check local cached CSV file (src/data/institutions.csv)
   try {
     const localCsvPath = path.join(process.cwd(), 'src', 'data', 'institutions.csv');
     if (fs.existsSync(localCsvPath)) {
@@ -235,7 +294,6 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
     console.warn('Could not read local institutions.csv:', err);
   }
 
-  // Fallback to static list (which should be empty or strictly verified)
+  // 3. Fallback to empty list (no invented data!)
   return institutionsList;
 }
-
