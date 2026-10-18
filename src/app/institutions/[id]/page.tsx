@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation';
 import { SiteShell } from '@/components/SiteShell';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { institutionsList, Institution } from '@/data/institutions';
+import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
+import { Institution } from '@/data/institutions';
 import { 
   Building2, 
   MapPin, 
@@ -56,10 +57,28 @@ function formatInstitutionDoc(doc: any): Institution {
 }
 
 async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
+  const decoded = decodeURIComponent(idOrSymbol).trim().toLowerCase();
+
+  // 1. First priority: Live Google Sheets institutions
+  try {
+    const liveList = await fetchInstitutionsFromGoogleSheets();
+    const found = liveList.find(
+      inst =>
+        inst.id === idOrSymbol ||
+        (inst.symbol && inst.symbol === idOrSymbol) ||
+        inst.name.toLowerCase() === decoded ||
+        inst.name.toLowerCase().replace(/[\s\-_"'/\\״״׳()״]/g, '') === decoded.replace(/[\s\-_"'/\\״״׳()״]/g, '')
+    );
+    if (found) return found;
+  } catch (err) {
+    console.error('Error finding institution from Google Sheets:', err);
+  }
+
+  // 2. Second priority: Payload CMS
   try {
     const payload = await getPayload({ config: configPromise });
     
-    // First try by ID if valid MongoDB ObjectId
+    // Try by ID if valid MongoDB ObjectId
     if (idOrSymbol.match(/^[0-9a-fA-F]{24}$/)) {
       try {
         const doc = await payload.findByID({
@@ -79,21 +98,11 @@ async function getInstitution(idOrSymbol: string): Promise<Institution | null> {
     if (bySymbol.docs && bySymbol.docs.length > 0) {
       return formatInstitutionDoc(bySymbol.docs[0]);
     }
-
-    // Try by name slug or fallback to institutionsList
-    const decoded = decodeURIComponent(idOrSymbol).toLowerCase();
-    const fallback = institutionsList.find(
-      inst => inst.id === idOrSymbol || inst.symbol === idOrSymbol || inst.name.toLowerCase() === decoded || inst.name.includes(decoded)
-    );
-    if (fallback) return fallback;
-
   } catch (err) {
-    console.error('Error fetching institution:', err);
+    console.error('Error fetching institution from Payload CMS:', err);
   }
 
-  // Final fallback to mock data
-  const fallback = institutionsList.find(inst => inst.id === idOrSymbol || inst.symbol === idOrSymbol);
-  return fallback || null;
+  return null;
 }
 
 export default async function SingleInstitutionPage({ params }: { params: Promise<{ id: string }> }) {

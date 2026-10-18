@@ -118,7 +118,7 @@ export function DirectoryView() {
               onClick={() => setActiveCategory(cat.id)}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.94 }}
-              className={`px-4.5 py-3 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${activeCategory === cat.id
+              className={`px-2 py-2 rounded-xl border text-sm sm:text-base transition-colors cursor-pointer ${activeCategory === cat.id
                 ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
                 : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
                 }`}
@@ -221,7 +221,7 @@ export function DirectoryView() {
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
               <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
                 <div className="flex items-start justify-between gap-2 text-xs sm:text-sm">
-                  <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600 font-bold group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                  <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600  group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
                     {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -231,14 +231,14 @@ export function DirectoryView() {
                       </span>
                     )}
                     {inst.specialTrait && inst.specialTrait !== 'none' && (
-                      <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
+                      <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-bold shadow-sm">
                         {inst.specialTraitHe}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <h3 className="font-black text-xl sm:text-2xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
+                <h3 className="font-bold text-lg sm:text-xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
 
                 <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
                   <div className="flex items-center gap-2.5">
@@ -264,7 +264,7 @@ export function DirectoryView() {
 
               <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
                 <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
-                <span className="text-brand-navy font-black group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
+                <span className="text-brand-navy  group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
                   <span>{t('directory.cardFullDetails')}</span>
                   <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
                     {dir === 'rtl' ? '←' : '→'}
@@ -304,10 +304,10 @@ export function DirectoryView() {
               </motion.button>
 
               <div>
-                <span className="inline-block px-3.5 py-1.5 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy font-bold text-sm mb-2">
+                <span className="inline-block px-3.5 py-1.5 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy  text-sm mb-2">
                   {selectedInst.categoryName}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">{selectedInst.name}</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy">{selectedInst.name}</h2>
                 <div className="text-sm sm:text-base text-slate-600 font-medium mt-1">
                   {t('directory.symbolLabel')} {selectedInst.symbol}
                 </div>
@@ -315,8 +315,8 @@ export function DirectoryView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800">
                 <div><strong>{t('directory.cityAddress')}</strong> {selectedInst.city}, {selectedInst.address}</div>
-                <div><strong>{t('directory.phone')}</strong> <a href={`tel:${selectedInst.phone}`} className="text-brand-navy font-bold hover:underline">{selectedInst.phone}</a></div>
-                <div><strong>{t('directory.email')}</strong> <a href={`mailto:${selectedInst.email}`} className="text-brand-navy font-bold hover:underline">{selectedInst.email}</a></div>
+                <div><strong>{t('directory.phone')}</strong> <a href={`tel:${selectedInst.phone}`} className="text-brand-navy  hover:underline">{selectedInst.phone}</a></div>
+                <div><strong>{t('directory.email')}</strong> <a href={`mailto:${selectedInst.email}`} className="text-brand-navy  hover:underline">{selectedInst.email}</a></div>
                 <div><strong>{t('directory.principal')}</strong> {selectedInst.principal}</div>
                 <div><strong>{t('directory.inspector')}</strong> {selectedInst.inspector}</div>
                 <div><strong>{t('directory.continuity')}</strong> {selectedInst.continuity}</div>

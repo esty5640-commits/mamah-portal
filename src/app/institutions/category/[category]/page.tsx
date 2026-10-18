@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
-import { institutionsList } from '@/data/institutions';
+import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
 import { Building2, MapPin, ArrowLeft, School, Baby, Award, Sparkles } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -32,7 +32,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   };
 
   const IconComp = config.icon;
-  const filtered = institutionsList.filter(
+  const allInstitutions = await fetchInstitutionsFromGoogleSheets();
+  const filtered = allInstitutions.filter(
     inst => inst.category === config.categoryKey || (config.categoryKey.includes('kindergarten') && inst.isMixed)
   );
 

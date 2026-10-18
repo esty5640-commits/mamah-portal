@@ -1,11 +1,28 @@
 import { NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
+import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
 import { institutionsList } from '@/data/institutions';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function GET() {
+  // 1. Live Google Sheets Data (Single Source of Truth)
+  try {
+    const liveInstitutions = await fetchInstitutionsFromGoogleSheets();
+    if (liveInstitutions && liveInstitutions.length > 0) {
+      return NextResponse.json(liveInstitutions, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      });
+    }
+  } catch (err) {
+    console.error('Error fetching live institutions from Google Sheets:', err);
+  }
+
+  // 2. Fallback to CMS collection if available
   try {
     const payload = await getPayload({ config: configPromise });
     const result = await payload.find({
@@ -48,6 +65,7 @@ export async function GET() {
     console.error('Error fetching institutions from Payload CMS:', error);
   }
 
-  // Fallback to static initial data if CMS is temporarily loading
+  // 3. Fallback to institutionsList (which is strictly empty or verified data)
   return NextResponse.json(institutionsList);
 }
+

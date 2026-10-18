@@ -236,12 +236,12 @@ export function Header() {
             </div>
 
             {/* Parents Hotline quick button */}
-            <Link
+            {/* <Link
               href="/contact/parents"
               className="btn-shimmer hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 bg-brand-cyan hover:bg-brand-cyanDark text-white text-xs font-bold rounded-xl shadow-2xs hover:shadow transition-all hover:scale-105 active:scale-95"
             >
               <span>{t('common.hotlineButton')}</span>
-            </Link>
+            </Link> */}
 
             {/* Mobile Hamburger Button */}
             <button
