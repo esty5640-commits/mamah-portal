@@ -92,16 +92,24 @@ export function DirectoryView() {
     });
   }, [activeCategory, selectedDistrict, selectedTrait, continuityOnly, specialEdOnly, searchQuery, dataList]);
 
-  const categories = [
-    { id: 'all', label: t('categories.all') },
-    { id: 'boys_elementary', label: t('categories.boys_elementary') },
-    { id: 'girls_elementary', label: t('categories.girls_elementary') },
-    { id: 'kindergarten_boys', label: locale === 'he' ? 'גני בנים' : locale === 'fr' ? 'Jardins Garçons' : 'Boys Kindergarten' },
-    { id: 'kindergarten_girls', label: locale === 'he' ? 'גני בנות' : locale === 'fr' ? 'Jardins Filles' : 'Girls Kindergarten' },
-    { id: 'special_ed_kindergarten', label: locale === 'he' ? 'גני חינוך מיוחד' : locale === 'fr' ? 'Jardins Spécialisés' : 'Special Ed Kindergartens' },
-    { id: 'gifted_center', label: locale === 'he' ? 'מרכזי מחוננים' : locale === 'fr' ? 'Centres d\'Excellence' : 'Gifted Centers' },
-    { id: 'middle_school', label: t('categories.middle_high') },
-  ];
+  const categories = useMemo(() => {
+    const list = [
+      { id: 'all', label: t('categories.all') },
+      { id: 'boys_elementary', label: t('categories.boys_elementary') },
+      { id: 'girls_elementary', label: t('categories.girls_elementary') },
+      { id: 'middle_school', label: t('categories.middle_high') },
+      { id: 'gifted_center', label: locale === 'he' ? 'מרכזי מחוננים' : locale === 'fr' ? "Centres d'Excellence" : 'Gifted Centers' },
+      { id: 'special_ed_kindergarten', label: locale === 'he' ? 'חינוך מיוחד' : locale === 'fr' ? 'Éducation Spéciale' : 'Special Ed' },
+    ];
+    const hasKindergarten = dataList.some(i => i.category === 'kindergarten_boys' || i.category === 'kindergarten_girls' || i.category === 'kindergarten_mixed');
+    if (hasKindergarten) {
+      list.push(
+        { id: 'kindergarten_boys', label: locale === 'he' ? 'גני בנים' : 'Boys Kindergarten' },
+        { id: 'kindergarten_girls', label: locale === 'he' ? 'גני בנות' : 'Girls Kindergarten' }
+      );
+    }
+    return list;
+  }, [dataList, locale, t]);
 
   return (
     <section id="directory" className="space-y-8">
@@ -381,14 +389,14 @@ export function DirectoryView() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800">
-                <div><strong>{t('directory.cityAddress')}</strong> {selectedInst.city}, {selectedInst.address}</div>
-                <div><strong>{t('directory.phone')}</strong> <a href={`tel:${selectedInst.phone}`} className="text-brand-navy  hover:underline">{selectedInst.phone}</a></div>
-                <div><strong>{t('directory.email')}</strong> <a href={`mailto:${selectedInst.email}`} className="text-brand-navy  hover:underline">{selectedInst.email}</a></div>
-                <div><strong>{t('directory.principal')}</strong> {selectedInst.principal}</div>
-                <div><strong>{t('directory.inspector')}</strong> {selectedInst.inspector}</div>
-                <div><strong>{t('directory.continuity')}</strong> {selectedInst.continuity}</div>
-                <div><strong>{t('directory.specialEd')}</strong> {selectedInst.specialEd}</div>
-                <div><strong>{t('directory.trait')}</strong> {selectedInst.specialTraitHe}</div>
+                <div><strong>{t('directory.cityAddress')}</strong> {selectedInst.city}{selectedInst.address ? `, ${selectedInst.address}` : ''}</div>
+                <div><strong>{t('directory.phone')}</strong> {selectedInst.phone ? <a href={`tel:${selectedInst.phone}`} className="text-brand-navy hover:underline">{selectedInst.phone}</a> : '-'}</div>
+                <div><strong>{t('directory.email')}</strong> {selectedInst.email ? <a href={`mailto:${selectedInst.email}`} className="text-brand-navy hover:underline">{selectedInst.email}</a> : '-'}</div>
+                <div><strong>{t('directory.principal')}</strong> {selectedInst.principal || '-'}</div>
+                <div><strong>{t('directory.inspector')}</strong> {selectedInst.inspector || '-'}</div>
+                <div><strong>{t('directory.continuity')}</strong> {selectedInst.continuity || '-'}</div>
+                <div><strong>{t('directory.specialEd')}</strong> {selectedInst.specialEd || '-'}</div>
+                <div><strong>{t('directory.trait')}</strong> {selectedInst.specialTraitHe || '-'}</div>
               </div>
 
               {selectedInst.about && (
@@ -417,36 +425,40 @@ export function DirectoryView() {
                   <span>{t('directory.goToFullPage')}</span>
                   <span>{dir === 'rtl' ? '←' : '→'}</span>
                 </Link>
-                <motion.a
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  href={selectedInst.waze}
-                  target="_blank"
-                  rel="noopener"
-                  className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
-                >
-                  🚗 {t('directory.waze')}
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  href={selectedInst.maps}
-                  target="_blank"
-                  rel="noopener"
-                  className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
-                >
-                  🗺 {t('directory.maps')}
-                </motion.a>
-                {selectedInst.rama && (
+                {selectedInst.website && (
                   <motion.a
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    href={selectedInst.rama}
+                    href={selectedInst.website}
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
                   >
-                    📊 {t('directory.rama')}
+                    🌐 {locale === 'he' ? 'אתר המוסד' : 'Website'}
+                  </motion.a>
+                )}
+                {selectedInst.waze && (
+                  <motion.a
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={selectedInst.waze}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
+                  >
+                    🚗 {t('directory.waze')}
+                  </motion.a>
+                )}
+                {selectedInst.maps && (
+                  <motion.a
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={selectedInst.maps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
+                  >
+                    🗺 {t('directory.maps')}
                   </motion.a>
                 )}
                 {selectedInst.registration && (
@@ -455,7 +467,7 @@ export function DirectoryView() {
                     whileTap={{ scale: 0.95 }}
                     href={selectedInst.registration}
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     className="btn-shimmer px-4 py-2.5 bg-brand-cyan hover:bg-brand-cyanDark text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all"
                   >
                     📝 {t('directory.registration')}

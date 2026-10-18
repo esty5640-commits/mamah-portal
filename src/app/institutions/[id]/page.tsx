@@ -21,7 +21,8 @@ import {
   HeartHandshake,
   CheckCircle2,
   School,
-  Baby
+  Baby,
+  Globe
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -49,6 +50,7 @@ function formatInstitutionDoc(doc: any): Institution {
       ? doc.parentsCommittee.map((p: any) => (typeof p === 'string' ? p : p?.name || '')).filter(Boolean)
       : [],
     about: doc.about || '',
+    website: doc.website || '',
     waze: doc.waze || '',
     maps: doc.maps || '',
     rama: doc.rama || '',
@@ -180,6 +182,17 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
 
             {/* Quick Action Navigation Buttons */}
             <div className="flex flex-wrap items-center gap-3 shrink-0">
+              {inst.website && (
+                <a
+                  href={inst.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-shimmer inline-flex items-center gap-2 px-5 py-3 bg-brand-navy hover:bg-brand-navyLight text-white font-black rounded-xl text-sm shadow-md transition-all hover:scale-105 active:scale-95"
+                >
+                  <Globe className="w-4 h-4 text-brand-gold" />
+                  <span>אתר המוסד</span>
+                </a>
+              )}
               {inst.waze && (
                 <a
                   href={inst.waze}
@@ -232,26 +245,13 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
                 <span>אודות המוסד והחזון החינוכי</span>
               </h2>
               <div className="prose text-slate-700 leading-relaxed text-sm sm:text-base space-y-3">
-                <p>
-                  {inst.about || `${inst.name} הינו מוסד חינוכי רשמי הפועל בפיקוח המחוז החרדי במשרד החינוך. המוסד מעניק סביבה חינוכית חמה ומקדמת, השמה דגש על יראת שמיים, מידות טובות ולימודי קודש ברמה גבוהה, לצד לימודי יסוד מלאים (מתמטיקה, אנגלית, מדעים ושפה).`}
-                </p>
-                <p>
-                  במוסד פועל צוות הוראה מקצועי ומוסמך, המלווה באופן צמוד על ידי מפקחי המחוז החרדי, תוך הקפדה על שעות לימודים עשירות ומענה פרא-רפואי וטיפולי תומך.
-                </p>
-              </div>
-
-              {/* School Regulations PDF Link */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs text-slate-500 font-bold">תקנון בית הספר והסדרי משמעת:</span>
-                <a
-                  href="/regulations-sample.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-navy hover:underline"
-                >
-                  <FileText className="w-4 h-4 text-brand-cyan" />
-                  <span>צפייה בתקנון המוסד (PDF)</span>
-                </a>
+                {inst.about ? (
+                  <p>{inst.about}</p>
+                ) : (
+                  <p>
+                    {inst.name} הינו מוסד חינוכי רשמי מוכר בפיקוח המחוז החרדי במשרד החינוך (סמל מוסד: {inst.symbol || '-'}), הפועל בעיר {inst.city}. המוסד משלב מסורת ולימודי קודש לצד תוכנית לימודי יסוד מלאה ומפוקחת.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -267,18 +267,18 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
                     <span className="text-xs text-slate-500 font-bold block">מענה לחינוך מיוחד / שילוב:</span>
                     <span className="text-sm font-black text-slate-900 block">
-                      {inst.specialEd || 'כיתות שילוב ומענה מותאם'}
+                      {inst.specialEd === 'כן' ? 'קיים מענה (כן)' : inst.specialEd === 'לא' ? 'ללא כיתות חנ״מ (לא)' : inst.specialEd || '-'}
                     </span>
-                    <span className="text-xs text-slate-500 block">סיוע פרא-רפואי והוראה מותאמת בפיקוח המחוז</span>
+                    <span className="text-xs text-slate-500 block">בפיקוח המחוז החרדי במשרד החינוך</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
                     <span className="text-xs text-slate-500 font-bold block">רצף חינוכי:</span>
                     <span className="text-sm font-black text-slate-900 block">
-                      {inst.continuity || 'קיים רצף חינוכי'}
+                      {inst.continuity === 'כן' ? 'קיים רצף חינוכי מוכר (כן)' : inst.continuity === 'לא' ? 'ללא רצף חינוכי ישיר (לא)' : inst.continuity || '-'}
                     </span>
                     <span className="text-xs text-slate-500 block">
-                      {isKindergarten ? 'רצף לבתי ספר יסודיים ממ״ח באזור' : 'רצף מגני ילדים ממ״ח וחטיבות ביניים'}
+                      {inst.continuity === 'כן' ? 'רצף מוסדר בפיקוח המחוז' : 'לפרטים ניתן לפנות למוקד'}
                     </span>
                   </div>
                 </div>
@@ -406,6 +406,20 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
               </h3>
 
               <div className="space-y-2 text-xs font-bold">
+                {inst.website && (
+                  <a
+                    href={inst.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-brand-navy" />
+                      <span>אתר האינטרנט של המוסד</span>
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                  </a>
+                )}
                 {inst.rama && (
                   <a
                     href={inst.rama}
