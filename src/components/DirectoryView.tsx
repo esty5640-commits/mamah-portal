@@ -286,27 +286,46 @@ export function DirectoryView() {
               >
                 <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
                 <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
-                  <div className="flex items-start justify-between gap-2 text-xs sm:text-sm">
-                    {inst.symbol ? (
-                      <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600  group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
-                        {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
-                      </span>
-                    ) : <span />}
-                    <div className="flex items-center gap-1.5">
-                      {inst.isMixed && (
-                        <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-black shadow-sm">
-                          {locale === 'he' ? 'גן מעורב' : 'Mixed'}
-                        </span>
-                      )}
-                      {inst.specialTraitHe && inst.specialTraitHe !== 'none' && (
-                        <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-bold shadow-sm">
-                          {inst.specialTraitHe}
-                        </span>
-                      )}
+                  <div className="flex items-start gap-3.5 sm:gap-4">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl bg-white border border-slate-100 shadow-xs p-1.5 flex items-center justify-center overflow-hidden group-hover:border-brand-navy/20 group-hover:shadow-md transition-all">
+                      <img
+                        src={inst.logo || '/logos/mamah-default.jpeg'}
+                        alt={inst.name}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target && !target.src.includes('mamah-default')) {
+                            target.src = '/logos/mamah-default.jpeg';
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex items-center justify-between gap-1.5 text-xs">
+                        {inst.symbol ? (
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-600 font-mono text-[11px] group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                            {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
+                          </span>
+                        ) : <span />}
+                        <div className="flex items-center gap-1">
+                          {inst.isMixed && (
+                            <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2 py-0.5 rounded-md text-[11px] font-black shadow-xs whitespace-nowrap">
+                              {locale === 'he' ? 'מעורב' : 'Mixed'}
+                            </span>
+                          )}
+                          {inst.specialTraitHe && inst.specialTraitHe !== 'none' && (
+                            <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2 py-0.5 rounded-md text-[11px] font-bold shadow-xs truncate max-w-[100px]" title={inst.specialTraitHe}>
+                              {inst.specialTraitHe}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-base sm:text-lg leading-tight text-slate-900 tracking-tight group-hover:text-brand-navy transition-colors line-clamp-2">
+                        {inst.name}
+                      </h3>
                     </div>
                   </div>
-
-                  <h3 className="font-bold text-lg sm:text-xl leading-tight text-slate-900 tracking-tight">{inst.name}</h3>
 
                   <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
                     {inst.city && (
@@ -378,13 +397,28 @@ export function DirectoryView() {
                 <X className="w-6 h-6" />
               </motion.button>
 
-              <div>
-                <span className="inline-block px-3.5 py-1.5 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy  text-sm mb-2">
-                  {selectedInst.categoryName}
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy">{selectedInst.name}</h2>
-                <div className="text-sm sm:text-base text-slate-600 font-medium mt-1">
-                  {t('directory.symbolLabel')} {selectedInst.symbol}
+              <div className="flex items-center gap-4 sm:gap-6 pt-2 pb-1">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl bg-white border border-slate-200 shadow-md p-2 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={selectedInst.logo || '/logos/mamah-default.jpeg'}
+                    alt={selectedInst.name}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target && !target.src.includes('mamah-default')) {
+                        target.src = '/logos/mamah-default.jpeg';
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="inline-block px-3.5 py-1 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy text-xs sm:text-sm font-bold mb-1.5">
+                    {selectedInst.categoryName}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight">{selectedInst.name}</h2>
+                  <div className="text-sm text-slate-500 font-medium mt-1">
+                    {t('directory.symbolLabel')} {selectedInst.symbol}
+                  </div>
                 </div>
               </div>
 

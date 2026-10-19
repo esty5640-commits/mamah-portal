@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
+import { fetchInstitutionsFromGoogleSheets, getInstitutionLogo } from '@/lib/sheets';
 import { institutionsList } from '@/data/institutions';
 
 export const dynamic = 'force-dynamic';
@@ -58,6 +58,7 @@ export async function GET() {
         maps: doc.maps || '',
         rama: doc.rama || '',
         registration: doc.registration || '',
+        logo: doc.logo || getInstitutionLogo(doc.symbol, doc.name),
       }));
       return NextResponse.json(institutions);
     }

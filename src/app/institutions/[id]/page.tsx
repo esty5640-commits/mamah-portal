@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { SiteShell } from '@/components/SiteShell';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
+import { fetchInstitutionsFromGoogleSheets, getInstitutionLogo } from '@/lib/sheets';
 import { Institution } from '@/data/institutions';
 import { 
   Building2, 
@@ -55,6 +55,7 @@ function formatInstitutionDoc(doc: any): Institution {
     maps: doc.maps || '',
     rama: doc.rama || '',
     registration: doc.registration || '',
+    logo: doc.logo || getInstitutionLogo(doc.symbol, doc.name),
   };
 }
 
@@ -145,39 +146,49 @@ export default async function SingleInstitutionPage({ params }: { params: Promis
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="px-3 py-1 bg-brand-navy/10 text-brand-navy font-black text-xs rounded-full">
-                  {inst.categoryName}
-                </span>
-                <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-full flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-slate-500" />
-                  <span>{inst.city} · מחוז {inst.district}</span>
-                </span>
-                {inst.symbol && (
-                  <span className="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs rounded-full" dir="ltr">
-                    סמל מוסד: {inst.symbol}
-                  </span>
-                )}
-                {inst.isMixed && (
-                  <span className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 font-bold text-xs rounded-full">
-                    גן מעורב (בנים ובנות)
-                  </span>
-                )}
-                {inst.specialTraitHe && inst.specialTraitHe !== 'סטנדרטי' && (
-                  <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs rounded-full">
-                    {inst.specialTraitHe}
-                  </span>
-                )}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-3xl bg-white border border-slate-200 shadow-md p-2 flex items-center justify-center overflow-hidden">
+                <img
+                  src={inst.logo || getInstitutionLogo(inst.symbol, inst.name)}
+                  alt={inst.name}
+                  className="w-full h-full object-contain"
+                />
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
-                {inst.name}
-              </h1>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="px-3 py-1 bg-brand-navy/10 text-brand-navy font-black text-xs rounded-full">
+                    {inst.categoryName}
+                  </span>
+                  <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-full flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-slate-500" />
+                    <span>{inst.city} · מחוז {inst.district}</span>
+                  </span>
+                  {inst.symbol && (
+                    <span className="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs rounded-full" dir="ltr">
+                      סמל מוסד: {inst.symbol}
+                    </span>
+                  )}
+                  {inst.isMixed && (
+                    <span className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 font-bold text-xs rounded-full">
+                      גן מעורב (בנים ובנות)
+                    </span>
+                  )}
+                  {inst.specialTraitHe && inst.specialTraitHe !== 'סטנדרטי' && (
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs rounded-full">
+                      {inst.specialTraitHe}
+                    </span>
+                  )}
+                </div>
 
-              <p className="text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
-                מוסד חינוכי רשמי מוכר ומפוקח בחינוך הממלכתי-חרדי, המשלב צביון תורני אותנטי עם לימודי יסוד מלאים.
-              </p>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                  {inst.name}
+                </h1>
+
+                <p className="text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
+                  מוסד חינוכי רשמי מוכר ומפוקח בחינוך הממלכתי-חרדי, המשלב צביון תורני אותנטי עם לימודי יסוד מלאים.
+                </p>
+              </div>
             </div>
 
             {/* Quick Action Navigation Buttons */}

@@ -5,6 +5,56 @@ import { institutionsList, Institution } from '@/data/institutions';
 export const DEFAULT_SHEET_ID = '1GX6EjbsXc5xuA7MWKe6jN1raiA1w5GqN43KsqCXMkq0';
 
 /**
+ * Official logos mapping extracted from Google Drive folder:
+ * https://drive.google.com/drive/folders/1Oda3ARS2H3gh5T4Gjz6dLerfxhCDXkuw
+ * Verified by symbol & visual/OCR inspection.
+ */
+export const DRIVE_LOGOS_BY_SYMBOL: Record<string, string> = {
+  '511626': '/logos/beit-raban.webp', // ת"ת בית רבן (ירושלים)
+  '630186': '/logos/achinoam.png', // אחינועם (ירושלים)
+  '630194': '/logos/ashira-jerusalem.png', // אשירה (ירושלים)
+  '649962': '/logos/ashira-beit-shemesh.jpg', // אשירה בית שמש
+  '649954': '/logos/shiru-lamelech.png', // שירו למלך (אשירה בנים - בית שמש)
+  '611541': '/logos/bnot-yerushalayim.png', // בנות ירושלים
+  '611558': '/logos/ginzei-hamelech.png', // גנזי המלך (צפת)
+  '655332': '/logos/or-yair.jpg', // ת"ת אור יאיר (שמעה אשתמוע)
+  '734103': '/logos/ahavat-yisrael.png', // אהבת ישראל (נחליאל)
+  '611442': '/logos/mesilat-yesharim.png', // מסילת ישרים נעים הליכות (עפולה)
+  '383729': '/logos/maayan-haemuna.png', // מעיין האמונה בנות (חריש)
+  '666016': '/logos/netivoteya.jpeg', // נתיבותיה - מונטסורי (ירושלים)
+  '749937': '/logos/netzach-yisroel-banim.png', // נצח ישראל (בית שמש)
+  '759050': '/logos/netzach-yisroel-banot.png', // נצח ישראל בנות (בית שמש)
+  '482349': '/logos/pnineem.jpg', // פנינים - עץ חיים בנות (רחובות)
+  '662627': '/logos/etz-hachaim-jerusalem.png', // עץ החיים (ירושלים)
+  '482091': '/logos/etz-chaim-rehovot.jpeg', // ת"ת עץ חיים (רחובות)
+  '636902': '/logos/shalhevet-yitzhar.jpeg', // שלהבת יצהר (יצהר)
+  '512095': '/logos/sadeh-tzofim.png', // שדה צופים (מעלות-תרשיחא)
+  '616094': '/logos/chava-chaklait-elad.png', // חווה חקלאית (אלעד)
+  '481978': '/logos/tiferet-chaya-elad.png', // תפארת חיה חב"ד (אלעד)
+  '482455': '/logos/or-chadash-nachal-sorek.jpg', // אור חדש / חיי שרה (נחל שורק)
+  '655936': '/logos/chefet-chaim-kiryat-shmona.png', // חפץ חיים (קרית שמונה)
+  '383737': '/logos/torat-chaim-breslev-charish.jpg', // תלמוד תורה חריש (חריש)
+  '630004': '/logos/breslev-chatzor.jpg', // ברסלב (חצור הגלילית)
+  '384206': '/logos/chabad-otlit.jpg', // אוהלי יוסף יצחק עתלית חוף הכרמל (עתלית)
+  '679431': '/logos/haheider-hachassidi-beit-shemesh.png', // בעש"ט החיידר החסידי (בית שמש)
+  '415679': '/logos/bereshit-banim-petach-tikva.jpg', // בראשית ממ"ח בנים פ"ת (פתח תקווה)
+  '581504': '/logos/bereshit-banot-petach-tikva.jpg', // בראשית (פתח תקוה)
+  '614354': '/logos/shiviti-banim.jpg', // שיויתי - אור החיים (קריית גת)
+};
+
+export const DEFAULT_MAMAH_LOGO = '/logos/mamah-default.jpeg';
+
+/**
+ * Returns the exact logo URL for an institution by symbol or fallback to official Mamah emblem
+ */
+export function getInstitutionLogo(symbol?: string, name?: string): string {
+  if (symbol && DRIVE_LOGOS_BY_SYMBOL[symbol.trim()]) {
+    return DRIVE_LOGOS_BY_SYMBOL[symbol.trim()];
+  }
+  return DEFAULT_MAMAH_LOGO;
+}
+
+/**
  * Robust CSV parser that correctly handles:
  * - Multi-line fields inside quotes
  * - Escaped double quotes ("")
@@ -196,7 +246,17 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
     let wazeVal = (wazeIdx < row.length ? row[wazeIdx] : row[18])?.trim() || '';
     let mapsVal = (mapsIdx < row.length ? row[mapsIdx] : row[19])?.trim() || '';
     const regVal = (registrationIdx < row.length ? row[registrationIdx] : row[20])?.trim() || '';
-    const logoVal = (logoIdx < row.length ? row[logoIdx] : row[21])?.trim() || '';
+    const rawLogo = (logoIdx < row.length ? row[logoIdx] : row[21])?.trim() || '';
+    let resolvedLogo = getInstitutionLogo(symbolVal, nameVal);
+    // If rawLogo from sheet is an actual direct image link (not a site URL or [link removed]), use it
+    if (
+      rawLogo &&
+      !rawLogo.includes('[link') &&
+      (rawLogo.startsWith('http') || rawLogo.startsWith('/')) &&
+      /\.(png|jpg|jpeg|webp|svg)(\?.*)?$/i.test(rawLogo)
+    ) {
+      resolvedLogo = rawLogo;
+    }
     const inspectorVal = (inspectorIdx < row.length ? row[inspectorIdx] : row[0])?.trim() || '';
 
     // Auto-generate navigation links if not provided in sheet
@@ -236,7 +296,7 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
       maps: mapsVal,
       rama: '',
       registration: regVal,
-      logo: logoVal,
+      logo: resolvedLogo,
       gender: genderVal,
       stage: stageVal,
     });
