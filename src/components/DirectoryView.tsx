@@ -51,13 +51,21 @@ export function DirectoryView() {
   const filtered = useMemo(() => {
     return dataList.filter(inst => {
       if (activeCategory !== 'all') {
-        if (activeCategory === 'boys_elementary' && inst.category !== 'boys_elementary') return false;
-        if (activeCategory === 'girls_elementary' && inst.category !== 'girls_elementary') return false;
-        if (activeCategory === 'kindergarten_boys' && inst.category !== 'kindergarten_boys') return false;
-        if (activeCategory === 'kindergarten_girls' && inst.category !== 'kindergarten_girls') return false;
-        if (activeCategory === 'special_ed_kindergarten' && inst.category !== 'special_ed_kindergarten') return false;
-        if (activeCategory === 'gifted_center' && inst.category !== 'gifted_center') return false;
-        if (activeCategory === 'middle_school' && inst.category !== 'middle_school') return false;
+        if (activeCategory === 'kindergarten') {
+          if (!inst.category.includes('kindergarten') && inst.stage !== 'גני ילדים') return false;
+        } else if (activeCategory === 'boys_elementary') {
+          if (inst.category !== 'boys_elementary') return false;
+        } else if (activeCategory === 'girls_elementary') {
+          if (inst.category !== 'girls_elementary') return false;
+        } else if (activeCategory === 'middle_school') {
+          if (inst.category !== 'middle_school') return false;
+        } else if (activeCategory === 'special_ed_kindergarten') {
+          if (inst.category !== 'special_ed_kindergarten') return false;
+        } else if (activeCategory === 'gifted_center') {
+          if (inst.category !== 'gifted_center') return false;
+        } else if (inst.category !== activeCategory) {
+          return false;
+        }
       }
 
       if (selectedDistrict !== 'all' && inst.district !== selectedDistrict) {
@@ -70,7 +78,7 @@ export function DirectoryView() {
         }
       }
 
-      if (continuityOnly && inst.continuity !== 'כן' && !inst.continuity.includes('יש')) {
+      if (continuityOnly && inst.continuity !== 'כן' && !inst.continuity.includes('יש') && !inst.continuity.includes('גני')) {
         return false;
       }
 
@@ -82,10 +90,12 @@ export function DirectoryView() {
         const q = searchQuery.toLowerCase();
         const matchName = inst.name.toLowerCase().includes(q);
         const matchCity = inst.city.toLowerCase().includes(q);
-        const matchSymbol = inst.symbol.includes(q);
-        const matchTrait = inst.specialTraitHe.toLowerCase().includes(q);
-        const matchPrincipal = inst.principal?.toLowerCase().includes(q);
-        if (!matchName && !matchCity && !matchSymbol && !matchTrait && !matchPrincipal) return false;
+        const matchSymbol = inst.symbol ? inst.symbol.includes(q) : false;
+        const matchTrait = inst.specialTraitHe ? inst.specialTraitHe.toLowerCase().includes(q) : false;
+        const matchPrincipal = inst.principal ? inst.principal.toLowerCase().includes(q) : false;
+        const matchInspector = inst.inspector ? inst.inspector.toLowerCase().includes(q) : false;
+        const matchAbout = inst.about ? inst.about.toLowerCase().includes(q) : false;
+        if (!matchName && !matchCity && !matchSymbol && !matchTrait && !matchPrincipal && !matchInspector && !matchAbout) return false;
       }
 
       return true;
@@ -93,23 +103,16 @@ export function DirectoryView() {
   }, [activeCategory, selectedDistrict, selectedTrait, continuityOnly, specialEdOnly, searchQuery, dataList]);
 
   const categories = useMemo(() => {
-    const list = [
+    return [
       { id: 'all', label: t('categories.all') },
+      { id: 'kindergarten', label: locale === 'he' ? 'גני ילדים' : t('categories.kindergarten') },
       { id: 'boys_elementary', label: t('categories.boys_elementary') },
       { id: 'girls_elementary', label: t('categories.girls_elementary') },
       { id: 'middle_school', label: t('categories.middle_high') },
       { id: 'gifted_center', label: locale === 'he' ? 'מרכזי מחוננים' : locale === 'fr' ? "Centres d'Excellence" : 'Gifted Centers' },
       { id: 'special_ed_kindergarten', label: locale === 'he' ? 'חינוך מיוחד' : locale === 'fr' ? 'Éducation Spéciale' : 'Special Ed' },
     ];
-    const hasKindergarten = dataList.some(i => i.category === 'kindergarten_boys' || i.category === 'kindergarten_girls' || i.category === 'kindergarten_mixed');
-    if (hasKindergarten) {
-      list.push(
-        { id: 'kindergarten_boys', label: locale === 'he' ? 'גני בנים' : 'Boys Kindergarten' },
-        { id: 'kindergarten_girls', label: locale === 'he' ? 'גני בנות' : 'Girls Kindergarten' }
-      );
-    }
-    return list;
-  }, [dataList, locale, t]);
+  }, [locale, t]);
 
   return (
     <section id="directory" className="space-y-8">

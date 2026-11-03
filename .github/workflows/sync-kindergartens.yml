@@ -1,0 +1,54 @@
+name: Sync Kindergartens from Google Sheets
+
+on:
+  schedule:
+    # Run twice daily at 06:00 and 18:00 UTC
+    - cron: '0 6,18 * * *'
+  workflow_dispatch: # Allows manual trigger directly from GitHub Actions tab
+  repository_dispatch:
+    types: [sync-kindergartens]
+
+jobs:
+  sync:
+    name: Download & Sync Kindergartens Data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Kindergartens CSV from Google Sheets
+        run: |
+          SHEET_URL="https://docs.google.com/spreadsheets/d/1nCmyFJ_sQcjc0aR2c8JAXb9vZpEtEJKkQfIZr5ofGaY/export?format=csv&gid=1534983099"
+          TEMP_FILE="src/data/kindergartens_temp.csv"
+          TARGET_FILE="src/data/kindergartens.csv"
+
+          echo "Fetching latest Google Sheets CSV from: $SHEET_URL"
+          curl -s -L "$SHEET_URL" -o "$TEMP_FILE"
+
+          # Verify that downloaded file is a valid CSV (not an HTML error/login page or empty)
+          if grep -q "<!DOCTYPE html" "$TEMP_FILE" || [ ! -s "$TEMP_FILE" ]; then
+            echo "Warning: Downloaded content is HTML login page or empty (Google Sheet permissions may require link sharing). Keeping existing CSV."
+            rm -f "$TEMP_FILE"
+            exit 0
+          fi
+
+          # Replace existing file
+          mv "$TEMP_FILE" "$TARGET_FILE"
+          echo "Updated $TARGET_FILE successfully. Row count: $(wc -l < "$TARGET_FILE")"
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/kindergartens.csv
+
+          if git diff --staged --quiet; then
+            echo "No changes detected in kindergartens data."
+          else
+            git commit -m "chore(data): auto-update kindergartens from Google Sheets [skip ci]"
+            git push
+            echo "Successfully pushed updated kindergartens data to repository."
+          fi

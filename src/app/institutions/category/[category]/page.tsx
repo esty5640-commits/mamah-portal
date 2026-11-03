@@ -17,6 +17,8 @@ const CATEGORY_MAP: Record<string, { title: string; categoryKey: string; desc: s
   'girls_elementary': { title: 'בי״ס יסודי בנות', categoryKey: 'girls_elementary', desc: 'בתי ספר יסודיים לבנות: חינוך ערכי תורני, מידות טובות, מצוינות במדעים, מתמטיקה ואנגלית רהוטה.', icon: School },
   'special-ed': { title: 'גני חינוך מיוחד', categoryKey: 'special_ed_kindergarten', desc: 'מסגרות חינוך מיוחד ייעודיות לילדים עם צרכים מגוונים, סל טיפולים פרא-רפואי מורחב וצוות פרא-רפואי.', icon: Sparkles },
   'special_ed_kindergarten': { title: 'גני חינוך מיוחד', categoryKey: 'special_ed_kindergarten', desc: 'מסגרות חינוך מיוחד ייעודיות לילדים עם צרכים מגוונים, סל טיפולים פרא-רפואי מורחב וצוות פרא-רפואי.', icon: Sparkles },
+  'kindergarten': { title: 'גני ילדים ממ״ח', categoryKey: 'kindergarten', desc: 'כל גני הילדים בחינוך הממלכתי-חרדי ברחבי הארץ בפיקוח משרד החינוך: צוותי חינוך מסורים, סביבה תורנית חמה ורמה פדגוגית גבוהה.', icon: Baby },
+  'kindergartens': { title: 'גני ילדים ממ״ח', categoryKey: 'kindergarten', desc: 'כל גני הילדים בחינוך הממלכתי-חרדי ברחבי הארץ בפיקוח משרד החינוך: צוותי חינוך מסורים, סביבה תורנית חמה ורמה פדגוגית גבוהה.', icon: Baby },
   'gifted': { title: 'מרכזי מחוננים ומצטיינים', categoryKey: 'gifted_center', desc: 'מרכזי העשרה ייחודיים לתלמידים מחוננים מהמגזר החרדי בשיתוף אגף המחוננים במשרד החינוך.', icon: Award },
   'gifted_center': { title: 'מרכזי מחוננים ומצטיינים', categoryKey: 'gifted_center', desc: 'מרכזי העשרה ייחודיים לתלמידים מחוננים מהמגזר החרדי בשיתוף אגף המחוננים במשרד החינוך.', icon: Award },
   'middle-school': { title: 'חט״ב - מכינה ז׳-ח׳', categoryKey: 'middle_school', desc: 'חטיבות ביניים ומכינות לישיבות המשלבות לימוד תורני אינטנסיבי עם הכנה לבגרויות מדעיות.', icon: Building2 },
@@ -34,7 +36,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const IconComp = config.icon;
   const allInstitutions = await fetchInstitutionsFromGoogleSheets();
   const filtered = allInstitutions.filter(
-    inst => inst.category === config.categoryKey || (config.categoryKey.includes('kindergarten') && inst.isMixed)
+    inst =>
+      inst.category === config.categoryKey ||
+      (config.categoryKey === 'kindergarten' && (inst.category.includes('kindergarten') || inst.stage === 'גני ילדים')) ||
+      (config.categoryKey.includes('kindergarten') && inst.isMixed)
   );
 
   return (

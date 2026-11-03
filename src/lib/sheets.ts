@@ -3,6 +3,8 @@ import path from 'path';
 import { institutionsList, Institution } from '@/data/institutions';
 
 export const DEFAULT_SHEET_ID = '1GX6EjbsXc5xuA7MWKe6jN1raiA1w5GqN43KsqCXMkq0';
+export const KINDERGARTENS_SHEET_ID = '1nCmyFJ_sQcjc0aR2c8JAXb9vZpEtEJKkQfIZr5ofGaY';
+export const KINDERGARTENS_GID = '1534983099';
 
 /**
  * Official logos mapping extracted from Google Drive folder:
@@ -120,22 +122,22 @@ function normalizeHeader(h: string): string {
  */
 export function getDistrictByCity(city: string): string {
   const c = city.trim();
-  if (/ירושלים|בית שמש|גבעת זאב|ביתר|תל ציון|פסגות|עלי|קרית ארבע|קריית ארבע|יצהר|נחליאל|שמעה|מיצד|אספר/.test(c)) {
+  if (/ירושלים|בית שמש|גבעת זאב|ביתר|תל ציון|פסגות|עלי|קרית ארבע|קריית ארבע|יצהר|נחליאל|שמעה|מיצד|אספר|בנימין|עציון/.test(c)) {
     return 'ירושלים';
   }
-  if (/באר שבע|אשדוד|אשקלון|נתיבות|דימונה|ערד|ניצן|גת|מלאכי/.test(c)) {
+  if (/באר שבע|אשדוד|אשקלון|נתיבות|דימונה|ערד|ניצן|גת|מלאכי|שדרות|טוביה|שפיר|שדות נגב|מרחבים/.test(c)) {
     return 'דרום';
   }
-  if (/צפת|טבריה|עפולה|נוף הגליל|הר יונה|מגדל העמק|כרמיאל|חצור|מעלות|אור הגנוז|מרום הגליל|שמונה/.test(c)) {
+  if (/צפת|טבריה|עפולה|נוף הגליל|הר יונה|מגדל העמק|כרמיאל|חצור|מעלות|אור הגנוז|מרום הגליל|שמונה|קצרין|יבנאל|מגדל|עמק המעיינות/.test(c)) {
     return 'צפון';
   }
-  if (/חיפה|עתלית|חריש|קרית ים/.test(c)) {
+  if (/חיפה|עתלית|חריש|קרית ים|קרית ביאליק|קרית מוצקין|נשר|טירת כרמל|זכרון/.test(c)) {
     return 'חיפה';
   }
-  if (/תל אביב/.test(c)) {
+  if (/תל אביב|חולון|בת ים|רמת גן|בני ברק|גבעתיים|הרצליה|רמת השרון/.test(c)) {
     return 'תל אביב';
   }
-  return 'מרכז'; // פתח תקווה, בני ברק, אלעד, רחובות, ראשון לציון, נס ציונה, חולון, לוד, גדרה, יבנה, יד בנימין, קרית עקרון, נחל שורק, נתניה, כפר חב"ד
+  return 'מרכז'; // פתח תקווה, אלעד, רחובות, ראשון לציון, נס ציונה, לוד, רמלה, גדרה, יבנה, באר יעקב, יד בנימין, קרית עקרון, נחל שורק, נתניה, כפר חב"ד, צורן, כפר סבא, רעננה, שומרון
 }
 
 /**
@@ -158,7 +160,7 @@ export function deriveCategory(stage: string, gender: string, name: string): { c
   if (s.includes('גן') || n.includes('גן ') || n.includes('גני ')) {
     if (g.includes('בנות') || n.includes('בנות')) return { code: 'kindergarten_girls', name: 'גני בנות' };
     if (g.includes('בנים') || n.includes('בנים')) return { code: 'kindergarten_boys', name: 'גני בנים' };
-    return { code: 'kindergarten_mixed', name: 'גני ילדים' };
+    return { code: 'kindergarten', name: 'גני ילדים' };
   }
   if (s.includes('יסודי') || n.includes('ת"ת') || n.includes('תלמוד תורה') || n.includes('בית ספר')) {
     if (g.includes('בנות') || n.includes('בנות')) return { code: 'girls_elementary', name: 'בי״ס יסודי בנות' };
@@ -172,34 +174,25 @@ export function deriveCategory(stage: string, gender: string, name: string): { c
 }
 
 /**
- * Parses raw 2D array of CSV rows into typed Institution objects using header matching
+ * Parses raw 2D array of CSV rows into typed Institution objects using header matching (Schools Sheet)
  */
 export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
   if (rows.length < 2) return [];
 
   const headers = rows[0].map(h => normalizeHeader(h));
 
-  // Helper to find column index safely by multiple keyword variations
   const findCol = (...keywords: string[]): number => {
     for (const kw of keywords) {
       const normKw = normalizeHeader(kw);
       if (!normKw) continue;
-      // 1. Exact match
       const exactIdx = headers.findIndex(h => h === normKw);
       if (exactIdx !== -1) return exactIdx;
-      // 2. Substring match only if header is not empty
       const subIdx = headers.findIndex(h => h.length > 0 && (h.includes(normKw) || normKw.includes(h)));
       if (subIdx !== -1) return subIdx;
     }
     return -1;
   };
 
-  // Find column indices with known positional fallbacks based on exact sheet layout:
-  // [0] פיקוח מחוז חרדי, [1] סמל מוסד, [2] שם המוסד, [3] עיר, [4] כתובת, [5] טלפון,
-  // [6] שלב חינוך, [7] מגדר, [8] מגדר מנהל/ת, [9] שם המנהל/ת, [10] חינוך מיוחד,
-  // [11] רצף חינוכי, [12] דוא״ל, [13] מאפיין מיוחד, [14] תנועת נוער, [15] אודות המוסד,
-  // [16] נציגות ועד הורים, [17] לדף המוסד המלא, [18] ניווט בwaze, [19] google maps,
-  // [20] רישום בעירייה, [21] לוגו
   const inspectorIdx = findCol('פיקוח מחוז חרדי', 'מפקח', 'מפקחת') !== -1 ? findCol('פיקוח מחוז חרדי', 'מפקח', 'מפקחת') : 0;
   const symbolIdx = findCol('סמל מוסד', 'סמל', 'קוד מוסד') !== -1 ? findCol('סמל מוסד', 'סמל', 'קוד מוסד') : 1;
   const nameIdx = findCol('שם המוסד', 'שם מוסד', 'שם') !== -1 ? findCol('שם המוסד', 'שם מוסד', 'שם') : 2;
@@ -248,7 +241,6 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
     const regVal = (registrationIdx < row.length ? row[registrationIdx] : row[20])?.trim() || '';
     const rawLogo = (logoIdx < row.length ? row[logoIdx] : row[21])?.trim() || '';
     let resolvedLogo = getInstitutionLogo(symbolVal, nameVal);
-    // If rawLogo from sheet is an actual direct image link (not a site URL or [link removed]), use it
     if (
       rawLogo &&
       !rawLogo.includes('[link') &&
@@ -259,7 +251,6 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
     }
     const inspectorVal = (inspectorIdx < row.length ? row[inspectorIdx] : row[0])?.trim() || '';
 
-    // Auto-generate navigation links if not provided in sheet
     if (!wazeVal && cityVal) {
       wazeVal = `https://waze.com/ul?q=${encodeURIComponent(`${nameVal} ${addressVal} ${cityVal}`.trim())}`;
     }
@@ -305,10 +296,137 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
   return institutions;
 }
 
-export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]> {
+/**
+ * Parses raw 2D array of CSV rows into typed Institution objects for Kindergartens (גנים תשפז Sheet)
+ * Aggregates multiple staff records for the same kindergarten into a rich entity with teachers listed.
+ */
+export function parseKindergartensFromRows(rows: string[][]): Institution[] {
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map(h => normalizeHeader(h));
+
+  const findCol = (...keywords: string[]): number => {
+    for (const kw of keywords) {
+      const normKw = normalizeHeader(kw);
+      if (!normKw) continue;
+      const exactIdx = headers.findIndex(h => h === normKw);
+      if (exactIdx !== -1) return exactIdx;
+      const subIdx = headers.findIndex(h => h.length > 0 && (h.includes(normKw) || normKw.includes(h)));
+      if (subIdx !== -1) return subIdx;
+    }
+    return -1;
+  };
+
+  const lastNameIdx = findCol('האם מורה אם', 'שם משפחה', 'משפחה') !== -1 ? findCol('האם מורה אם', 'שם משפחה', 'משפחה') : 0;
+  const firstNameIdx = findCol('שם פרטי עווה', 'שם פרטי', 'פרטי') !== -1 ? findCol('שם פרטי עווה', 'שם פרטי', 'פרטי') : 1;
+  const cityIdx = findCol('רשות חינוך', 'רשות', 'עיר', 'ישוב') !== -1 ? findCol('רשות חינוך', 'רשות', 'עיר', 'ישוב') : 2;
+  const inspectorIdx = findCol('שם מפקח', 'מפקח', 'מפקחת') !== -1 ? findCol('שם מפקח', 'מפקח', 'מפקחת') : 3;
+  const nameIdx = findCol('שם מוסד', 'שם המוסד', 'גן', 'שם גן') !== -1 ? findCol('שם מוסד', 'שם המוסד', 'גן', 'שם גן') : 4;
+  const principalIdx = findCol('שם מנהל מוסד', 'מנהל מוסד', 'מנהל', 'מנהלת') !== -1 ? findCol('שם מנהל מוסד', 'מנהל מוסד', 'מנהל', 'מנהלת') : 5;
+
+  type GanGroup = {
+    name: string;
+    city: string;
+    inspector: string;
+    principal: string;
+    teachers: Set<string>;
+  };
+
+  const groups = new Map<string, GanGroup>();
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row.length === 0) continue;
+    const nameVal = (nameIdx < row.length ? row[nameIdx] : row[4])?.trim();
+    if (!nameVal || nameVal === 'שם מוסד' || nameVal === 'שם המוסד') continue;
+
+    const cityVal = (cityIdx < row.length ? row[cityIdx] : row[2])?.trim() || '';
+    const inspectorVal = (inspectorIdx < row.length ? row[inspectorIdx] : row[3])?.trim() || '';
+    const principalVal = (principalIdx < row.length ? row[principalIdx] : row[5])?.trim() || '';
+    const lName = (lastNameIdx < row.length ? row[lastNameIdx] : row[0])?.trim() || '';
+    const fName = (firstNameIdx < row.length ? row[firstNameIdx] : row[1])?.trim() || '';
+    const teacherName = `${fName} ${lName}`.trim();
+
+    const key = `${nameVal.toLowerCase()}__${cityVal.toLowerCase()}`;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        name: nameVal,
+        city: cityVal,
+        inspector: inspectorVal,
+        principal: (principalVal && principalVal !== '-') ? principalVal : '',
+        teachers: new Set<string>(),
+      });
+    }
+
+    const g = groups.get(key)!;
+    if (!g.inspector && inspectorVal) g.inspector = inspectorVal;
+    if (!g.principal && principalVal && principalVal !== '-') g.principal = principalVal;
+    if (teacherName && teacherName !== '-') g.teachers.add(teacherName);
+  }
+
+  const kindergartens: Institution[] = [];
+  let counter = 1;
+
+  for (const g of groups.values()) {
+    const teacherList = Array.from(g.teachers);
+    const primaryPrincipal = g.principal || (teacherList.length > 0 ? teacherList[0] : '');
+    const districtVal = getDistrictByCity(g.city);
+
+    let categoryCode = 'kindergarten';
+    if (g.name.includes('בנים')) {
+      categoryCode = 'kindergarten_boys';
+    } else if (g.name.includes('בנות')) {
+      categoryCode = 'kindergarten_girls';
+    } else if (g.name.includes('מעורב')) {
+      categoryCode = 'kindergarten_mixed';
+    }
+
+    const isMixedVal = g.name.includes('מעורב');
+    const slug = `${g.city}-${g.name}`.replace(/[\s\-_"'/\\״״׳()״]+/g, '-').replace(/^-+|-+$/g, '');
+    const id = `gan-${counter++}-${slug}`;
+
+    const aboutText = `גן ילדים רשמי בחינוך הממלכתי-חרדי ברשות ${g.city}, בפיקוח ${g.inspector || 'המחוז החרדי במשרד החינוך'}.${teacherList.length > 0 ? ` צוות הוראה וגננות: ${teacherList.join(', ')}.` : ''}`;
+
+    kindergartens.push({
+      id,
+      name: g.name,
+      category: categoryCode,
+      categoryName: 'גני ילדים',
+      city: g.city,
+      district: districtVal,
+      symbol: '',
+      specialTrait: 'סטנדרטי',
+      specialTraitHe: '',
+      isMixed: isMixedVal,
+      phone: '',
+      email: '',
+      address: g.city,
+      principal: primaryPrincipal,
+      inspector: g.inspector,
+      specialEd: 'בפיקוח משרד החינוך',
+      continuity: 'רצף גני ממ״ח',
+      parentsCommittee: teacherList,
+      about: aboutText,
+      website: '',
+      waze: `https://waze.com/ul?q=${encodeURIComponent(`${g.name} ${g.city}`.trim())}`,
+      maps: `https://maps.google.com/?q=${encodeURIComponent(`${g.name} ${g.city}`.trim())}`,
+      rama: '',
+      registration: '',
+      logo: DEFAULT_MAMAH_LOGO,
+      gender: categoryCode === 'kindergarten_boys' ? 'בנים' : categoryCode === 'kindergarten_girls' ? 'בנות' : 'מעורב',
+      stage: 'גני ילדים',
+    });
+  }
+
+  return kindergartens;
+}
+
+/**
+ * Fetches elementary/middle schools from Google Sheets or local cache
+ */
+export async function fetchSchoolsFromGoogleSheets(): Promise<Institution[]> {
   const sheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || DEFAULT_SHEET_ID;
 
-  // 1. Try fetching live from Google Sheets
   const endpoints = [
     `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`,
     `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=0`,
@@ -325,7 +443,6 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
 
       if (res.ok) {
         const text = await res.text();
-        // Check that response is CSV data and not an HTML login/redirect page
         if (!text.includes('<!DOCTYPE html>') && text.includes(',')) {
           const rows = parseCsv(text);
           const parsed = parseInstitutionsFromRows(rows);
@@ -339,7 +456,7 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
     }
   }
 
-  // 2. Check local cached CSV file (src/data/institutions.csv)
+  // Local cached fallback
   try {
     const localCsvPath = path.join(process.cwd(), 'src', 'data', 'institutions.csv');
     if (fs.existsSync(localCsvPath)) {
@@ -354,6 +471,76 @@ export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]
     console.warn('Could not read local institutions.csv:', err);
   }
 
-  // 3. Fallback to empty list (no invented data!)
+  return [];
+}
+
+/**
+ * Fetches kindergartens from Google Sheets or local kindergartens.csv cache
+ */
+export async function fetchKindergartensFromGoogleSheets(): Promise<Institution[]> {
+  const sheetId = process.env.NEXT_PUBLIC_KINDERGARTENS_SHEET_ID || KINDERGARTENS_SHEET_ID;
+  const gid = process.env.NEXT_PUBLIC_KINDERGARTENS_GID || KINDERGARTENS_GID;
+
+  const endpoints = [
+    `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`,
+    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=${gid}`,
+  ];
+
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: 60 },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; MamahPortal/1.0)',
+        },
+      });
+
+      if (res.ok) {
+        const text = await res.text();
+        if (!text.includes('<!DOCTYPE html>') && text.includes(',')) {
+          const rows = parseCsv(text);
+          const parsed = parseKindergartensFromRows(rows);
+          if (parsed.length > 0) {
+            return parsed;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn(`Attempt to fetch kindergartens from ${url} failed:`, err);
+    }
+  }
+
+  // Local cached fallback
+  try {
+    const localCsvPath = path.join(process.cwd(), 'src', 'data', 'kindergartens.csv');
+    if (fs.existsSync(localCsvPath)) {
+      const localText = fs.readFileSync(localCsvPath, 'utf-8');
+      const rows = parseCsv(localText);
+      const parsed = parseKindergartensFromRows(rows);
+      if (parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read local kindergartens.csv:', err);
+  }
+
+  return [];
+}
+
+/**
+ * Main aggregator: returns all institutions (both schools and kindergartens)
+ */
+export async function fetchInstitutionsFromGoogleSheets(): Promise<Institution[]> {
+  const [schools, kindergartens] = await Promise.all([
+    fetchSchoolsFromGoogleSheets(),
+    fetchKindergartensFromGoogleSheets(),
+  ]);
+
+  const combined = [...schools, ...kindergartens];
+  if (combined.length > 0) {
+    return combined;
+  }
+
   return institutionsList;
 }
