@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
-import { fetchInstitutionsFromGoogleSheets } from '@/lib/sheets';
-import { Building2, MapPin, ArrowLeft, School, Baby, Award, Sparkles } from 'lucide-react';
+import { DirectoryView } from '@/components/DirectoryView';
+import { Building2, School, Baby, Award, Sparkles } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,13 +34,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   };
 
   const IconComp = config.icon;
-  const allInstitutions = await fetchInstitutionsFromGoogleSheets();
-  const filtered = allInstitutions.filter(
-    inst =>
-      inst.category === config.categoryKey ||
-      (config.categoryKey === 'kindergarten' && (inst.category.includes('kindergarten') || inst.stage === 'גני ילדים')) ||
-      (config.categoryKey.includes('kindergarten') && inst.isMixed)
-  );
 
   return (
     <SiteShell>
@@ -69,68 +62,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         </div>
       </section>
 
-      {/* Institutions Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-          <span className="text-sm text-slate-500 font-bold">נמצאו {filtered.length} מוסדות בקטגוריה</span>
-          <Link href="/institutions" className="text-xs font-bold text-brand-navy hover:underline">
-            חזרה לכל המוסדות באינדקס ←
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((inst, i) => (
-            <div 
-              key={i}
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-1 bg-brand-navy/10 text-brand-navy text-xs font-black rounded-full">
-                    {inst.city}
-                  </span>
-                  {inst.symbol && (
-                    <span className="text-[11px] text-slate-400 font-mono" dir="ltr">
-                      סמל {inst.symbol}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-navy transition-colors">
-                  {inst.name}
-                </h3>
-
-                {inst.address && (
-                  <p className="text-xs text-slate-500 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>{inst.address}</span>
-                  </p>
-                )}
-
-                {inst.principal && (
-                  <p className="text-xs text-slate-600 font-medium">
-                    הנהלה: <strong className="text-slate-900">{inst.principal}</strong>
-                  </p>
-                )}
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                <Link
-                  href={`/institutions/${inst.symbol || encodeURIComponent(inst.name)}`}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-brand-navy hover:underline group-hover:translate-x-1 transition-transform"
-                >
-                  <span>לכרטיס המוסד המלא</span>
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                </Link>
-                {inst.phone && (
-                  <a href={`tel:${inst.phone}`} className="text-xs text-slate-500 hover:text-slate-800" dir="ltr">
-                    {inst.phone}
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Directory Content with Filter & Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <DirectoryView initialCategory={config.categoryKey} hideHeader={true} />
       </div>
     </SiteShell>
   );

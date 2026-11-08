@@ -89,7 +89,6 @@ export function parseCsv(text: string): string[][] {
         i++; // Skip \n in CRLF
       }
       currentRow.push(currentCell.trim());
-      // Only push non-empty rows
       if (currentRow.some(c => c.length > 0)) {
         rows.push(currentRow);
       }
@@ -207,7 +206,7 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
   const emailIdx = findCol('דואל', 'אימייל', 'מייל') !== -1 ? findCol('דואל', 'אימייל', 'מייל') : 12;
   const specialTraitIdx = findCol('מאפיין מיוחד', 'מאפיין', 'ייחודיות') !== -1 ? findCol('מאפיין מיוחד', 'מאפיין', 'ייחודיות') : 13;
   const aboutIdx = findCol('אודות המוסד', 'אודות', 'תיאור') !== -1 ? findCol('אודות המוסד', 'אודות', 'תיאור') : 15;
-  const parentsCommitteeIdx = findCol('נציגות ועד הורים', 'ועד הורים', 'הורים') !== -1 ? findCol('נציגות ועד הורים', 'ועד הורים', 'הורים') : 16;
+  const parentsCommitteeIdx = findCol('נציגות ועד הורים', 'ועד הורים', 'הורים');
   const websiteIdx = findCol('קישור לאתר', 'לדף המוסד המלא', 'אתר') !== -1 ? findCol('קישור לאתר', 'לדף המוסד המלא', 'אתר') : 17;
   const wazeIdx = findCol('ניווט בwaze', 'waze', 'וייז', 'וויז') !== -1 ? findCol('ניווט בwaze', 'waze', 'וייז', 'וויז') : 18;
   const mapsIdx = findCol('google maps', 'maps', 'מפות') !== -1 ? findCol('google maps', 'maps', 'מפות') : 19;
@@ -233,7 +232,7 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
     const emailVal = (emailIdx < row.length ? row[emailIdx] : row[12])?.trim() || '';
     const specialTraitVal = (specialTraitIdx < row.length ? row[specialTraitIdx] : row[13])?.trim() || '';
     const aboutVal = (aboutIdx < row.length ? row[aboutIdx] : row[15])?.trim() || '';
-    const parentsRaw = (parentsCommitteeIdx < row.length ? row[parentsCommitteeIdx] : row[16])?.trim() || '';
+    const parentsRaw = (parentsCommitteeIdx !== -1 && parentsCommitteeIdx < row.length ? row[parentsCommitteeIdx] : '')?.trim() || '';
     const parentsVal = parentsRaw ? parentsRaw.split(/[/,;\n]/).map(s => s.trim()).filter(Boolean) : [];
     const websiteVal = (websiteIdx < row.length ? row[websiteIdx] : row[17])?.trim() || '';
     let wazeVal = (wazeIdx < row.length ? row[wazeIdx] : row[18])?.trim() || '';
@@ -298,7 +297,7 @@ export function parseInstitutionsFromRows(rows: string[][]): Institution[] {
 
 /**
  * Parses raw 2D array of CSV rows into typed Institution objects for Kindergartens (גנים תשפז Sheet)
- * Aggregates multiple staff records for the same kindergarten into a rich entity with teachers listed.
+ * Accurately extracts symbol, principal, inspector, city, and ONLY populates parentsCommittee if explicitly present in the data.
  */
 export function parseKindergartensFromRows(rows: string[][]): Institution[] {
   if (rows.length < 2) return [];
@@ -317,19 +316,22 @@ export function parseKindergartensFromRows(rows: string[][]): Institution[] {
     return -1;
   };
 
-  const lastNameIdx = findCol('האם מורה אם', 'שם משפחה', 'משפחה') !== -1 ? findCol('האם מורה אם', 'שם משפחה', 'משפחה') : 0;
-  const firstNameIdx = findCol('שם פרטי עווה', 'שם פרטי', 'פרטי') !== -1 ? findCol('שם פרטי עווה', 'שם פרטי', 'פרטי') : 1;
-  const cityIdx = findCol('רשות חינוך', 'רשות', 'עיר', 'ישוב') !== -1 ? findCol('רשות חינוך', 'רשות', 'עיר', 'ישוב') : 2;
-  const inspectorIdx = findCol('שם מפקח', 'מפקח', 'מפקחת') !== -1 ? findCol('שם מפקח', 'מפקח', 'מפקחת') : 3;
-  const nameIdx = findCol('שם מוסד', 'שם המוסד', 'גן', 'שם גן') !== -1 ? findCol('שם מוסד', 'שם המוסד', 'גן', 'שם גן') : 4;
-  const principalIdx = findCol('שם מנהל מוסד', 'מנהל מוסד', 'מנהל', 'מנהלת') !== -1 ? findCol('שם מנהל מוסד', 'מנהל מוסד', 'מנהל', 'מנהלת') : 5;
+  const lastNameIdx = findCol('האם מורה אם', 'שם משפחה', 'משפחה');
+  const firstNameIdx = findCol('שם פרטי עווה', 'שם פרטי', 'פרטי');
+  const cityIdx = findCol('רשות/ישוב', 'רשותישוב', 'רשות חינוך', 'רשות', 'עיר', 'ישוב');
+  const inspectorIdx = findCol('שם מפקח', 'מפקח', 'מפקחת');
+  const nameIdx = findCol('שם מוסד', 'שם המוסד', 'גן', 'שם גן');
+  const principalIdx = findCol('שם מנהל מוסד', 'מנהל מוסד', 'מנהלת', 'מנהל');
+  const symbolIdx = findCol('סמל מוסד', 'סמל גן', 'סמל', 'קוד מוסד');
+  const parentsCommitteeIdx = findCol('נציגות ועד הורים', 'ועד הורים');
 
   type GanGroup = {
     name: string;
     city: string;
+    symbol: string;
     inspector: string;
     principal: string;
-    teachers: Set<string>;
+    parentsCommittee: string[];
   };
 
   const groups = new Map<string, GanGroup>();
@@ -337,39 +339,51 @@ export function parseKindergartensFromRows(rows: string[][]): Institution[] {
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     if (!row || row.length === 0) continue;
-    const nameVal = (nameIdx < row.length ? row[nameIdx] : row[4])?.trim();
-    if (!nameVal || nameVal === 'שם מוסד' || nameVal === 'שם המוסד') continue;
 
-    const cityVal = (cityIdx < row.length ? row[cityIdx] : row[2])?.trim() || '';
-    const inspectorVal = (inspectorIdx < row.length ? row[inspectorIdx] : row[3])?.trim() || '';
-    const principalVal = (principalIdx < row.length ? row[principalIdx] : row[5])?.trim() || '';
-    const lName = (lastNameIdx < row.length ? row[lastNameIdx] : row[0])?.trim() || '';
-    const fName = (firstNameIdx < row.length ? row[firstNameIdx] : row[1])?.trim() || '';
-    const teacherName = `${fName} ${lName}`.trim();
+    // Resolve name
+    const rawName = (nameIdx !== -1 && nameIdx < row.length ? row[nameIdx] : (row.length > 5 ? row[5] : row[4]))?.trim();
+    if (!rawName || rawName === 'שם מוסד' || rawName === 'שם המוסד') continue;
 
-    const key = `${nameVal.toLowerCase()}__${cityVal.toLowerCase()}`;
+    // Resolve city
+    const rawCity = (cityIdx !== -1 && cityIdx < row.length ? row[cityIdx] : (row.length > 4 ? row[4] : row[2]))?.trim() || '';
+
+    // Resolve inspector
+    const inspectorVal = (inspectorIdx !== -1 && inspectorIdx < row.length ? row[inspectorIdx] : (row.length > 2 ? row[2] : row[3]))?.trim() || '';
+
+    // Resolve principal
+    const rawPrincipal = (principalIdx !== -1 && principalIdx < row.length ? row[principalIdx] : (row.length > 3 ? row[3] : row[5]))?.trim() || '';
+    const principalVal = (rawPrincipal && rawPrincipal !== '-') ? rawPrincipal : '';
+
+    // Resolve symbol
+    const symbolVal = (symbolIdx !== -1 && symbolIdx < row.length ? row[symbolIdx] : (row.length > 6 ? row[6] : ''))?.trim() || '';
+
+    // Resolve parents committee ONLY if appropriate column exists and has content
+    const rawParents = (parentsCommitteeIdx !== -1 && parentsCommitteeIdx < row.length ? row[parentsCommitteeIdx] : '')?.trim() || '';
+    const parentsList = rawParents ? rawParents.split(/[/,;\n]/).map(s => s.trim()).filter(Boolean) : [];
+
+    const key = `${rawName.toLowerCase()}__${rawCity.toLowerCase()}`;
     if (!groups.has(key)) {
       groups.set(key, {
-        name: nameVal,
-        city: cityVal,
+        name: rawName,
+        city: rawCity,
+        symbol: symbolVal,
         inspector: inspectorVal,
-        principal: (principalVal && principalVal !== '-') ? principalVal : '',
-        teachers: new Set<string>(),
+        principal: principalVal,
+        parentsCommittee: parentsList,
       });
     }
 
     const g = groups.get(key)!;
+    if (!g.symbol && symbolVal) g.symbol = symbolVal;
     if (!g.inspector && inspectorVal) g.inspector = inspectorVal;
-    if (!g.principal && principalVal && principalVal !== '-') g.principal = principalVal;
-    if (teacherName && teacherName !== '-') g.teachers.add(teacherName);
+    if (!g.principal && principalVal) g.principal = principalVal;
+    if (g.parentsCommittee.length === 0 && parentsList.length > 0) g.parentsCommittee = parentsList;
   }
 
   const kindergartens: Institution[] = [];
   let counter = 1;
 
   for (const g of groups.values()) {
-    const teacherList = Array.from(g.teachers);
-    const primaryPrincipal = g.principal || (teacherList.length > 0 ? teacherList[0] : '');
     const districtVal = getDistrictByCity(g.city);
 
     let categoryCode = 'kindergarten';
@@ -383,9 +397,9 @@ export function parseKindergartensFromRows(rows: string[][]): Institution[] {
 
     const isMixedVal = g.name.includes('מעורב');
     const slug = `${g.city}-${g.name}`.replace(/[\s\-_"'/\\״״׳()״]+/g, '-').replace(/^-+|-+$/g, '');
-    const id = `gan-${counter++}-${slug}`;
+    const id = g.symbol || `gan-${counter++}-${slug}`;
 
-    const aboutText = `גן ילדים רשמי בחינוך הממלכתי-חרדי ברשות ${g.city}, בפיקוח ${g.inspector || 'המחוז החרדי במשרד החינוך'}.${teacherList.length > 0 ? ` צוות הוראה וגננות: ${teacherList.join(', ')}.` : ''}`;
+    const aboutText = `גן ילדים רשמי בחינוך הממלכתי-חרדי ברשות ${g.city}, בפיקוח ${g.inspector || 'המחוז החרדי במשרד החינוך'}.`;
 
     kindergartens.push({
       id,
@@ -394,18 +408,18 @@ export function parseKindergartensFromRows(rows: string[][]): Institution[] {
       categoryName: 'גני ילדים',
       city: g.city,
       district: districtVal,
-      symbol: '',
+      symbol: g.symbol || '',
       specialTrait: 'סטנדרטי',
       specialTraitHe: '',
       isMixed: isMixedVal,
       phone: '',
       email: '',
       address: g.city,
-      principal: primaryPrincipal,
-      inspector: g.inspector,
+      principal: g.principal || '',
+      inspector: g.inspector || '',
       specialEd: 'בפיקוח משרד החינוך',
       continuity: 'רצף גני ממ״ח',
-      parentsCommittee: teacherList,
+      parentsCommittee: g.parentsCommittee, // Guaranteed to only come from parents committee column, never staff!
       about: aboutText,
       website: '',
       waze: `https://waze.com/ul?q=${encodeURIComponent(`${g.name} ${g.city}`.trim())}`,

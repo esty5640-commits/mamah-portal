@@ -7,9 +7,14 @@ import { Search, MapPin, Building2, ExternalLink, X, ArrowLeft } from 'lucide-re
 import { institutionsList, Institution } from '@/data/institutions';
 import { useI18n } from '@/i18n/I18nContext';
 
-export function DirectoryView() {
+interface DirectoryViewProps {
+  initialCategory?: string;
+  hideHeader?: boolean;
+}
+
+export function DirectoryView({ initialCategory = 'all', hideHeader = false }: DirectoryViewProps = {}) {
   const { t, dir, locale } = useI18n();
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [selectedTrait, setSelectedTrait] = useState('all');
   const [continuityOnly, setContinuityOnly] = useState(false);
@@ -18,6 +23,12 @@ export function DirectoryView() {
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null);
   const [dataList, setDataList] = useState<Institution[]>(institutionsList);
   const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, [initialCategory]);
 
   React.useEffect(() => {
     fetch('/api/institutions')
@@ -57,6 +68,10 @@ export function DirectoryView() {
           if (inst.category !== 'boys_elementary') return false;
         } else if (activeCategory === 'girls_elementary') {
           if (inst.category !== 'girls_elementary') return false;
+        } else if (activeCategory === 'kindergarten_boys') {
+          if (inst.category !== 'kindergarten_boys') return false;
+        } else if (activeCategory === 'kindergarten_girls') {
+          if (inst.category !== 'kindergarten_girls') return false;
         } else if (activeCategory === 'middle_school') {
           if (inst.category !== 'middle_school') return false;
         } else if (activeCategory === 'special_ed_kindergarten') {
@@ -90,7 +105,7 @@ export function DirectoryView() {
         const q = searchQuery.toLowerCase();
         const matchName = inst.name.toLowerCase().includes(q);
         const matchCity = inst.city.toLowerCase().includes(q);
-        const matchSymbol = inst.symbol ? inst.symbol.includes(q) : false;
+        const matchSymbol = inst.symbol ? inst.symbol.toLowerCase().includes(q) : false;
         const matchTrait = inst.specialTraitHe ? inst.specialTraitHe.toLowerCase().includes(q) : false;
         const matchPrincipal = inst.principal ? inst.principal.toLowerCase().includes(q) : false;
         const matchInspector = inst.inspector ? inst.inspector.toLowerCase().includes(q) : false;
@@ -117,30 +132,50 @@ export function DirectoryView() {
   return (
     <section id="directory" className="space-y-8">
       {/* Header with scroll reveal */}
-      <motion.div
-        initial={{ opacity: 0, x: dir === 'rtl' ? 20 : -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '-50px' }}
-        transition={{ duration: 0.6 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6"
-      >
-        <div>
-          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">02 // {t('nav.institutions')}</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">{t('common.siteTitle')} – {t('nav.institutions')}</h2>
+      {!hideHeader ? (
+        <motion.div
+          initial={{ opacity: 0, x: dir === 'rtl' ? 20 : -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6"
+        >
+          <div>
+            <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">02 // {t('nav.institutions')}</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">{t('common.siteTitle')} – {t('nav.institutions')}</h2>
+          </div>
+          <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
+            <span>{locale === 'he' ? 'מוצגים' : locale === 'fr' ? 'Affichés' : 'Showing'}</span>
+            <motion.span
+              key={filtered.length}
+              initial={{ scale: 1.3, color: '#110771' }}
+              animate={{ scale: 1 }}
+              className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg inline-block"
+            >
+              {filtered.length}
+            </motion.span>
+            <span>{locale === 'he' ? 'מוסדות חינוך' : locale === 'fr' ? 'écoles' : 'schools'}</span>
+          </div>
+        </motion.div>
+      ) : (
+        <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
+          <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
+            <span>{locale === 'he' ? 'מוצגים' : locale === 'fr' ? 'Affichés' : 'Showing'}</span>
+            <motion.span
+              key={filtered.length}
+              initial={{ scale: 1.3, color: '#110771' }}
+              animate={{ scale: 1 }}
+              className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg inline-block"
+            >
+              {filtered.length}
+            </motion.span>
+            <span>{locale === 'he' ? 'מוסדות חינוך בקטגוריה זו' : 'institutions in this category'}</span>
+          </div>
+          <Link href="/institutions" className="text-xs sm:text-sm font-bold text-brand-navy hover:underline">
+            {locale === 'he' ? '← חזרה לכל המוסדות באינדקס' : '← Back to all institutions'}
+          </Link>
         </div>
-        <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
-          <span>{locale === 'he' ? 'מוצגים' : locale === 'fr' ? 'Affichés' : 'Showing'}</span>
-          <motion.span
-            key={filtered.length}
-            initial={{ scale: 1.3, color: '#110771' }}
-            animate={{ scale: 1 }}
-            className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg inline-block"
-          >
-            {filtered.length}
-          </motion.span>
-          <span>{locale === 'he' ? 'מוסדות חינוך' : locale === 'fr' ? 'écoles' : 'schools'}</span>
-        </div>
-      </motion.div>
+      )}
 
       {/* Filter Pills with click & hover animations */}
       <div className="space-y-4">
@@ -151,7 +186,7 @@ export function DirectoryView() {
               onClick={() => setActiveCategory(cat.id)}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.94 }}
-              className={`px-2 py-2 rounded-xl border text-sm sm:text-base transition-colors cursor-pointer ${activeCategory === cat.id
+              className={`px-3 py-2 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${activeCategory === cat.id
                 ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
                 : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
                 }`}
@@ -264,7 +299,7 @@ export function DirectoryView() {
           <p className="text-sm sm:text-base text-slate-500 max-w-md mx-auto">
             {dataList.length === 0
               ? 'מתבצע ניסיון טעינה ישיר מטבלת Google Sheets. אנא ודאו שהגיליון מוגדר בהרשאות כ-"כל מי שקיבל את הקישור יכול לצפות".'
-              : 'נסו להסיר חלק מהמסננים או לחפש עיר או מוסד אחר.'}
+              : 'נסו להסיר חלק מהמסננים או לחפש עיר, סמל או מוסד אחר.'}
           </p>
         </div>
       )}
@@ -285,7 +320,7 @@ export function DirectoryView() {
                 transition={{ duration: 0.25 }}
                 key={inst.id}
                 onClick={() => setSelectedInst(inst)}
-                className="group relative bg-white border border-slate-100 rounded-md p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
+                className="group relative bg-white border border-slate-100 rounded-2xl p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
                 <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
@@ -307,7 +342,7 @@ export function DirectoryView() {
                     <div className="flex-1 min-w-0 space-y-1.5">
                       <div className="flex items-center justify-between gap-1.5 text-xs">
                         {inst.symbol ? (
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-600 font-mono text-[11px] group-hover:bg-brand-navy/5 group-hover:border-brand-navy/10 group-hover:text-brand-navy transition-colors">
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-brand-navy font-bold font-mono text-[11px] group-hover:bg-brand-navy/10 group-hover:border-brand-navy/20 transition-colors">
                             {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
                           </span>
                         ) : <span />}
@@ -360,7 +395,7 @@ export function DirectoryView() {
 
                 <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
                   <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
-                  <span className="text-brand-navy  group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base">
+                  <span className="text-brand-navy group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base font-bold">
                     <span>{t('directory.cardFullDetails')}</span>
                     <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
                       {dir === 'rtl' ? '←' : '→'}
@@ -419,9 +454,11 @@ export function DirectoryView() {
                     {selectedInst.categoryName}
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight">{selectedInst.name}</h2>
-                  <div className="text-sm text-slate-500 font-medium mt-1">
-                    {t('directory.symbolLabel')} {selectedInst.symbol}
-                  </div>
+                  {selectedInst.symbol && (
+                    <div className="text-sm text-brand-navy font-bold font-mono mt-1">
+                      {t('directory.symbolLabel')} {selectedInst.symbol}
+                    </div>
+                  )}
                 </div>
               </div>
 
