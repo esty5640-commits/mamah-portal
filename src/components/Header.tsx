@@ -143,10 +143,10 @@ export function Header() {
               alt={t('common.siteTitle')}
               className="h-14 sm:h-16 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs"
             />
-            <div className={`hidden 2xl:flex flex-col max-w-52 ${dir === 'rtl' ? 'border-r-2 border-slate-200 pr-3.5 mr-1 text-right' : 'border-l-2 border-slate-200 pl-3.5 ml-1 text-left'}`}>
+            {/*<div className={`hidden 2xl:flex flex-col max-w-52 ${dir === 'rtl' ? 'border-r-2 border-slate-200 pr-3.5 mr-1 text-right' : 'border-l-2 border-slate-200 pl-3.5 ml-1 text-left'}`}>
               <span className="text-xs font-black text-brand-navy tracking-tight">{t('common.siteSubtitle')}</span>
               <span className="text-[10px] text-slate-500 font-semibold">ע״ר 580758324</span>
-            </div>
+            </div>*/}
           </Link>
 
           {/* Desktop Navigation Tabs */}
