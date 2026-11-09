@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Heebo:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,6 +6,8 @@
 
 @layer base {
   :root {
+    --font-rubik: 'Noto Sans Hebrew', sans-serif;
+    --font-noto-sans-hebrew: 'Noto Sans Hebrew', sans-serif;
     --background: 216 25% 97%;
     --foreground: 245 45% 15%;
     --card: 0 0% 100%;
@@ -18,8 +20,20 @@
     --border: 220 16% 89%;
   }
 
+  *,
+  *::before,
+  *::after,
+  html,
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: 'Noto Sans Hebrew', sans-serif !important;
+  }
+
   body {
-    font-family: 'Rubik', 'Heebo', system-ui, -apple-system, sans-serif;
+    font-family: 'Noto Sans Hebrew', sans-serif !important;
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;

@@ -36,7 +36,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-rubik)", "Rubik", "Heebo", "system-ui", "sans-serif"],
+        sans: ["Noto Sans Hebrew", "sans-serif"],
+        serif: ["Noto Sans Hebrew", "sans-serif"],
+        mono: ["Noto Sans Hebrew", "sans-serif"],
       },
       boxShadow: {
         soft: "0 2px 15px -3px rgba(17, 7, 113, 0.06), 0 4px 6px -2px rgba(17, 7, 113, 0.03)",

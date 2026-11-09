@@ -270,17 +270,20 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
 
       {/* Loading Skeleton */}
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="animate-pulse bg-white border border-slate-100 rounded-2xl p-7 space-y-4 shadow-sm">
-              <div className="flex justify-between items-center">
-                <div className="h-6 w-20 bg-slate-200 rounded-xl" />
-                <div className="h-6 w-24 bg-slate-200 rounded-xl" />
+            <div key={i} className="animate-pulse bg-white rounded-none p-5 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-24 bg-slate-100 rounded-none" />
+                  <div className="h-5 w-3/4 bg-slate-100 rounded-none" />
+                  <div className="h-3.5 w-1/2 bg-slate-100 rounded-none" />
+                </div>
+                <div className="w-12 h-12 bg-slate-100 rounded-none shrink-0" />
               </div>
-              <div className="h-7 w-3/4 bg-slate-200 rounded" />
-              <div className="space-y-2 pt-2">
-                <div className="h-4 w-1/2 bg-slate-100 rounded" />
-                <div className="h-4 w-2/3 bg-slate-100 rounded" />
+              <div className="pt-2 flex justify-between items-center">
+                <div className="h-3.5 w-32 bg-slate-100 rounded-none" />
+                <div className="h-3.5 w-16 bg-slate-100 rounded-none" />
               </div>
             </div>
           ))}
@@ -289,14 +292,14 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
 
       {/* Empty State */}
       {!isLoading && filtered.length === 0 && (
-        <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl p-8 space-y-4 shadow-sm">
-          <div className="w-16 h-16 mx-auto rounded-full bg-brand-navy/5 flex items-center justify-center text-brand-navy">
-            <Building2 className="w-8 h-8" />
+        <div className="text-center py-14 bg-white rounded-none p-8 space-y-3">
+          <div className="w-14 h-14 mx-auto rounded-none bg-brand-navy/5 flex items-center justify-center text-brand-navy">
+            <Building2 className="w-7 h-7" />
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-slate-800">
+          <h3 className="text-lg sm:text-xl font-black text-slate-800">
             {dataList.length === 0 ? 'לא נטענו מוסדות עדיין' : 'לא נמצאו מוסדות התואמים את הסינון'}
           </h3>
-          <p className="text-sm sm:text-base text-slate-500 max-w-md mx-auto">
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
             {dataList.length === 0
               ? 'מתבצע ניסיון טעינה ישיר מטבלת Google Sheets. אנא ודאו שהגיליון מוגדר בהרשאות כ-"כל מי שקיבל את הקישור יכול לצפות".'
               : 'נסו להסיר חלק מהמסננים או לחפש עיר, סמל או מוסד אחר.'}
@@ -304,100 +307,103 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
         </div>
       )}
 
-      {/* Cards Grid with Framer Motion layout animations */}
+      {/* Cards Grid - Sharp corners (rounded-none), clean, compact, no borders or shadows */}
       {!isLoading && filtered.length > 0 && (
         <motion.div
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           <AnimatePresence>
             {filtered.map(inst => (
               <motion.div
                 layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.25 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
                 key={inst.id}
                 onClick={() => setSelectedInst(inst)}
-                className="group relative bg-white border border-slate-100 rounded-2xl p-7 shadow-sm hover:shadow-xl ring-1 ring-transparent hover:ring-brand-navy/15 transition-all duration-500 cursor-pointer flex flex-col justify-between overflow-hidden"
+                className="group relative bg-white hover:bg-slate-50/90 rounded-none p-5 transition-colors duration-200 cursor-pointer flex flex-col justify-between gap-3.5"
               >
-                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-br-[4rem]" />
-                <div className="space-y-4 relative z-10 group-hover:-translate-y-1 transition-transform duration-500">
-                  <div className="flex items-start gap-3.5 sm:gap-4">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl bg-white border border-slate-100 shadow-xs p-1.5 flex items-center justify-center overflow-hidden group-hover:border-brand-navy/20 group-hover:shadow-md transition-all">
-                      <img
-                        src={inst.logo || '/logos/mamah-default.jpeg'}
-                        alt={inst.name}
-                        className="w-full h-full object-contain"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          if (target && !target.src.includes('mamah-default')) {
-                            target.src = '/logos/mamah-default.jpeg';
-                          }
-                        }}
-                      />
+                {/* Top Section: Content + Sharp Logo */}
+                <div className="flex items-start justify-between gap-3.5">
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    {/* Sharp Micro-Tags Row */}
+                    <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
+                      {inst.categoryName && (
+                        <span className="px-2 py-0.5 rounded-none bg-brand-navy/[0.06] text-brand-navy font-bold">
+                          {inst.categoryName}
+                        </span>
+                      )}
+                      {inst.specialTraitHe && inst.specialTraitHe !== 'none' && (
+                        <span className="px-2 py-0.5 rounded-none bg-brand-cyan/10 text-brand-cyan font-bold">
+                          {inst.specialTraitHe}
+                        </span>
+                      )}
+                      {inst.isMixed && (
+                        <span className="px-2 py-0.5 rounded-none bg-brand-gold/15 text-amber-800 font-bold">
+                          {locale === 'he' ? 'מעורב' : 'Mixed'}
+                        </span>
+                      )}
+                      {inst.symbol && (
+                        <span className="px-1.5 py-0.5 rounded-none bg-slate-100 text-slate-500 font-semibold">
+                          {locale === 'he' ? 'סמל' : 'Code'} {inst.symbol}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <div className="flex items-center justify-between gap-1.5 text-xs">
-                        {inst.symbol ? (
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-brand-navy font-bold font-mono text-[11px] group-hover:bg-brand-navy/10 group-hover:border-brand-navy/20 transition-colors">
-                            {locale === 'he' ? 'סמל:' : 'Code:'} {inst.symbol}
-                          </span>
-                        ) : <span />}
-                        <div className="flex items-center gap-1">
-                          {inst.isMixed && (
-                            <span className="border border-brand-gold/30 text-brand-gold bg-brand-gold/5 px-2 py-0.5 rounded-md text-[11px] font-black shadow-xs whitespace-nowrap">
-                              {locale === 'he' ? 'מעורב' : 'Mixed'}
-                            </span>
-                          )}
-                          {inst.specialTraitHe && inst.specialTraitHe !== 'none' && (
-                            <span className="border border-brand-cyan/30 text-brand-cyan bg-brand-cyan/5 px-2 py-0.5 rounded-md text-[11px] font-bold shadow-xs truncate max-w-[100px]" title={inst.specialTraitHe}>
-                              {inst.specialTraitHe}
-                            </span>
-                          )}
-                        </div>
+
+                    {/* Institution Title */}
+                    <h3 className="font-extrabold text-base sm:text-[17px] leading-snug text-slate-900 group-hover:text-brand-navy transition-colors">
+                      {inst.name}
+                    </h3>
+
+                    {/* Location Line */}
+                    {inst.city && (
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-brand-cyan shrink-0" />
+                        <span className="truncate">
+                          {inst.city}{inst.address ? ` · ${inst.address}` : ''}
+                        </span>
                       </div>
-                      <h3 className="font-bold text-base sm:text-lg leading-tight text-slate-900 tracking-tight group-hover:text-brand-navy transition-colors line-clamp-2">
-                        {inst.name}
-                      </h3>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="space-y-2.5 text-sm sm:text-base text-slate-600 font-medium">
-                    {inst.city && (
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-cyan/10 transition-colors">
-                          <MapPin className="w-4 h-4 text-slate-400 group-hover:text-brand-cyan transition-colors" />
-                        </div>
-                        <span>{inst.city} {inst.address ? `(${inst.address})` : ''}</span>
-                      </div>
-                    )}
-                    {inst.categoryName && (
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-purple/10 transition-colors">
-                          <Building2 className="w-4 h-4 text-slate-400 group-hover:text-brand-purple transition-colors" />
-                        </div>
-                        <span>{inst.categoryName}</span>
-                      </div>
-                    )}
-                    {inst.principal && (
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
-                          <span className="text-sm">👤</span>
-                        </div>
-                        <span>{locale === 'he' ? 'הנהלה:' : 'Principal:'} <span className="font-bold text-slate-800">{inst.principal}</span></span>
-                      </div>
-                    )}
+                  {/* Sharp Logo Box */}
+                  <div className="w-12 h-12 shrink-0 rounded-none bg-slate-50/80 p-1.5 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={inst.logo || '/logos/mamah-default.jpeg'}
+                      alt={inst.name}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (target && !target.src.includes('mamah-default')) {
+                          target.src = '/logos/mamah-default.jpeg';
+                        }
+                      }}
+                    />
                   </div>
                 </div>
 
-                <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base relative z-10 group-hover:-translate-y-1 transition-transform duration-500 delay-75">
-                  <span className="text-slate-500 font-medium group-hover:text-slate-700 transition-colors">{inst.phone}</span>
-                  <span className="text-brand-navy group-hover:text-brand-gold inline-flex items-center gap-1.5 transition-colors text-sm sm:text-base font-bold">
+                {/* Bottom Section: Principal, Phone & Action */}
+                <div className="flex items-end justify-between gap-3 pt-1 text-xs">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-slate-500 min-w-0">
+                    {inst.principal && (
+                      <span className="truncate">
+                        {locale === 'he' ? 'הנהלה:' : 'Principal:'}{' '}
+                        <strong className="font-bold text-slate-800">{inst.principal}</strong>
+                      </span>
+                    )}
+                    {inst.phone && (
+                      <span className="text-slate-400 font-medium" dir="ltr">
+                        {inst.phone}
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="text-brand-navy group-hover:text-brand-cyan font-bold inline-flex items-center gap-1 shrink-0 transition-colors">
                     <span>{t('directory.cardFullDetails')}</span>
-                    <span className={`inline-block transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`}>
+                    <span className={`inline-block transition-transform duration-200 ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}>
                       {dir === 'rtl' ? '←' : '→'}
                     </span>
                   </span>
@@ -423,20 +429,20 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className={`bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto relative shadow-2xl ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+              className={`bg-white rounded-none max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto relative ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
               onClick={e => e.stopPropagation()}
             >
               <motion.button
                 whileHover={{ rotate: 90, scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setSelectedInst(null)}
-                className={`absolute top-4 ${dir === 'rtl' ? 'left-4' : 'right-4'} p-2 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-full hover:bg-slate-100`}
+                className={`absolute top-4 ${dir === 'rtl' ? 'left-4' : 'right-4'} p-2 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-none hover:bg-slate-100`}
               >
                 <X className="w-6 h-6" />
               </motion.button>
 
               <div className="flex items-center gap-4 sm:gap-6 pt-2 pb-1">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl bg-white border border-slate-200 shadow-md p-2 flex items-center justify-center overflow-hidden">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-none bg-slate-50 p-2 flex items-center justify-center overflow-hidden">
                   <img
                     src={selectedInst.logo || '/logos/mamah-default.jpeg'}
                     alt={selectedInst.name}
@@ -450,19 +456,19 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="inline-block px-3.5 py-1 rounded-full bg-brand-navy/10 border border-brand-navy/20 text-brand-navy text-xs sm:text-sm font-bold mb-1.5">
+                  <span className="inline-block px-3.5 py-1 rounded-none bg-brand-navy/10 text-brand-navy text-xs sm:text-sm font-bold mb-1.5">
                     {selectedInst.categoryName}
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight">{selectedInst.name}</h2>
                   {selectedInst.symbol && (
-                    <div className="text-sm text-brand-navy font-bold font-mono mt-1">
+                    <div className="text-sm text-brand-navy font-bold mt-1">
                       {t('directory.symbolLabel')} {selectedInst.symbol}
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-5 bg-slate-50 rounded-none text-sm sm:text-base text-slate-800">
                 <div><strong>{t('directory.cityAddress')}</strong> {selectedInst.city}{selectedInst.address ? `, ${selectedInst.address}` : ''}</div>
                 <div><strong>{t('directory.phone')}</strong> {selectedInst.phone ? <a href={`tel:${selectedInst.phone}`} className="text-brand-navy hover:underline">{selectedInst.phone}</a> : '-'}</div>
                 <div><strong>{t('directory.email')}</strong> {selectedInst.email ? <a href={`mailto:${selectedInst.email}`} className="text-brand-navy hover:underline">{selectedInst.email}</a> : '-'}</div>
@@ -485,64 +491,64 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
                   <h4 className="font-bold text-base sm:text-lg text-slate-900">{t('directory.parentsCommittee')}</h4>
                   <div className="flex gap-2 flex-wrap">
                     {selectedInst.parentsCommittee.map((m, idx) => (
-                      <span key={idx} className="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-800 rounded-lg text-sm sm:text-base font-medium">{m}</span>
+                      <span key={idx} className="px-3 py-1.5 bg-slate-100 text-slate-800 rounded-none text-sm sm:text-base font-medium">{m}</span>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-slate-100 flex gap-3 flex-wrap items-center">
+              <div className="pt-2 flex gap-3 flex-wrap items-center">
                 <Link
                   href={`/institutions/${selectedInst.symbol || selectedInst.id}`}
-                  className="px-5 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                  className="px-5 py-2.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-none text-sm sm:text-base font-bold transition-all flex items-center gap-2"
                 >
                   <span>{t('directory.goToFullPage')}</span>
                   <span>{dir === 'rtl' ? '←' : '→'}</span>
                 </Link>
                 {selectedInst.website && (
                   <motion.a
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     href={selectedInst.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
+                    className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-brand-navy rounded-none text-sm sm:text-base font-bold transition-all"
                   >
                     🌐 {locale === 'he' ? 'אתר המוסד' : 'Website'}
                   </motion.a>
                 )}
                 {selectedInst.waze && (
                   <motion.a
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     href={selectedInst.waze}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
+                    className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-brand-navy rounded-none text-sm sm:text-base font-bold transition-all"
                   >
                     🚗 {t('directory.waze')}
                   </motion.a>
                 )}
                 {selectedInst.maps && (
                   <motion.a
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     href={selectedInst.maps}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 border border-slate-200 hover:border-brand-navy text-brand-navy rounded-xl text-sm sm:text-base font-bold shadow-2xs transition-all"
+                    className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-brand-navy rounded-none text-sm sm:text-base font-bold transition-all"
                   >
                     🗺 {t('directory.maps')}
                   </motion.a>
                 )}
                 {selectedInst.registration && (
                   <motion.a
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     href={selectedInst.registration}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-shimmer px-4 py-2.5 bg-brand-cyan hover:bg-brand-cyanDark text-white rounded-xl text-sm sm:text-base font-bold shadow-sm transition-all"
+                    className="btn-shimmer px-4 py-2.5 bg-brand-cyan hover:bg-brand-cyanDark text-white rounded-none text-sm sm:text-base font-bold transition-all"
                   >
                     📝 {t('directory.registration')}
                   </motion.a>

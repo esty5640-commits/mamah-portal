@@ -20,8 +20,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const dir = lang === 'he' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={lang} dir={dir} className="scroll-smooth" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased selection:bg-[#110771] selection:text-white">
+    <html
+      lang={lang}
+      dir={dir}
+      className="scroll-smooth"
+      style={{ fontFamily: "'Noto Sans Hebrew', sans-serif" }}
+      suppressHydrationWarning
+    >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@100..900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body
+        className="min-h-screen bg-background text-foreground antialiased selection:bg-[#110771] selection:text-white"
+        style={{ fontFamily: "'Noto Sans Hebrew', sans-serif" }}
+      >
         <I18nProvider initialLocale={lang}>
           {children}
         </I18nProvider>
