@@ -113,6 +113,70 @@ export function LandingPageHeaderEditor({
 
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-slate-700 block">
+            טקסט כפתור קריאה לפעולה בראש הדף (Hero CTA)
+          </label>
+          <input
+            type="text"
+            value={page.heroCtaText || ''}
+            onChange={(e) => onChange({ ...page, heroCtaText: e.target.value })}
+            placeholder="להרשמה מהירה וליווי אישי ←"
+            className="w-full p-3 rounded-xl border border-slate-200 text-sm font-bold focus:border-brand-navy outline-none"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 block">
+            נקודות אמון מתחת לכפתור (מופרדות בפסיק)
+          </label>
+          <input
+            type="text"
+            value={(page.heroHighlights || []).join(', ')}
+            onChange={(e) =>
+              onChange({
+                ...page,
+                heroHighlights: e.target.value
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              })
+            }
+            placeholder="ליווי אישי ללא עלות, מענה תוך 24 שעות, סודיות מלאה"
+            className="w-full p-3 rounded-xl border border-slate-200 text-sm focus:border-brand-navy outline-none"
+          />
+        </div>
+
+        <div className="sm:col-span-2 space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 block">
+            שורת מדדים והוכחה חברתית (כל מדד בשורה: מספר | תיאור)
+          </label>
+          <textarea
+            rows={3}
+            value={(page.statsBar || [])
+              .map((s) => `${s.value} | ${s.label}`)
+              .join('\n')}
+            onChange={(e) =>
+              onChange({
+                ...page,
+                statsBar: e.target.value
+                  .split('\n')
+                  .map((line) => line.trim())
+                  .filter(Boolean)
+                  .map((line) => {
+                    const [value, ...rest] = line.split('|');
+                    return {
+                      value: (value || '').trim(),
+                      label: rest.join('|').trim(),
+                    };
+                  }),
+              })
+            }
+            placeholder={'88+ | מוסדות ממ״ח רשמיים\n18,500+ | תלמידים ותלמידות'}
+            className="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 focus:border-brand-navy outline-none"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 block">
             ערכת צבעים (Theme)
           </label>
           <select

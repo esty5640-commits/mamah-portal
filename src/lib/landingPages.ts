@@ -67,6 +67,9 @@ export interface LandingPageDoc {
   title: string;
   subtitle?: string;
   badge?: string;
+  heroCtaText?: string;
+  heroHighlights?: string[];
+  statsBar?: { value: string; label: string }[];
   status: 'published' | 'draft';
   heroImage?: string;
   logoUrl?: string;
@@ -103,6 +106,14 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
     title: 'רישום והצטרפות למוסדות הממ״ח - שנת הלימודים תשפ״ז',
     subtitle: 'טופס רישום מוקדם, מיפוי ביקושים וליווי אישי להורים המעוניינים בחינוך ממלכתי-חרדי איכותי המשלב תורה ויראת שמיים עם 100% לימודי יסוד.',
     badge: 'רישום ארצי פתוח · אגודת ידידי הממ״ח',
+    heroCtaText: 'להרשמה מהירה וליווי אישי ←',
+    heroHighlights: ['ליווי אישי ללא עלות', 'מענה מהיר תוך 24 שעות', 'סודיות מלאה'],
+    statsBar: [
+      { value: '88+', label: 'מוסדות ממ״ח רשמיים' },
+      { value: '18,500+', label: 'תלמידים ותלמידות' },
+      { value: '100%', label: 'לימודי יסוד בפיקוח' },
+      { value: '60+', label: 'ועדי הורים פעילים' },
+    ],
     status: 'published',
     heroImage: '/images/landing-hero-mamah.svg',
     logoUrl: '/logo.png',
@@ -407,6 +418,9 @@ function normalizePayloadLandingPage(doc: any): LandingPageDoc {
     title: doc.title || '',
     subtitle: doc.subtitle || '',
     badge: doc.badge || '',
+    heroCtaText: doc.heroCtaText || '',
+    heroHighlights: Array.isArray(doc.heroHighlights) ? doc.heroHighlights : [],
+    statsBar: Array.isArray(doc.statsBar) ? doc.statsBar : [],
     status: doc.status === 'draft' ? 'draft' : 'published',
     heroImage: doc.heroImage || '',
     logoUrl: doc.logoUrl || '/logo.png',
@@ -479,6 +493,9 @@ export async function saveLandingPage(pageInput: Partial<LandingPageDoc> & { slu
     title: pageInput.title,
     subtitle: pageInput.subtitle ?? '',
     badge: pageInput.badge ?? '',
+    heroCtaText: pageInput.heroCtaText ?? '',
+    heroHighlights: Array.isArray(pageInput.heroHighlights) ? pageInput.heroHighlights : [],
+    statsBar: Array.isArray(pageInput.statsBar) ? pageInput.statsBar : [],
     status: pageInput.status || 'published',
     heroImage: pageInput.heroImage ?? '',
     logoUrl: pageInput.logoUrl || '/logo.png',
@@ -516,6 +533,9 @@ export async function saveLandingPage(pageInput: Partial<LandingPageDoc> & { slu
       slug: merged.slug,
       subtitle: merged.subtitle,
       badge: merged.badge,
+      heroCtaText: merged.heroCtaText,
+      heroHighlights: merged.heroHighlights as any,
+      statsBar: merged.statsBar as any,
       status: merged.status,
       heroImage: merged.heroImage,
       logoUrl: merged.logoUrl,

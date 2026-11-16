@@ -56,12 +56,20 @@ export interface LandingFormBlock {
 
 export type LandingBlock = LandingTextBlock | LandingImageBlock | LandingFormBlock;
 
+export interface LandingStatItem {
+  value: string;
+  label: string;
+}
+
 export interface LandingPageDoc {
   id: string;
   slug: string;
   title: string;
   subtitle?: string;
   badge?: string;
+  heroCtaText?: string;
+  heroHighlights?: string[];
+  statsBar?: LandingStatItem[];
   status: 'published' | 'draft';
   heroImage?: string;
   logoUrl?: string;
@@ -103,8 +111,15 @@ export function buildStarterLandingPage(): LandingPageDoc {
     title: 'דף נחיתה ורישום חדש - אגודת ידידי הממ״ח',
     subtitle: 'הזינו כאן תיאור קצר וברור המזמין את ההורים או המשתתפים לקרוא ולהירשם בטופס למטה.',
     badge: 'רישום פתוח · אגודת ידידי הממ״ח',
+    heroCtaText: 'להרשמה מהירה וליווי אישי ←',
+    heroHighlights: ['ליווי אישי ללא עלות', 'מענה מהיר תוך 24 שעות', 'סודיות מובטחת'],
+    statsBar: [
+      { value: '88+', label: 'מוסדות רשמיים' },
+      { value: '18,500+', label: 'תלמידים ותלמידות' },
+      { value: '100%', label: 'לימודי יסוד בפיקוח' },
+    ],
     status: 'published',
-    heroImage: '/logo.png',
+    heroImage: '/images/landing-hero-mamah.svg',
     logoUrl: '/logo.png',
     themeColor: 'navy',
     layoutMode: 'standalone',

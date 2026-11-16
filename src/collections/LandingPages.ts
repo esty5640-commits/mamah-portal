@@ -52,6 +52,21 @@ export const LandingPages: CollectionConfig = {
       label: 'תגית עליונה (Badge)',
     },
     {
+      name: 'heroCtaText',
+      type: 'text',
+      label: 'טקסט כפתור קריאה לפעולה ב-Hero',
+    },
+    {
+      name: 'heroHighlights',
+      type: 'json',
+      label: 'נקודות אמון מתחת לכפתור (JSON)',
+    },
+    {
+      name: 'statsBar',
+      type: 'json',
+      label: 'שורת מדדים והוכחה חברתית (JSON)',
+    },
+    {
       name: 'heroImage',
       type: 'text',
       label: 'תמונת קאבר / באנר ראשי (URL או נתיב תמונה)',
