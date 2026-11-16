@@ -13,6 +13,8 @@ import { Media } from './collections/Media';
 import { MediaCoverage } from './collections/MediaCoverage';
 import { Updates } from './collections/Updates';
 import { Events } from './collections/Events';
+import { LandingPages } from './collections/LandingPages';
+import { LandingPageSubmissions } from './collections/LandingPageSubmissions';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -38,6 +40,8 @@ export default buildConfig({
     Users,
     Institutions,
     Pages,
+    LandingPages,
+    LandingPageSubmissions,
     Inquiries,
     MediaCoverage,
     Updates,

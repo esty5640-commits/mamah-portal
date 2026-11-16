@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090342" />
+      <stop offset="55%" stop-color="#110771" />
+      <stop offset="100%" stop-color="#1c1294" />
+    </linearGradient>
+    <radialGradient id="goldGlow" cx="82%" cy="18%" r="48%">
+      <stop offset="0%" stop-color="#eea600" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#ee4c00" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#110771" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="cyanGlow" cx="18%" cy="78%" r="45%">
+      <stop offset="0%" stop-color="#309ac0" stop-opacity="0.45" />
+      <stop offset="55%" stop-color="#4e0a6c" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#090342" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ribbonGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#eea600" />
+      <stop offset="20%" stop-color="#4e0a6c" />
+      <stop offset="40%" stop-color="#66c329" />
+      <stop offset="60%" stop-color="#309ac0" />
+      <stop offset="80%" stop-color="#ee4c00" />
+      <stop offset="100%" stop-color="#c00500" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgGrad)" />
+  <rect width="1600" height="900" fill="url(#goldGlow)" />
+  <rect width="1600" height="900" fill="url(#cyanGlow)" />
+
+  <!-- Subtle architectural grid -->
+  <g stroke="#ffffff" stroke-opacity="0.05" stroke-width="1">
+    <line x1="0" y1="180" x2="1600" y2="180" />
+    <line x1="0" y1="360" x2="1600" y2="360" />
+    <line x1="0" y1="540" x2="1600" y2="540" />
+    <line x1="0" y1="720" x2="1600" y2="720" />
+    <line x1="320" y1="0" x2="320" y2="900" />
+    <line x1="640" y1="0" x2="640" y2="900" />
+    <line x1="960" y1="0" x2="960" y2="900" />
+    <line x1="1280" y1="0" x2="1280" y2="900" />
+  </g>
+
+  <!-- Flowing spectrum waves -->
+  <path d="M-50,760 C350,620 680,820 1120,640 C1340,550 1500,590 1650,510 L1650,920 L-50,920 Z" fill="#090342" fill-opacity="0.55" />
+  <path d="M-50,780 C380,640 710,830 1150,655 C1360,575 1510,605 1650,530" fill="none" stroke="url(#ribbonGrad)" stroke-width="10" stroke-linecap="round" opacity="0.85" />
+  <path d="M-50,820 C410,685 740,860 1180,695 C1390,620 1530,645 1650,575" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="3" />
+
+  <!-- Glowing geometric accents -->
+  <circle cx="1320" cy="210" r="140" fill="#eea600" fill-opacity="0.08" />
+  <circle cx="1320" cy="210" r="95" fill="none" stroke="#eea600" stroke-opacity="0.25" stroke-width="2" />
+  <circle cx="240" cy="220" r="110" fill="#309ac0" fill-opacity="0.08" />
+  <circle cx="240" cy="220" r="70" fill="none" stroke="#309ac0" stroke-opacity="0.25" stroke-width="2" />
+
+  <!-- Stylized open book / light rays motif -->
+  <g transform="translate(1150, 520)" opacity="0.9">
+    <path d="M0,45 Q90,10 175,45 L175,145 Q90,115 0,145 Z" fill="#ffffff" fill-opacity="0.12" stroke="#eea600" stroke-opacity="0.55" stroke-width="2" />
+    <path d="M175,45 Q260,10 350,45 L350,145 Q260,115 175,145 Z" fill="#ffffff" fill-opacity="0.16" stroke="#eea600" stroke-opacity="0.55" stroke-width="2" />
+    <line x1="175" y1="45" x2="175" y2="145" stroke="#eea600" stroke-width="2.5" stroke-opacity="0.8" />
+    <circle cx="175" cy="-15" r="5" fill="#eea600" fill-opacity="0.85" />
+    <circle cx="135" cy="-35" r="3" fill="#66c329" fill-opacity="0.85" />
+    <circle cx="215" cy="-40" r="3.5" fill="#309ac0" fill-opacity="0.85" />
+  </g>
+</svg>
