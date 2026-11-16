@@ -1,0 +1,233 @@
+[
+  {
+    "id": "lp-tofsy-akkdQz",
+    "slug": "akkdQz",
+    "title": "רישום והצטרפות למוסדות הממ״ח - שנת הלימודים תשפ״ז",
+    "subtitle": "טופס רישום מוקדם, מיפוי ביקושים וליווי אישי להורים המעוניינים בחינוך ממלכתי-חרדי איכותי המשלב תורה ויראת שמיים עם 100% לימודי יסוד.",
+    "badge": "רישום ארצי פתוח · אגודת ידידי הממ״ח",
+    "status": "published",
+    "heroImage": "/images/landing-hero-mamah.svg",
+    "logoUrl": "/logo.png",
+    "themeColor": "navy",
+    "layoutMode": "standalone",
+    "submitButtonText": "שליחת טופס הרישום",
+    "successTitle": "הטופס נשלח בהצלחה!",
+    "successMessage": "תודה על הרשמתכם! פרטיכם נקלטו במערכת אגודת ידידי הממ״ח. רכז פניות ההורים באזור מגוריכם ייצור עמכם קשר בהקדם להמשך ליווי.",
+    "whatsappNumber": "972500000000",
+    "createdAt": "2026-11-16T10:00:00.000Z",
+    "updatedAt": "2026-11-16T10:00:00.000Z",
+    "blocks": [
+      {
+        "id": "block-text-intro",
+        "type": "text",
+        "title": "למה להירשם דרך מוקד הליווי של אגודת ידידי הממ״ח?",
+        "content": "החינוך הממלכתי-חרדי (ממ״ח) מעניק לילדיכם סביבה תורנית-חרדית מוקפדת בפיקוח המחוז החרדי במשרד החינוך, לצד לימודי יסוד מלאים בתקצוב ממלכתי מלא. מילוי הטופס מאפשר לנו לרכז את פניות ההורים מול הרשויות המקומיות ולהבטיח פתיחת כיתות ושיבוץ מיטבי.",
+        "align": "right",
+        "style": "checklist",
+        "bulletPoints": [
+          "שמירה מלאה על אורח חיים חרדי, תפילה, גמרא, הלכה ומידות טובות",
+          "לימודי יסוד מלאים (מתמטיקה, אנגלית, מדעים ועברית) ברמה גבוהה",
+          "ליווי משפטי ופדגוגי צמוד להורים מול מחלקות החינוך בעיריות",
+          "תקצוב ממלכתי מלא, כיתות תקניות ומעטפת פרא-רפואית רחבה"
+        ]
+      },
+      {
+        "id": "block-image-flyer",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1000&auto=format&fit=crop&q=80",
+        "alt": "כיתת לימוד במוסדות הממ״ח",
+        "caption": "למעלה מ-88 מוסדות ו-18,500 תלמידים ותלמידות ברחבי הארץ",
+        "displayStyle": "framed_card"
+      },
+      {
+        "id": "block-form-main",
+        "type": "form",
+        "title": "מילוי פרטי ההורה והתלמיד/ה",
+        "subtitle": "אנא מלאו את הפרטים בדיוק כדי שנוכל לשייך את פנייתכם למוסד ולרשות המקומית הרלוונטיים",
+        "submitButtonText": "שליחת פרטים והצטרפות ←",
+        "privacyNote": "המידע נשמר בסודיות מלאה במאגר אגודת ידידי הממ״ח (ע״ר 580758324) ומשמש לצורכי סיוע ברישום בלבד.",
+        "fields": [
+          {
+            "id": "f-parent-name",
+            "name": "fullName",
+            "label": "שם מלא של ההורה",
+            "type": "text",
+            "placeholder": "לדוגמה: ישראל ישראלי",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "f-phone",
+            "name": "phone",
+            "label": "טלפון נייד ליצירת קשר",
+            "type": "tel",
+            "placeholder": "050-0000000",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "f-email",
+            "name": "email",
+            "label": "כתובת דוא״ל",
+            "type": "email",
+            "placeholder": "name@example.com",
+            "required": false,
+            "width": "half"
+          },
+          {
+            "id": "f-city",
+            "name": "city",
+            "label": "עיר / יישוב מגורים",
+            "type": "text",
+            "placeholder": "לדוגמה: ירושלים, בית שמש, בני ברק, אלעד...",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "f-student-name",
+            "name": "studentName",
+            "label": "שם התלמיד/ה",
+            "type": "text",
+            "placeholder": "שם פרטי ומשפחה של הילד/ה",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "f-stage",
+            "name": "educationStage",
+            "label": "שלב חינוכי מבוקש לשנה״ל הקרובה",
+            "type": "select",
+            "required": true,
+            "width": "half",
+            "options": [
+              "גן ילדים (גילאי 3-6)",
+              "עולה לכיתה א׳ - בי״ס יסודי בנים (ת״ת)",
+              "עולה לכיתה א׳ - בי״ס יסודי בנות",
+              "מעבר לכיתות ב׳-ח׳ (יסודי)",
+              "חטיבת ביניים / מכינה לישיבה או סמינר",
+              "יוזמה להקמת מוסד ממ״ח חדש בעיר"
+            ]
+          },
+          {
+            "id": "f-preference",
+            "name": "assistType",
+            "label": "באיזה נושא תרצו שנלווה אתכם?",
+            "type": "radio",
+            "required": true,
+            "width": "full",
+            "options": [
+              "רישום למוסד ממ״ח קיים בעיר",
+              "הצטרפות לקבוצת הורים להקמת מוסד חדש",
+              "סיוע בסירוב שיבוץ / הגשת ערעור מול הרשות",
+              "שיחת היכרות ומידע על מוסדות באזורי"
+            ]
+          },
+          {
+            "id": "f-notes",
+            "name": "notes",
+            "label": "הערות או פרטים נוספים",
+            "type": "textarea",
+            "placeholder": "ציינו שם שכונה, מוסד מבוקש או כל פרט שחשוב שנדע...",
+            "required": false,
+            "width": "full"
+          },
+          {
+            "id": "f-updates-consent",
+            "name": "updatesConsent",
+            "label": "אני מעוניין/ת לקבל עדכונים מאגודת ידידי הממ״ח על מועדי רישום ואירועים",
+            "type": "checkbox",
+            "required": false,
+            "width": "full"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lp-founding-group",
+    "slug": "new-school-initiative",
+    "title": "מקימים ממ״ח בעיר שלך! הצטרפות לגרעין הורים מייסד",
+    "subtitle": "רוצים להקים גן או בית ספר ממלכתי-חרדי בשכונה שלכם? השאירו פרטים ונחבר אתכם לקבוצת ההורים בעיר עם ליווי משפטי וארגוני מלא.",
+    "badge": "יוזמות הקמה תשפ״ז · ליווי מלא ללא עלות",
+    "status": "published",
+    "heroImage": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&auto=format&fit=crop&q=80",
+    "logoUrl": "/logo.png",
+    "themeColor": "purple",
+    "layoutMode": "standalone",
+    "submitButtonText": "הצטרפות לגרעין ההורים",
+    "successTitle": "ברוכים הבאים לגרעין המייסד!",
+    "successMessage": "פרטיכם התקבלו. מנהל תחום הקמת מוסדות באגודה יחזור אליכם לתיאום פגישת התנעה בעירכם.",
+    "whatsappNumber": "972500000000",
+    "createdAt": "2026-11-16T11:00:00.000Z",
+    "updatedAt": "2026-11-16T11:00:00.000Z",
+    "blocks": [
+      {
+        "id": "b-founding-1",
+        "type": "text",
+        "title": "איך קם מוסד ממ״ח חדש?",
+        "content": "עשרות בתי ספר וגני ממ״ח ברחבי הארץ קמו בזכות קבוצת הורים שהחליטה לקחת יוזמה. אגודת ידידי הממ״ח מעניקה לכם מעטפת מקצועית משלב איסוף החתימות ועד פתיחת שערי המוסד ב-1 בספטמבר.",
+        "align": "right",
+        "style": "highlight",
+        "bulletPoints": [
+          "ריכוז רשימות הורים ומיפוי צרכים יישובי",
+          "הגשת בקשה רשמית לאגף החינוך ולמחוז החרדי במשרד החינוך",
+          "ייצוג משפטי מול הרשות המקומית לקבלת מבנה תקני והסעות"
+        ]
+      },
+      {
+        "id": "b-founding-form",
+        "type": "form",
+        "title": "טופס הצטרפות לגרעין הורים מייסד",
+        "subtitle": "מלאו את הפרטים ונחבר אתכם להורים נוספים בעירכם",
+        "submitButtonText": "אני רוצה להצטרף ליוזמה ←",
+        "fields": [
+          {
+            "id": "ff-1",
+            "name": "fullName",
+            "label": "שם מלא",
+            "type": "text",
+            "placeholder": "שם פרטי ומשפחה",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "ff-2",
+            "name": "phone",
+            "label": "טלפון נייד",
+            "type": "tel",
+            "placeholder": "050-0000000",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "ff-3",
+            "name": "city",
+            "label": "עיר ושכונה",
+            "type": "text",
+            "placeholder": "למשל: בית שמש - נווה שמיר / רמה ד׳",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "ff-4",
+            "name": "childrenAges",
+            "label": "גילאי הילדים הרלוונטיים",
+            "type": "text",
+            "placeholder": "למשל: גיל 4 וגיל 6",
+            "required": true,
+            "width": "half"
+          },
+          {
+            "id": "ff-5",
+            "name": "message",
+            "label": "האם כבר קיימת קבוצת הורים בשכונה?",
+            "type": "textarea",
+            "placeholder": "ספרו לנו בכמה הורים מדובר ואיזו מסגרת (גן / בי״ס בנים / בי״ס בנות) נדרשת...",
+            "required": false,
+            "width": "full"
+          }
+        ]
+      }
+    ]
+  }
+]
