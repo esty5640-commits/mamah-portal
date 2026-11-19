@@ -734,27 +734,27 @@ export function LandingPageRenderer({
       )}
 
       {/* Full-Width Minimal Footer */}
-      {page.layoutMode === 'standalone' && (
-        <footer className="w-full bg-white py-8 px-4 sm:px-8 text-xs text-slate-500 pb-24 sm:pb-8">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="font-semibold text-slate-700 flex items-center gap-2">
-              <Award className="w-4 h-4 text-slate-400" />
-              <span>אגודת ידידי הממ״ח (ע״ר 580758324) · הבית של הורי הממ״ח בישראל</span>
-            </div>
-            <div className="flex items-center gap-5">
-              <Link href="/" className="hover:text-slate-900 transition-colors">
-                דף הבית
-              </Link>
-              <Link href="/privacy" className="hover:text-slate-900 transition-colors">
-                מדיניות פרטיות
-              </Link>
-              <Link href="/accessibility" className="hover:text-slate-900 transition-colors">
-                הצהרת נגישות
-              </Link>
-            </div>
-          </div>
-        </footer>
-      )}
+      // {page.layoutMode === 'standalone' && (
+      //   <footer className="w-full bg-white py-8 px-4 sm:px-8 text-xs text-slate-500 pb-24 sm:pb-8">
+      //     <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      //       <div className="font-semibold text-slate-700 flex items-center gap-2">
+      //         <Award className="w-4 h-4 text-slate-400" />
+      //         <span>אגודת ידידי הממ״ח (ע״ר 580758324) · הבית של הורי הממ״ח בישראל</span>
+      //       </div>
+      //       <div className="flex items-center gap-5">
+      //         <Link href="/" className="hover:text-slate-900 transition-colors">
+      //           דף הבית
+      //         </Link>
+      //         <Link href="/privacy" className="hover:text-slate-900 transition-colors">
+      //           מדיניות פרטיות
+      //         </Link>
+      //         <Link href="/accessibility" className="hover:text-slate-900 transition-colors">
+      //           הצהרת נגישות
+      //         </Link>
+      //       </div>
+      //     </div>
+      //   </footer>
+      // )}
 
       {/* Clean Mobile Sticky CTA Bar */}
       {!previewMode && hasFormBlock && (
