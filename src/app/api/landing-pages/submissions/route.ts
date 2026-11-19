@@ -43,6 +43,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, submission: saved });
   } catch (err: any) {
     console.error('Error in POST /api/landing-pages/submissions:', err);
-    return NextResponse.json({ error: 'שגיאה בשמירת הפנייה' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: err?.message || 'שגיאה בשמירת הפנייה',
+        details: err?.cause ? String(err.cause) : undefined,
+      },
+      { status: 500 }
+    );
   }
 }
