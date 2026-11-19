@@ -47,7 +47,7 @@ export default async function EventsPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-        
+
         {/* Section 1: Upcoming Events */}
         <div className="space-y-6">
           <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
@@ -97,7 +97,7 @@ export default async function EventsPage() {
                       href={ev.registrationUrl || '#'}
                       className="btn-shimmer px-6 py-3 bg-brand-gold text-slate-950 font-black rounded-xl text-sm shadow-md hover:bg-amber-400 transition-all hover:scale-105 active:scale-95"
                     >
-                      הרשמה לאירוע ללא תשלום ←
+                      הרשמה לאירוע ללא תשלום
                     </a>
                   </div>
                 </div>

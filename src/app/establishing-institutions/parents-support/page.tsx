@@ -83,7 +83,7 @@ export default async function EstablishingParentsSupportPage() {
                 href="/contact/parents"
                 className="btn-shimmer inline-flex items-center gap-2 px-6 py-3.5 bg-brand-gold text-slate-950 font-black rounded-xl text-sm shadow-md hover:bg-amber-400 transition-all"
               >
-                <span>השארת פרטים לקבלת ליווי אישי להקמה ←</span>
+                <span>השארת פרטים לקבלת ליווי אישי להקמה </span>
               </Link>
             </div>
           </div>

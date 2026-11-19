@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
-import { 
-  HeartHandshake, 
-  Phone, 
-  Mail, 
-  MessageCircle, 
-  Send, 
-  CheckCircle2, 
+import {
+  HeartHandshake,
+  Phone,
+  Mail,
+  MessageCircle,
+  Send,
+  CheckCircle2,
   AlertCircle,
   HelpCircle,
   ArrowRight
@@ -82,7 +82,7 @@ export default function ParentsInquiryPage() {
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-12">
-        
+
         {/* Contact Channels Card */}
         <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-4">
           <h2 className="text-lg font-black text-brand-navy">
@@ -90,7 +90,7 @@ export default function ParentsInquiryPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-semibold">
             <a
-              href="https://wa.me/972500000000"
+              href="https://wa.me/972583950000"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all group"
@@ -192,7 +192,7 @@ export default function ParentsInquiryPage() {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              
+
               {/* Parent Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">

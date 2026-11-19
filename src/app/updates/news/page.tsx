@@ -45,7 +45,7 @@ export default async function NewsUpdatesPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-        
+
         {/* Silent WhatsApp Group Invitation Banner */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-right">
@@ -79,7 +79,7 @@ export default async function NewsUpdatesPage() {
               ארכיון עדכונים ({updates.length} ידיעות)
             </span>
             <Link href="/updates/events" className="text-xs font-bold text-brand-navy hover:underline">
-              לאירועי וכנסי האגודה ←
+              לאירועי וכנסי האגודה
             </Link>
           </div>
 

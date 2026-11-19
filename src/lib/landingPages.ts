@@ -106,7 +106,7 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
     title: 'רישום והצטרפות למוסדות הממ״ח - שנת הלימודים תשפ״ז',
     subtitle: 'טופס רישום מוקדם, מיפוי ביקושים וליווי אישי להורים המעוניינים בחינוך ממלכתי-חרדי איכותי המשלב תורה ויראת שמיים עם 100% לימודי יסוד.',
     badge: 'רישום ארצי פתוח · אגודת ידידי הממ״ח',
-    heroCtaText: 'להרשמה מהירה וליווי אישי ←',
+    heroCtaText: 'להרשמה מהירה וליווי אישי',
     heroHighlights: ['ליווי אישי ללא עלות', 'מענה מהיר תוך 24 שעות', 'סודיות מלאה'],
     statsBar: [
       { value: '88+', label: 'מוסדות ממ״ח רשמיים' },
@@ -122,7 +122,7 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
     submitButtonText: 'שליחת טופס הרישום',
     successTitle: 'הטופס נשלח בהצלחה!',
     successMessage: 'תודה על הרשמתכם! פרטיכם נקלטו במערכת אגודת ידידי הממ״ח. רכז פניות ההורים באזור מגוריכם ייצור עמכם קשר בהקדם להמשך ליווי.',
-    whatsappNumber: '972500000000',
+    whatsappNumber: '972583950000',
     createdAt: '2026-11-16T10:00:00.000Z',
     updatedAt: '2026-11-16T10:00:00.000Z',
     blocks: [
@@ -153,7 +153,7 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
         type: 'form',
         title: 'מילוי פרטי ההורה והתלמיד/ה',
         subtitle: 'אנא מלאו את הפרטים בדיוק כדי שנוכל לשייך את פנייתכם למוסד ולרשות המקומית הרלוונטיים',
-        submitButtonText: 'שליחת פרטים והצטרפות ←',
+        submitButtonText: 'שליחת פרטים והצטרפות',
         privacyNote: 'המידע נשמר בסודיות מלאה במאגר אגודת ידידי הממ״ח (ע״ר 580758324) ומשמש לצורכי סיוע ברישום בלבד.',
         fields: [
           {
@@ -266,7 +266,7 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
     submitButtonText: 'הצטרפות לגרעין ההורים',
     successTitle: 'ברוכים הבאים לגרעין המייסד!',
     successMessage: 'פרטיכם התקבלו. מנהל תחום הקמת מוסדות באגודה יחזור אליכם לתיאום פגישת התנעה בעירכם.',
-    whatsappNumber: '972500000000',
+    whatsappNumber: '972583950000',
     createdAt: '2026-11-16T11:00:00.000Z',
     updatedAt: '2026-11-16T11:00:00.000Z',
     blocks: [
@@ -288,7 +288,7 @@ export const INITIAL_LANDING_PAGES: LandingPageDoc[] = [
         type: 'form',
         title: 'טופס הצטרפות לגרעין הורים מייסד',
         subtitle: 'מלאו את הפרטים ונחבר אתכם להורים נוספים בעירכם',
-        submitButtonText: 'אני רוצה להצטרף ליוזמה ←',
+        submitButtonText: 'אני רוצה להצטרף ליוזמה',
         fields: [
           {
             id: 'ff-1',

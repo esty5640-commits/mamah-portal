@@ -58,7 +58,7 @@ export default async function EstablishingInstitutionsPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-        
+
         {/* Intro */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-6">
@@ -87,7 +87,7 @@ export default async function EstablishingInstitutionsPage() {
                 href="/establishing-institutions/parents-support"
                 className="btn-shimmer inline-flex items-center gap-2 px-6 py-3.5 bg-brand-gold text-slate-950 font-black rounded-xl text-sm shadow-md hover:bg-amber-400 transition-all"
               >
-                <span>ליווי הורים להקמת ממ״ח ←</span>
+                <span>ליווי הורים להקמת ממ״ח</span>
               </Link>
               <Link
                 href="/contact/parents"

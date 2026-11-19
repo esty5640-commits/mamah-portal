@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Send, 
-  CheckCircle2, 
-  HeartHandshake, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  HeartHandshake,
   ArrowLeft,
   Building2,
   FileText
@@ -69,7 +69,7 @@ export default function ContactPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-12">
-        
+
         {/* Prominent Banner directing parents to parents hotline */}
         <div className="bg-gradient-to-r from-brand-navy to-brand-navyDark text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-r-8 border-brand-gold">
           <div className="space-y-2 text-center md:text-right">
@@ -89,13 +89,13 @@ export default function ContactPage() {
             href="/contact/parents"
             className="btn-shimmer px-6 py-3.5 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm shrink-0 shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
           >
-            <span>מעבר לטופס פניות הורים ←</span>
+            <span>מעבר לטופס פניות הורים</span>
           </Link>
         </div>
 
         {/* Contact Grid: Details + General Form */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          
+
           {/* Details (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-6">

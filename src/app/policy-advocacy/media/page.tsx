@@ -50,13 +50,13 @@ export default async function MediaPage() {
             מוצגים {items.length} אייטמים תקשורתיים
           </span>
           <Link href="/policy-advocacy" className="text-xs font-bold text-brand-navy hover:underline">
-            ← חזרה לפעילות מדיניות והסברה
+             חזרה לפעילות מדיניות והסברה
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {items.map((item: any) => (
-            <div 
+            <div
               key={item.id || item.title}
               className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
             >

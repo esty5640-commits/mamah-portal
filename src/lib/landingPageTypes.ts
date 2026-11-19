@@ -111,7 +111,7 @@ export function buildStarterLandingPage(): LandingPageDoc {
     title: 'דף נחיתה ורישום חדש - אגודת ידידי הממ״ח',
     subtitle: 'הזינו כאן תיאור קצר וברור המזמין את ההורים או המשתתפים לקרוא ולהירשם בטופס למטה.',
     badge: 'רישום פתוח · אגודת ידידי הממ״ח',
-    heroCtaText: 'להרשמה מהירה וליווי אישי ←',
+    heroCtaText: 'להרשמה מהירה וליווי אישי',
     heroHighlights: ['ליווי אישי ללא עלות', 'מענה מהיר תוך 24 שעות', 'סודיות מובטחת'],
     statsBar: [
       { value: '88+', label: 'מוסדות רשמיים' },
@@ -147,7 +147,7 @@ export function buildStarterLandingPage(): LandingPageDoc {
         type: 'form',
         title: 'טופס השארת פרטים ורישום',
         subtitle: 'מלאו את הפרטים ונחזור אליכם בהקדם',
-        submitButtonText: 'שליחת פרטים ←',
+        submitButtonText: 'שליחת פרטים',
         privacyNote: 'הפרטים נשמרים בסודיות במערכת אגודת ידידי הממ״ח.',
         fields: [
           {
@@ -232,7 +232,7 @@ export function createNewBlockByType(type: 'text' | 'image' | 'form'): LandingBl
     type: 'form',
     title: 'טופס רישום ויצירת קשר',
     subtitle: 'אנא מלאו את הפרטים ונחזור אליכם בהקדם',
-    submitButtonText: 'שליחת טופס ←',
+    submitButtonText: 'שליחת טופס',
     privacyNote: 'המידע נשמר בסודיות באגודת ידידי הממ״ח',
     fields: [
       {

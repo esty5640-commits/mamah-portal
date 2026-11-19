@@ -95,7 +95,7 @@ export default async function ParentsCommitteesPage() {
                 href="/contact"
                 className="btn-shimmer inline-flex items-center gap-2 px-6 py-3.5 bg-brand-navy text-white font-bold rounded-xl text-sm shadow-md hover:bg-brand-navyLight transition-all"
               >
-                <span>הצטרפות לפורום ועדי ההורים הארצי ←</span>
+                <span>הצטרפות לפורום ועדי ההורים הארצי </span>
               </Link>
             </div>
           </div>

@@ -3,14 +3,14 @@ import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { 
-  FileText, 
-  Scale, 
-  Building2, 
-  Users, 
-  CheckCircle2, 
-  Video, 
-  ArrowLeft 
+import {
+  FileText,
+  Scale,
+  Building2,
+  Users,
+  CheckCircle2,
+  Video,
+  ArrowLeft
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -58,7 +58,7 @@ export default async function PolicyAdvocacyPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-        
+
         {/* Intro Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-6">
@@ -88,7 +88,7 @@ export default async function PolicyAdvocacyPage() {
                 className="btn-shimmer inline-flex items-center gap-2 px-6 py-3.5 bg-brand-navy text-white font-bold rounded-xl text-sm shadow-md hover:bg-brand-navyLight transition-all"
               >
                 <Video className="w-4 h-4 text-brand-gold" />
-                <span>צפו באייטמים וכתבות: הממ״ח בתקשורת ←</span>
+                <span>צפו באייטמים וכתבות: הממ״ח בתקשורת </span>
               </Link>
             </div>
           </div>

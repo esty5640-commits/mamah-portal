@@ -119,7 +119,7 @@ export function LandingPageHeaderEditor({
             type="text"
             value={page.heroCtaText || ''}
             onChange={(e) => onChange({ ...page, heroCtaText: e.target.value })}
-            placeholder="להרשמה מהירה וליווי אישי ←"
+            placeholder="להרשמה מהירה וליווי אישי"
             className="w-full p-3 rounded-xl border border-slate-200 text-sm font-bold focus:border-brand-navy outline-none"
           />
         </div>
@@ -287,7 +287,7 @@ export function LandingPageHeaderEditor({
             dir="ltr"
             value={page.whatsappNumber || ''}
             onChange={(e) => onChange({ ...page, whatsappNumber: e.target.value })}
-            placeholder="972500000000"
+            placeholder="972583950000"
             className="w-full p-3 rounded-xl border border-slate-200 text-sm"
           />
         </div>

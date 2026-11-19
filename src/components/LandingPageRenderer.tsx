@@ -538,7 +538,7 @@ export function LandingPageRenderer({
   const formBlocks = blocks.filter((b): b is LandingFormBlock => b.type === 'form');
   const contentBlocks = blocks.filter((b) => b.type !== 'form');
   const hasFormBlock = formBlocks.length > 0;
-  const ctaText = page.heroCtaText || 'להרשמה ומילוי הטופס ←';
+  const ctaText = page.heroCtaText || 'להרשמה ומילוי הטופס';
   const highlights =
     page.heroHighlights && page.heroHighlights.length > 0
       ? page.heroHighlights
