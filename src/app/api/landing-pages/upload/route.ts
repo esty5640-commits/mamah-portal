@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export async function POST(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;

@@ -6,11 +6,15 @@ import {
   saveGoogleSheetsConfig,
   syncSubmissionsToGoogleSheets,
 } from '@/lib/googleSheetsSync';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   const cfg = getGoogleSheetsConfig();
   return NextResponse.json(
     {
@@ -28,6 +32,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   try {
     const body = await req.json();
 

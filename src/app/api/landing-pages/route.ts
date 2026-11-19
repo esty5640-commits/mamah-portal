@@ -5,6 +5,7 @@ import {
   saveLandingPage,
   deleteLandingPageBySlug,
 } from '@/lib/landingPages';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,11 +20,18 @@ export async function GET(req: Request) {
       if (!page) {
         return NextResponse.json({ error: 'דף הנחיתה לא נמצא' }, { status: 404 });
       }
+      if (page.status !== 'published') {
+        const authError = await requireAdminApi();
+        if (authError) return authError;
+      }
       return NextResponse.json(
         { page },
         { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } }
       );
     }
+
+    const authError = await requireAdminApi();
+    if (authError) return authError;
 
     const pages = await getAllLandingPages();
     return NextResponse.json(
@@ -37,6 +45,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   try {
     const body = await req.json();
     if (!body.title || !body.slug) {
@@ -55,6 +66,9 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');

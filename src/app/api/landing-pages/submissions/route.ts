@@ -3,11 +3,15 @@ import {
   getAllLandingSubmissions,
   recordLandingSubmission,
 } from '@/lib/landingPages';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug') || undefined;
