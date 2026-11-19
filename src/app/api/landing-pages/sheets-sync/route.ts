@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAllLandingPages, getAllLandingSubmissions } from '@/lib/landingPages';
 import {
-  APPS_SCRIPT_TEMPLATE,
   getGoogleSheetsConfig,
   saveGoogleSheetsConfig,
   syncSubmissionsToGoogleSheets,
@@ -18,10 +17,8 @@ export async function GET() {
   const cfg = getGoogleSheetsConfig();
   return NextResponse.json(
     {
-      configured: Boolean(cfg.webhookUrl),
-      webhookUrl: cfg.webhookUrl,
+      configured: Boolean(cfg.webhookUrl || cfg.hasServiceAccount),
       sheetUrl: cfg.sheetUrl,
-      scriptTemplate: APPS_SCRIPT_TEMPLATE,
     },
     {
       headers: {
@@ -45,8 +42,7 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({
         success: true,
-        configured: Boolean(saved.webhookUrl),
-        webhookUrl: saved.webhookUrl,
+        configured: Boolean(saved.webhookUrl || saved.hasServiceAccount),
         sheetUrl: saved.sheetUrl,
       });
     }

@@ -1,67 +1,30 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import type { LandingPageDoc, LandingSubmissionDoc } from './landingPages';
+
+export const DEFAULT_LANDING_SHEET_ID = '1nCqSrCdl0n5Ya4fMhnAApbAKqq-gjQEnea0dPh2Smb4';
+export const DEFAULT_LANDING_SHEET_URL =
+  'https://docs.google.com/spreadsheets/d/1nCqSrCdl0n5Ya4fMhnAApbAKqq-gjQEnea0dPh2Smb4/edit';
 
 export interface GoogleSheetsConfig {
   webhookUrl: string;
   sheetUrl: string;
+  sheetId: string;
+  hasServiceAccount: boolean;
 }
 
 const CONFIG_PATH = path.join(process.cwd(), 'src', 'data', 'google-sheets-config.json');
 
-export const APPS_SCRIPT_TEMPLATE = `function doPost(e) {
-  try {
-    var payload = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var batches = payload.batches || [];
-
-    batches.forEach(function(batch) {
-      var rawName = (batch.sheetName || 'פניות').replace(/[\\\\\\/\\?\\*\\[\\]:]/g, ' ').trim();
-      var sheetName = rawName.substring(0, 95) || 'פניות';
-      var sheet = ss.getSheetByName(sheetName);
-      if (!sheet) {
-        sheet = ss.insertSheet(sheetName);
-        sheet.setRightToLeft(true);
-      }
-
-      var headers = batch.headers || [];
-      if (sheet.getLastRow() === 0 && headers.length > 0) {
-        sheet.appendRow(headers);
-        sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#f1f5f9');
-        sheet.setFrozenRows(1);
-      }
-
-      var existingIds = {};
-      var lastRow = sheet.getLastRow();
-      if (lastRow > 1) {
-        var idValues = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        for (var i = 0; i < idValues.length; i++) {
-          if (idValues[i][0]) existingIds[String(idValues[i][0])] = true;
-        }
-      }
-
-      (batch.rows || []).forEach(function(row) {
-        var rowId = String(row[0] || '');
-        if (!rowId || !existingIds[rowId]) {
-          sheet.appendRow(row);
-          if (rowId) existingIds[rowId] = true;
-        }
-      });
-    });
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
-
 export function getGoogleSheetsConfig(): GoogleSheetsConfig {
   const envWebhook = process.env.GOOGLE_SHEETS_WEBHOOK_URL || '';
-  const envSheetUrl = process.env.GOOGLE_SHEETS_URL || '';
+  const envSheetId = process.env.GOOGLE_SHEETS_ID || DEFAULT_LANDING_SHEET_ID;
+  const envSheetUrl =
+    process.env.GOOGLE_SHEETS_URL ||
+    `https://docs.google.com/spreadsheets/d/${envSheetId}/edit`;
+  const hasServiceAccount = Boolean(
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY
+  );
 
   let fileConfig: Partial<GoogleSheetsConfig> = {};
   try {
@@ -76,13 +39,21 @@ export function getGoogleSheetsConfig(): GoogleSheetsConfig {
   return {
     webhookUrl: fileConfig.webhookUrl || envWebhook,
     sheetUrl: fileConfig.sheetUrl || envSheetUrl,
+    sheetId: envSheetId,
+    hasServiceAccount,
   };
 }
 
-export function saveGoogleSheetsConfig(config: GoogleSheetsConfig): GoogleSheetsConfig {
+export function saveGoogleSheetsConfig(config: {
+  webhookUrl?: string;
+  sheetUrl?: string;
+}): GoogleSheetsConfig {
+  const current = getGoogleSheetsConfig();
   const clean: GoogleSheetsConfig = {
-    webhookUrl: (config.webhookUrl || '').trim(),
-    sheetUrl: (config.sheetUrl || '').trim(),
+    webhookUrl: (config.webhookUrl ?? current.webhookUrl ?? '').trim(),
+    sheetUrl: (config.sheetUrl ?? current.sheetUrl ?? DEFAULT_LANDING_SHEET_URL).trim(),
+    sheetId: current.sheetId,
+    hasServiceAccount: current.hasServiceAccount,
   };
 
   try {
@@ -129,6 +100,129 @@ function buildFieldLabelMap(page?: LandingPageDoc): Record<string, string> {
   return map;
 }
 
+async function getServiceAccountAccessToken(): Promise<string> {
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '';
+  const privateKey = (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+
+  if (!email || !privateKey) {
+    throw new Error('חסרים פרטי Service Account לחיבור Google Sheets');
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
+  const claim = Buffer.from(
+    JSON.stringify({
+      iss: email,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp: now + 3600,
+      iat: now,
+    })
+  ).toString('base64url');
+
+  const signer = crypto.createSign('RSA-SHA256');
+  signer.update(`${header}.${claim}`);
+  const signature = signer.sign(privateKey, 'base64url');
+  const jwt = `${header}.${claim}.${signature}`;
+
+  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt,
+    }),
+  });
+
+  const tokenJson = await tokenRes.json();
+  if (!tokenRes.ok || !tokenJson.access_token) {
+    throw new Error(tokenJson.error_description || 'שגיאה באימות מול Google Sheets API');
+  }
+
+  return tokenJson.access_token;
+}
+
+async function syncViaGoogleSheetsApi(
+  sheetId: string,
+  batches: { slug: string; sheetName: string; headers: string[]; rows: any[][] }[]
+): Promise<void> {
+  const token = await getServiceAccountAccessToken();
+  const base = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}`;
+
+  const metaRes = await fetch(`${base}?fields=sheets.properties.title`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!metaRes.ok) {
+    throw new Error(`לא ניתן לגשת לגיליון Google Sheets (סטטוס ${metaRes.status})`);
+  }
+  const metaJson = await metaRes.json();
+  const existingTitles = new Set<string>(
+    (metaJson.sheets || []).map((s: any) => s.properties?.title).filter(Boolean)
+  );
+
+  for (const batch of batches) {
+    const cleanTitle = batch.sheetName.replace(/[\\/?*[\]:]/g, ' ').trim().slice(0, 95) || 'פניות';
+
+    if (!existingTitles.has(cleanTitle)) {
+      const addRes = await fetch(`${base}:batchUpdate`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requests: [
+            {
+              addSheet: {
+                properties: {
+                  title: cleanTitle,
+                  rightToLeft: true,
+                },
+              },
+            },
+          ],
+        }),
+      });
+      if (addRes.ok) {
+        existingTitles.add(cleanTitle);
+      }
+    }
+
+    const encodedRange = encodeURIComponent(`'${cleanTitle}'!A:A`);
+    const existingRes = await fetch(`${base}/values/${encodedRange}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const existingJson = existingRes.ok ? await existingRes.json() : { values: [] };
+    const existingValues: string[][] = existingJson.values || [];
+
+    const rowsToAppend: any[][] = [];
+    if (existingValues.length === 0) {
+      rowsToAppend.push(batch.headers);
+    }
+
+    const existingIds = new Set(existingValues.slice(1).map((r) => String(r[0] || '')));
+    for (const row of batch.rows) {
+      const idVal = String(row[0] || '');
+      if (!idVal || !existingIds.has(idVal)) {
+        rowsToAppend.push(row);
+        if (idVal) existingIds.add(idVal);
+      }
+    }
+
+    if (rowsToAppend.length > 0) {
+      const appendRange = encodeURIComponent(`'${cleanTitle}'!A1`);
+      await fetch(`${base}/values/${appendRange}:append?valueInputOption=USER_ENTERED`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ values: rowsToAppend }),
+      });
+    }
+  }
+}
+
 export async function syncSubmissionsToGoogleSheets(
   submissions: LandingSubmissionDoc[],
   pages: LandingPageDoc[],
@@ -137,15 +231,10 @@ export async function syncSubmissionsToGoogleSheets(
   const cfg = getGoogleSheetsConfig();
   const webhookUrl = (overrideWebhookUrl || cfg.webhookUrl || '').trim();
 
-  if (!webhookUrl) {
-    throw new Error('לא הוגדר קישור Webhook של Google Sheets (Apps Script)');
-  }
-
   if (submissions.length === 0) {
     return { syncedCount: 0, sheetsCount: 0 };
   }
 
-  // Group submissions by landingPageSlug so each landing page gets its own Sheet/Tab
   const bySlug = new Map<string, LandingSubmissionDoc[]>();
   for (const sub of submissions) {
     const slug = sub.landingPageSlug || 'general';
@@ -195,19 +284,26 @@ export async function syncSubmissionsToGoogleSheets(
     };
   });
 
-  const res = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ batches }),
-    redirect: 'follow',
-  });
-
-  if (!res.ok) {
-    throw new Error(`שגיאה בסנכרון מול Google Sheets (סטטוס ${res.status})`);
+  if (cfg.hasServiceAccount) {
+    await syncViaGoogleSheetsApi(cfg.sheetId, batches);
+    return { syncedCount: submissions.length, sheetsCount: batches.length };
   }
 
-  return {
-    syncedCount: submissions.length,
-    sheetsCount: batches.length,
-  };
+  if (webhookUrl) {
+    const res = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ batches }),
+      redirect: 'follow',
+    });
+
+    if (!res.ok) {
+      throw new Error(`שגיאה בסנכרון מול Google Sheets (סטטוס ${res.status})`);
+    }
+    return { syncedCount: submissions.length, sheetsCount: batches.length };
+  }
+
+  throw new Error(
+    'הגיליון מחובר, אך לסנכרון אוטומטי יש להגדיר ב-Vercel את GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY (או GOOGLE_SHEETS_WEBHOOK_URL).'
+  );
 }
