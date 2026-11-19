@@ -54,6 +54,6 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: mongooseAdapter({
-    url: process.env.MONGODB_URI || 'mongodb+srv://admin:rhfRSvyYPwBgdQfh@cluster0.2qdoidx.mongodb.net/mamah_portal?retryWrites=true&w=majority&appName=Cluster0',
+    url: process.env.MONGODB_URI || process.env.DATABASE_URI || 'mongodb+srv://admin:rhfRSvyYPwBgdQfh@cluster0.2qdoidx.mongodb.net/mamah_portal?retryWrites=true&w=majority&appName=Cluster0',
   }),
 });
