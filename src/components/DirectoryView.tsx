@@ -3,17 +3,28 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Building2, ExternalLink, X, ArrowLeft } from 'lucide-react';
+import { Search, MapPin, Building2, ExternalLink, X, ArrowLeft, ArrowRight, LocateFixed } from 'lucide-react';
 import { institutionsList, Institution } from '@/data/institutions';
 import { useI18n } from '@/i18n/I18nContext';
+import { Coordinates, DEFAULT_ISRAEL_COORDS, getCityCoordinates, haversineDistanceKm } from '@/lib/geo';
 
 interface DirectoryViewProps {
   initialCategory?: string;
   hideHeader?: boolean;
+  mode?: 'full' | 'home-nearby';
+  initialCoords?: Coordinates | null;
+  initialCity?: string | null;
 }
 
-export function DirectoryView({ initialCategory = 'all', hideHeader = false }: DirectoryViewProps = {}) {
+export function DirectoryView({
+  initialCategory = 'all',
+  hideHeader = false,
+  mode = 'full',
+  initialCoords = null,
+  initialCity = null,
+}: DirectoryViewProps = {}) {
   const { t, dir, locale } = useI18n();
+  const isHomeNearby = mode === 'home-nearby';
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [selectedTrait, setSelectedTrait] = useState('all');
@@ -23,6 +34,8 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null);
   const [dataList, setDataList] = useState<Institution[]>(institutionsList);
   const [isLoading, setIsLoading] = useState(true);
+  const [userCoords, setUserCoords] = useState<Coordinates | null>(initialCoords);
+  const [geoSource, setGeoSource] = useState<'browser' | 'ip' | 'default'>(initialCoords ? 'ip' : 'default');
 
   React.useEffect(() => {
     if (initialCategory) {
@@ -45,6 +58,26 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
         setIsLoading(false);
       });
   }, []);
+
+  const requestBrowserLocation = React.useCallback(() => {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoSource('browser');
+      },
+      () => {
+        // Keep IP-based or default fallback quietly
+      },
+      { enableHighAccuracy: false, timeout: 6000, maximumAge: 300000 }
+    );
+  }, []);
+
+  React.useEffect(() => {
+    if (isHomeNearby) {
+      requestBrowserLocation();
+    }
+  }, [isHomeNearby, requestBrowserLocation]);
 
   const uniqueTraits = useMemo(() => {
     const set = new Set<string>();
@@ -117,6 +150,29 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
     });
   }, [activeCategory, selectedDistrict, selectedTrait, continuityOnly, specialEdOnly, searchQuery, dataList]);
 
+  const nearbyList = useMemo(() => {
+    if (!isHomeNearby) return [];
+    const targetCoords = userCoords || DEFAULT_ISRAEL_COORDS;
+    return dataList
+      .map((inst, index) => {
+        const instCoords = getCityCoordinates(inst.city);
+        const distanceKm = instCoords ? haversineDistanceKm(targetCoords, instCoords) : Number.POSITIVE_INFINITY;
+        return { inst, distanceKm, index };
+      })
+      .sort((a, b) => {
+        if (a.distanceKm !== b.distanceKm) return a.distanceKm - b.distanceKm;
+        return a.index - b.index;
+      })
+      .slice(0, 6);
+  }, [isHomeNearby, dataList, userCoords]);
+
+  const displayedItems = useMemo(() => {
+    if (isHomeNearby) {
+      return nearbyList;
+    }
+    return filtered.map((inst) => ({ inst, distanceKm: null as number | null }));
+  }, [isHomeNearby, nearbyList, filtered]);
+
   const categories = useMemo(() => {
     return [
       { id: 'all', label: t('categories.all') },
@@ -142,20 +198,67 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
         >
           <div>
             <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">02 // {t('nav.institutions')}</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">{t('common.siteTitle')} – {t('nav.institutions')}</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">
+              {isHomeNearby
+                ? locale === 'he'
+                  ? 'מוסדות הממ״ח הקרובים אליך'
+                  : locale === 'fr'
+                  ? 'Établissements près de chez vous'
+                  : 'Institutions Near You'
+                : `${t('common.siteTitle')} – ${t('nav.institutions')}`}
+            </h2>
           </div>
-          <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
-            <span>{locale === 'he' ? 'מוצגים' : locale === 'fr' ? 'Affichés' : 'Showing'}</span>
-            <motion.span
-              key={filtered.length}
-              initial={{ scale: 1.3, color: '#110771' }}
-              animate={{ scale: 1 }}
-              className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg inline-block"
-            >
-              {filtered.length}
-            </motion.span>
-            <span>{locale === 'he' ? 'מוסדות חינוך' : locale === 'fr' ? 'écoles' : 'schools'}</span>
-          </div>
+          {isHomeNearby ? (
+            <div className="flex items-center gap-2.5 text-sm sm:text-base text-slate-600 font-semibold flex-wrap">
+              <span className="inline-flex items-center gap-1.5 text-brand-navy font-bold">
+                <MapPin className="w-4 h-4 text-brand-cyan shrink-0" />
+                {geoSource === 'browser'
+                  ? locale === 'he'
+                    ? 'ממוין לפי מיקומך הנוכחי'
+                    : locale === 'fr'
+                    ? 'Trié selon votre position'
+                    : 'Sorted by your current location'
+                  : geoSource === 'ip' && initialCity
+                  ? locale === 'he'
+                    ? `לפי אזור ${initialCity}`
+                    : `Near ${initialCity}`
+                  : locale === 'he'
+                  ? '6 המוסדות הקרובים למיקומך'
+                  : locale === 'fr'
+                  ? '6 établissements les plus proches'
+                  : '6 closest institutions'}
+              </span>
+              {geoSource !== 'browser' && (
+                <button
+                  type="button"
+                  onClick={requestBrowserLocation}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-navy/[0.06] hover:bg-brand-navy/10 text-brand-navy text-xs sm:text-sm font-bold rounded-none transition-colors cursor-pointer"
+                >
+                  <LocateFixed className="w-3.5 h-3.5" />
+                  <span>
+                    {locale === 'he'
+                      ? 'איתור מיקום מדויק'
+                      : locale === 'fr'
+                      ? 'Ma position exacte'
+                      : 'Use exact location'}
+                  </span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="text-base sm:text-lg text-slate-700 font-semibold flex items-center gap-2">
+              <span>{locale === 'he' ? 'מוצגים' : locale === 'fr' ? 'Affichés' : 'Showing'}</span>
+              <motion.span
+                key={filtered.length}
+                initial={{ scale: 1.3, color: '#110771' }}
+                animate={{ scale: 1 }}
+                className="text-brand-navy font-black bg-brand-navy/10 px-3 py-1 rounded-full text-base sm:text-lg inline-block"
+              >
+                {filtered.length}
+              </motion.span>
+              <span>{locale === 'he' ? 'מוסדות חינוך' : locale === 'fr' ? 'écoles' : 'schools'}</span>
+            </div>
+          )}
         </motion.div>
       ) : (
         <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
@@ -177,96 +280,98 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
         </div>
       )}
 
-      {/* Filter Pills with click & hover animations */}
-      <div className="space-y-4">
-        <div className="flex gap-2.5 flex-wrap">
-          {categories.map(cat => (
-            <motion.button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.94 }}
-              className={`px-3 py-2 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${activeCategory === cat.id
-                ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
-                : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
-                }`}
-            >
-              {cat.label}
-            </motion.button>
-          ))}
+      {/* Filter Pills with click & hover animations - hidden on home preview */}
+      {!isHomeNearby && (
+        <div className="space-y-4">
+          <div className="flex gap-2.5 flex-wrap">
+            {categories.map(cat => (
+              <motion.button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.94 }}
+                className={`px-3 py-2 rounded-xl border text-sm sm:text-base font-bold transition-colors cursor-pointer ${activeCategory === cat.id
+                  ? 'bg-brand-navy text-white border-brand-navy shadow-md shadow-brand-navy/25'
+                  : 'bg-white text-slate-800 border-slate-200 hover:border-brand-navy/40 hover:bg-slate-50'
+                  }`}
+              >
+                {cat.label}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Sub Filters */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-soft flex flex-wrap gap-4 items-center"
+          >
+            <div className="flex-1 min-w-[240px] relative">
+              <Search className={`w-5 h-5 text-slate-400 absolute ${dir === 'rtl' ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 transition-colors`} />
+              <input
+                type="text"
+                placeholder={t('directory.search')}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className={`w-full ${dir === 'rtl' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all`}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מחוז:' : locale === 'fr' ? 'District :' : 'District:'}</span>
+              <select
+                value={selectedDistrict}
+                onChange={e => setSelectedDistrict(e.target.value)}
+                className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
+              >
+                <option value="all">{t('directory.allDistricts')}</option>
+                <option value="ירושלים">{locale === 'he' ? 'מחוז ירושלים' : 'Jerusalem'}</option>
+                <option value="מרכז">{locale === 'he' ? 'מחוז מרכז' : 'Center'}</option>
+                <option value="תל אביב">{locale === 'he' ? 'מחוז תל אביב' : 'Tel Aviv'}</option>
+                <option value="חיפה">{locale === 'he' ? 'מחוז חיפה' : 'Haifa'}</option>
+                <option value="צפון">{locale === 'he' ? 'מחוז צפון' : 'North'}</option>
+                <option value="דרום">{locale === 'he' ? 'מחוז דרום' : 'South'}</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מאפיין:' : locale === 'fr' ? 'Caractéristique :' : 'Characteristic:'}</span>
+              <select
+                value={selectedTrait}
+                onChange={e => setSelectedTrait(e.target.value)}
+                className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
+              >
+                <option value="all">{t('directory.allTraits')}</option>
+                <option value="כללי">כללי</option>
+                {uniqueTraits.map(tr => (
+                  <option key={tr} value={tr}>{tr}</option>
+                ))}
+              </select>
+            </div>
+
+            <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-[#110771] rounded transition-transform active:scale-90"
+                checked={continuityOnly}
+                onChange={e => setContinuityOnly(e.target.checked)}
+              />
+              {t('directory.continuityFilter')}
+            </label>
+
+            <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-[#110771] rounded transition-transform active:scale-90"
+                checked={specialEdOnly}
+                onChange={e => setSpecialEdOnly(e.target.checked)}
+              />
+              {t('directory.specialEdFilter')}
+            </label>
+          </motion.div>
         </div>
-
-        {/* Sub Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-soft flex flex-wrap gap-4 items-center"
-        >
-          <div className="flex-1 min-w-[240px] relative">
-            <Search className={`w-5 h-5 text-slate-400 absolute ${dir === 'rtl' ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 transition-colors`} />
-            <input
-              type="text"
-              placeholder={t('directory.search')}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className={`w-full ${dir === 'rtl' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all`}
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מחוז:' : locale === 'fr' ? 'District :' : 'District:'}</span>
-            <select
-              value={selectedDistrict}
-              onChange={e => setSelectedDistrict(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
-            >
-              <option value="all">{t('directory.allDistricts')}</option>
-              <option value="ירושלים">{locale === 'he' ? 'מחוז ירושלים' : 'Jerusalem'}</option>
-              <option value="מרכז">{locale === 'he' ? 'מחוז מרכז' : 'Center'}</option>
-              <option value="תל אביב">{locale === 'he' ? 'מחוז תל אביב' : 'Tel Aviv'}</option>
-              <option value="חיפה">{locale === 'he' ? 'מחוז חיפה' : 'Haifa'}</option>
-              <option value="צפון">{locale === 'he' ? 'מחוז צפון' : 'North'}</option>
-              <option value="דרום">{locale === 'he' ? 'מחוז דרום' : 'South'}</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base text-slate-700 font-bold">{locale === 'he' ? 'מאפיין:' : locale === 'fr' ? 'Caractéristique :' : 'Characteristic:'}</span>
-            <select
-              value={selectedTrait}
-              onChange={e => setSelectedTrait(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-sm sm:text-base text-slate-800 rounded-xl p-2.5 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20 focus:border-brand-navy transition-all cursor-pointer"
-            >
-              <option value="all">{t('directory.allTraits')}</option>
-              <option value="כללי">כללי</option>
-              {uniqueTraits.map(tr => (
-                <option key={tr} value={tr}>{tr}</option>
-              ))}
-            </select>
-          </div>
-
-          <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              className="w-4 h-4 accent-[#110771] rounded transition-transform active:scale-90"
-              checked={continuityOnly}
-              onChange={e => setContinuityOnly(e.target.checked)}
-            />
-            {t('directory.continuityFilter')}
-          </label>
-
-          <label className="text-sm sm:text-base text-slate-800 font-semibold flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              className="w-4 h-4 accent-[#110771] rounded transition-transform active:scale-90"
-              checked={specialEdOnly}
-              onChange={e => setSpecialEdOnly(e.target.checked)}
-            />
-            {t('directory.specialEdFilter')}
-          </label>
-        </motion.div>
-      </div>
+      )}
 
       {/* Loading Skeleton */}
       {isLoading && (
@@ -291,7 +396,7 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
       )}
 
       {/* Empty State */}
-      {!isLoading && filtered.length === 0 && (
+      {!isLoading && displayedItems.length === 0 && (
         <div className="text-center py-14 bg-white rounded-none p-8 space-y-3">
           <div className="w-14 h-14 mx-auto rounded-none bg-brand-navy/5 flex items-center justify-center text-brand-navy">
             <Building2 className="w-7 h-7" />
@@ -308,13 +413,13 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
       )}
 
       {/* Cards Grid - Sharp corners (rounded-none), clean, compact, no borders or shadows */}
-      {!isLoading && filtered.length > 0 && (
+      {!isLoading && displayedItems.length > 0 && (
         <motion.div
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           <AnimatePresence>
-            {filtered.map(inst => (
+            {displayedItems.map(({ inst, distanceKm }) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, y: 8 }}
@@ -348,6 +453,17 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
                       {inst.symbol && (
                         <span className="px-1.5 py-0.5 rounded-none bg-slate-100 text-slate-500 font-semibold">
                           {locale === 'he' ? 'סמל' : 'Code'} {inst.symbol}
+                        </span>
+                      )}
+                      {isHomeNearby && distanceKm !== null && Number.isFinite(distanceKm) && (
+                        <span className="px-1.5 py-0.5 rounded-none bg-emerald-50 text-emerald-700 font-bold">
+                          {distanceKm < 2
+                            ? locale === 'he'
+                              ? 'בקרבתך'
+                              : 'Nearby'
+                            : locale === 'he'
+                            ? `~${Math.round(distanceKm)} ק״מ`
+                            : `~${Math.round(distanceKm)} km`}
                         </span>
                       )}
                     </div>
@@ -412,6 +528,25 @@ export function DirectoryView({ initialCategory = 'all', hideHeader = false }: D
             ))}
           </AnimatePresence>
         </motion.div>
+      )}
+
+      {/* CTA Button to Full Institutions Page on Home */}
+      {isHomeNearby && (
+        <div className="flex justify-center pt-4">
+          <Link
+            href="/institutions"
+            className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-brand-navy hover:bg-brand-navyLight text-white font-bold text-base rounded-none transition-colors"
+          >
+            <span>
+              {locale === 'he'
+                ? `לכל מוסדות הממ״ח${dataList.length > 0 ? ` (${dataList.length})` : ''}`
+                : locale === 'fr'
+                ? `Voir tous les établissements${dataList.length > 0 ? ` (${dataList.length})` : ''}`
+                : `View all institutions${dataList.length > 0 ? ` (${dataList.length})` : ''}`}
+            </span>
+            {dir === 'rtl' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+          </Link>
+        </div>
       )}
 
       {/* Modal Detail with spring enter/exit animation */}

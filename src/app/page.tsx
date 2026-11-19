@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { DirectoryView } from '@/components/DirectoryView';
 import { ContactForm } from '@/components/ContactForm';
 import { AnimatedHero } from '@/components/AnimatedHero';
@@ -100,6 +101,16 @@ async function getHomePageData() {
 
 export default async function HomePage() {
   const pageDoc = await getHomePageData();
+  const headersList = await headers();
+  const rawLat = headersList.get('x-vercel-ip-latitude');
+  const rawLng = headersList.get('x-vercel-ip-longitude');
+  const rawCity = headersList.get('x-vercel-ip-city');
+  const parsedLat = rawLat ? Number(rawLat) : NaN;
+  const parsedLng = rawLng ? Number(rawLng) : NaN;
+  const initialCoords = Number.isFinite(parsedLat) && Number.isFinite(parsedLng)
+    ? { lat: parsedLat, lng: parsedLng }
+    : null;
+  const initialCity = rawCity ? decodeURIComponent(rawCity) : null;
 
   const hero = pageDoc?.hero ? {
     badge: pageDoc.hero.badge || DEFAULT_HERO.badge,
@@ -128,8 +139,12 @@ export default async function HomePage() {
         {/* SECTION 1: WHAT IS MAMACH */}
         <AnimatedPillars pillars={pillars} />
 
-        {/* SECTION 2: INTERACTIVE DIRECTORY */}
-        <DirectoryView />
+        {/* SECTION 2: NEARBY INSTITUTIONS (HOME PREVIEW) */}
+        <DirectoryView
+          mode="home-nearby"
+          initialCoords={initialCoords}
+          initialCity={initialCity}
+        />
 
         {/* SECTION 3: ACTIVITIES */}
         <AnimatedActivities activities={activities} />
