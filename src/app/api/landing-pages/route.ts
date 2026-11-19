@@ -7,6 +7,7 @@ import {
 } from '@/lib/landingPages';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(req: Request) {
   try {
@@ -18,11 +19,17 @@ export async function GET(req: Request) {
       if (!page) {
         return NextResponse.json({ error: 'דף הנחיתה לא נמצא' }, { status: 404 });
       }
-      return NextResponse.json({ page });
+      return NextResponse.json(
+        { page },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } }
+      );
     }
 
     const pages = await getAllLandingPages();
-    return NextResponse.json({ pages });
+    return NextResponse.json(
+      { pages },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } }
+    );
   } catch (err: any) {
     console.error('Error in GET /api/landing-pages:', err);
     return NextResponse.json({ error: err?.message || 'שגיאה בטעינת דפי הנחיתה' }, { status: 500 });

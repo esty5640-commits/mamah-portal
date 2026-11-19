@@ -54,9 +54,10 @@ export function LandingPageStudio() {
   const loadData = async () => {
     setLoading(true);
     try {
+      const ts = Date.now();
       const [pagesRes, subsRes] = await Promise.all([
-        fetch('/api/landing-pages'),
-        fetch('/api/landing-pages/submissions'),
+        fetch(`/api/landing-pages?_t=${ts}`, { cache: 'no-store' }),
+        fetch(`/api/landing-pages/submissions?_t=${ts}`, { cache: 'no-store' }),
       ]);
       const pagesJson = await pagesRes.json();
       const subsJson = await subsRes.json();
@@ -287,7 +288,10 @@ export function LandingPageStudio() {
 
             <button
               type="button"
-              onClick={() => setActiveTab('submissions')}
+              onClick={() => {
+                setActiveTab('submissions');
+                loadData();
+              }}
               className={`px-5 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 transition-all cursor-pointer ${
                 activeTab === 'submissions'
                   ? 'bg-brand-navy text-white shadow-md'
@@ -327,6 +331,7 @@ export function LandingPageStudio() {
             onViewSubmissions={(slug) => {
               setSubmissionFilterSlug(slug);
               setActiveTab('submissions');
+              loadData();
             }}
           />
         )}

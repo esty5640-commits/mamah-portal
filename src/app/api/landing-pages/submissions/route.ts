@@ -5,13 +5,21 @@ import {
 } from '@/lib/landingPages';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug') || undefined;
     const submissions = await getAllLandingSubmissions(slug);
-    return NextResponse.json({ submissions });
+    return NextResponse.json(
+      { submissions },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        },
+      }
+    );
   } catch (err: any) {
     console.error('Error in GET /api/landing-pages/submissions:', err);
     return NextResponse.json({ error: 'שגיאה בטעינת הפניות' }, { status: 500 });

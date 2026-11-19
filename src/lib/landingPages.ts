@@ -631,14 +631,24 @@ export async function recordLandingSubmission(input: {
     createdAt: new Date().toISOString(),
   };
 
-  const localSubs = readLocalSubmissions();
-  localSubs.unshift(newSub);
-  writeLocalSubmissions(localSubs);
+  let savedToLocal = false;
+  try {
+    const localSubs = readLocalSubmissions();
+    localSubs.unshift(newSub);
+    ensureLocalStore();
+    fs.writeFileSync(SUBMISSIONS_JSON_PATH, JSON.stringify(localSubs, null, 2), 'utf-8');
+    savedToLocal = true;
+  } catch (fsErr) {
+    console.warn('Local JSON submission write skipped (read-only fs):', fsErr);
+  }
 
+  let savedToDb = false;
+  let dbError: any = null;
   try {
     const payload = await getPayload({ config: configPromise });
-    await payload.create({
+    const created = await payload.create({
       collection: 'landing-page-submissions',
+      overrideAccess: true,
       data: {
         landingPageSlug: newSub.landingPageSlug,
         landingPageTitle: newSub.landingPageTitle,
@@ -651,26 +661,40 @@ export async function recordLandingSubmission(input: {
         status: 'new',
       },
     });
+    if (created && created.id) {
+      newSub.id = String(created.id);
+      savedToDb = true;
+    }
 
-    // Also mirror into general inquiries collection so the main hotline sees it too
-    await payload.create({
-      collection: 'inquiries',
-      data: {
-        fullName: newSub.submitterName,
-        studentName: data.studentName || data.childrenAges || '',
-        phone: newSub.submitterPhone || 'לא צוין',
-        email: newSub.submitterEmail || undefined,
-        city: newSub.submitterCity || '',
-        institutionName: `דף נחיתה: ${newSub.landingPageTitle}`,
-        inquiryType: 'registration',
-        message: Object.entries(data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join(' | '),
-        status: 'new',
-      },
-    });
+    // Mirror into general inquiries collection (best-effort, non-blocking)
+    try {
+      await payload.create({
+        collection: 'inquiries',
+        overrideAccess: true,
+        data: {
+          fullName: newSub.submitterName,
+          studentName: data.studentName || data.childrenAges || '',
+          phone: newSub.submitterPhone || 'לא צוין',
+          email: newSub.submitterEmail || undefined,
+          city: newSub.submitterCity || '',
+          institutionName: `דף נחיתה: ${newSub.landingPageTitle}`,
+          inquiryType: 'registration',
+          message: Object.entries(data)
+            .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+            .join(' | '),
+          status: 'new',
+        },
+      });
+    } catch (inqErr) {
+      console.warn('Non-fatal: mirroring to inquiries collection failed:', inqErr);
+    }
   } catch (err) {
-    console.warn('Payload submission sync skipped (stored in local JSON):', err);
+    dbError = err;
+    console.error('Error saving landing submission to Payload CMS / MongoDB:', err);
+  }
+
+  if (!savedToDb && !savedToLocal) {
+    throw new Error(dbError?.message || 'שגיאה בשמירת הפנייה למסד הנתונים');
   }
 
   return newSub;
@@ -682,8 +706,9 @@ export async function getAllLandingSubmissions(slugFilter?: string): Promise<Lan
     const payload = await getPayload({ config: configPromise });
     const res = await payload.find({
       collection: 'landing-page-submissions',
+      overrideAccess: true,
       sort: '-createdAt',
-      limit: 200,
+      limit: 500,
       ...(slugFilter ? { where: { landingPageSlug: { equals: slugFilter } } } : {}),
     });
 
@@ -705,7 +730,13 @@ export async function getAllLandingSubmissions(slugFilter?: string): Promise<Lan
 
       const combined = [...dbSubs];
       for (const ls of localSubs) {
-        if (!combined.some((c) => c.createdAt === ls.createdAt && c.submitterPhone === ls.submitterPhone)) {
+        if (
+          !combined.some(
+            (c) =>
+              c.id === ls.id ||
+              (c.createdAt === ls.createdAt && c.submitterPhone === ls.submitterPhone)
+          )
+        ) {
           combined.push(ls);
         }
       }
@@ -714,7 +745,7 @@ export async function getAllLandingSubmissions(slugFilter?: string): Promise<Lan
         : combined;
     }
   } catch (err) {
-    // Fallback to local
+    console.error('Error fetching landing submissions from Payload CMS:', err);
   }
   return slugFilter
     ? localSubs.filter((s) => s.landingPageSlug === slugFilter)
