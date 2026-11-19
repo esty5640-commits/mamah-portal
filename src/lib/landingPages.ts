@@ -666,6 +666,20 @@ export async function recordLandingSubmission(input: {
       savedToDb = true;
     }
 
+    // Auto-sync to Google Sheets in dedicated tab for this landing page (best-effort)
+    try {
+      const { getGoogleSheetsConfig, syncSubmissionsToGoogleSheets } = await import(
+        './googleSheetsSync'
+      );
+      const cfg = getGoogleSheetsConfig();
+      if (cfg.webhookUrl) {
+        const allPages = await getAllLandingPages();
+        await syncSubmissionsToGoogleSheets([newSub], allPages, cfg.webhookUrl);
+      }
+    } catch (gsErr) {
+      console.warn('Non-fatal: Google Sheets auto-sync failed:', gsErr);
+    }
+
     // Mirror into general inquiries collection (best-effort, non-blocking)
     try {
       await payload.create({
