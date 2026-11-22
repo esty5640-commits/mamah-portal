@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { InteractivePieChart } from './InteractivePieChart';
+import { ShieldCheck, BookOpen, Building2, ArrowDown } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 
 interface AnimatedHeroProps {
@@ -22,163 +22,208 @@ interface AnimatedHeroProps {
   }>;
 }
 
+const CORE_PRINCIPLES = [
+  {
+    color: '#4c0d69',
+    icon: ShieldCheck,
+    titleHe: 'צביון תורני ואורח חיים חרדי',
+    titleEn: 'Authentic Haredi Identity',
+    titleFr: 'Identité Torahique Authentique',
+    descHe: 'פיקוח תורני מוקפד, תפילות, גמרא והלכה לצד צוות חינוכי שומר מצוות.',
+    descEn: 'Strict Torah supervision, prayer, and halacha with observant educators.',
+    descFr: 'Encadrement religieux rigoureux avec une équipe éducative pratiquante.',
+  },
+  {
+    color: '#65b933',
+    icon: BookOpen,
+    titleHe: '100% לימודי יסוד בתקן מלא',
+    titleEn: '100% Core Curriculum',
+    titleFr: '100% Matières Fondamentales',
+    descHe: 'מתמטיקה, אנגלית ומדעים ברמה אקדמית תקנית בפיקוח משרד החינוך.',
+    descEn: 'Math, English, and science at full Ministry of Education standards.',
+    descFr: 'Mathématiques, anglais et sciences selon les normes du ministère.',
+  },
+  {
+    color: '#2596b8',
+    icon: Building2,
+    titleHe: 'מוסדות רשמיים ותקצוב שוויוני',
+    titleEn: 'Official State Funding',
+    titleFr: 'Financement Public Équitable',
+    descHe: 'מבנים תקניים, ימי לימודים ארוכים ומעטפת פרא-רפואית מלאה.',
+    descEn: 'Standardized facilities, full school days, and comprehensive support.',
+    descFr: 'Locaux conformes, journées complètes et accompagnement paramédical.',
+  },
+];
+
 export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
-  const { t, locale, dir } = useI18n();
+  const { locale } = useI18n();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.08,
         delayChildren: 0.05,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, y: 12 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
+  const featuredStats = stats.slice(0, 3);
+
   return (
-    <section className="relative w-full min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-7rem)] flex flex-col justify-center overflow-hidden bg-brand-navyDark">
-      {/* Background Video spanning full width and full height */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover scale-125 object-[center_45%]"
-      >
-        <source src="/video.mp4" type="video/mp4" />
-      </video>
+    <section className="w-full bg-white border-b border-slate-200/90">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
 
-      {/* 0.8 Transparent Gradient Overlay using the active colors of the website */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          background: 'linear-gradient(135deg, rgba(9, 3, 66, 0.85) 0%, rgba(17, 7, 113, 0.80) 35%, rgba(78, 10, 108, 0.80) 70%, rgba(48, 154, 192, 0.78) 100%)',
-        }}
-      />
-
-      {/* Subtle Ambient Brand Glows over video for extra vibrance */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 85% 20%, rgba(238, 166, 0, 0.20) 0%, transparent 45%), radial-gradient(circle at 15% 80%, rgba(48, 154, 192, 0.20) 0%, transparent 45%)',
-        }}
-      />
-
-      {/* Rainbow Accent Strip at top of Hero */}
-      <div className="h-1.5 w-full logo-rainbow-strip absolute top-0 left-0 right-0 z-20" />
-
-      {/* Main 2-Column Hero Area (Zefat Style: text/CTAs on right, interactive wheel on left in RTL) */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 flex-1 flex items-center">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
-
-          {/* Right Column (Col 7 in RTL): Hero text & CTAs */}
+          {/* Right Column (2/3): Main Editorial Content */}
           <motion.div
-            className="lg:col-span-7 text-center lg:text-right space-y-5 sm:space-y-6"
+            className="lg:col-span-2 flex flex-col justify-between gap-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-            {/* Badge with spectrum dots */}
-            <motion.div variants={itemVariants} className="inline-block">
-              <motion.div
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2.5 border border-white/30 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 rounded-full bg-white/15 backdrop-blur-md shadow-xl cursor-default transition-all hover:bg-white/25 hover:border-white/50"
-              >
-                <span className="flex items-center gap-1.5">
-                  {['bg-brand-gold', 'bg-brand-purple', 'bg-brand-green', 'bg-brand-cyan', 'bg-brand-orange', 'bg-brand-red'].map((c, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.1 + i * 0.05, type: 'spring', stiffness: 200 }}
-                      className={`w-2.5 h-2.5 rounded-full ${c} shadow-sm ring-1 ring-white/40`}
-                    />
-                  ))}
+            <div className="space-y-5">
+              {/* Tag "00 //" */}
+              <motion.div variants={itemVariants}>
+                <span className="text-sm sm:text-base text-[#0a0563] font-bold tracking-wider block">
+                  00 // {hero.badge}
                 </span>
-                <span className="drop-shadow-sm">{hero.badge}</span>
               </motion.div>
-            </motion.div>
 
-            {/* Animated Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-black tracking-tight leading-[1.2] text-white drop-shadow-lg"
-            >
-              {hero.titleLine1}<br />
-              <span className="relative inline-block text-brand-gold drop-shadow-md">
-                {hero.highlightText}
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
-                  className="absolute bottom-1 right-0 left-0 h-3 bg-brand-gold/40 -z-10 rounded-full origin-right"
-                />
-              </span>{' '}
-              <span className="inline-block whitespace-nowrap text-white/95">{hero.titleLine2}</span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              variants={itemVariants}
-              className="text-base sm:text-lg lg:text-xl text-slate-100/95 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal drop-shadow-md"
-            >
-              {hero.subtitle}
-            </motion.p>
-
-            {/* CTA Buttons with hover & click physics */}
-            <motion.div variants={itemVariants} className={`flex flex-wrap items-center justify-center ${dir === 'rtl' ? 'lg:justify-start' : 'lg:justify-start'} gap-4 pt-2`}>
-              <motion.a
-                href="#directory"
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-shimmer px-7 py-3.5 sm:py-4 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-xl text-base sm:text-lg inline-flex items-center gap-2.5 shadow-xl shadow-amber-500/25 hover:shadow-2xl transition-all"
+              {/* Heavy Main Headline (#0a0563) */}
+              <motion.h1
+                variants={itemVariants}
+                className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.6rem] font-black tracking-tight leading-[1.16] text-[#0a0563]"
               >
-                <span>{locale === 'he' ? 'איתור מוסד חינוכי באינדקס' : locale === 'fr' ? 'Trouver une école dans l\'annuaire' : 'Locate a School in Directory'}</span>
-                <motion.span
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+                {hero.titleLine1}
+                <br />
+                <span className="text-[#2596b8]">{hero.highlightText}</span>{' '}
+                <span className="inline-block whitespace-nowrap">{hero.titleLine2}</span>
+              </motion.h1>
+
+              {/* Subtitle */}
+              <motion.p
+                variants={itemVariants}
+                className="text-base sm:text-lg lg:text-xl text-slate-700 leading-relaxed max-w-2xl"
+              >
+                {hero.subtitle}
+              </motion.p>
+
+              {/* Rectangular Action Buttons (rounded-md) */}
+              <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-2">
+                <a
+                  href="#directory"
+                  className="px-6 py-3.5 bg-[#0a0563] hover:bg-[#110771] text-white font-bold rounded-md text-sm sm:text-base inline-flex items-center gap-2 transition-colors"
                 >
-                  ↓
-                </motion.span>
-              </motion.a>
-              <motion.a
-                href="#contact"
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3.5 sm:py-4 border-2 border-white/40 hover:border-white text-white bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-xl text-base sm:text-lg font-bold shadow-lg transition-all"
-              >
-                <span>{locale === 'he' ? 'פנייה ישירה למוקד ההורים' : locale === 'fr' ? 'Contacter la permanence parents' : 'Direct Inquiry to Parents Hotline'}</span>
+                  <span>
+                    {locale === 'he'
+                      ? 'איתור מוסד חינוכי באינדקס'
+                      : locale === 'fr'
+                      ? 'Trouver une école dans l\'annuaire'
+                      : 'Locate a School in Directory'}
+                  </span>
+                  <ArrowDown className="w-4 h-4" />
+                </a>
+                <a
+                  href="#contact"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-[#0a0563] border border-slate-200/90 hover:border-[#0a0563]/40 font-bold rounded-md text-sm sm:text-base transition-colors"
+                >
+                  <span>
+                    {locale === 'he'
+                      ? 'פנייה ישירה למוקד ההורים'
+                      : locale === 'fr'
+                      ? 'Contacter la permanence parents'
+                      : 'Direct Inquiry to Parents Hotline'}
+                  </span>
+                </a>
+              </motion.div>
+            </div>
 
-              </motion.a>
-            </motion.div>
+            {/* Dynamic Stats Strip */}
+            {featuredStats.length > 0 && (
+              <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-200/90"
+              >
+                {featuredStats.map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-slate-50/70 border border-slate-200/90 rounded-md px-4 py-3.5"
+                  >
+                    <div className="text-2xl sm:text-3xl font-black text-[#0a0563] tracking-tight">
+                      {stat.number}
+                      {stat.suffix && <span className="text-[#2596b8]">{stat.suffix}</span>}
+                    </div>
+                    <div className="text-sm font-bold text-slate-800 mt-0.5">{stat.label}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{stat.sublabel}</div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
 
-          {/* Left Column (Col 5 in RTL): Interactive Pie Chart Wheel (Zefat Style) */}
+          {/* Left Column (1/3): Core Principles Card */}
           <motion.div
-            className="lg:col-span-5 flex justify-center items-center py-4 lg:py-0"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-1 flex"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
           >
-            <InteractivePieChart stats={stats} />
+            <div className="w-full bg-slate-50/60 border border-slate-200/90 rounded-md p-6 sm:p-7 flex flex-col justify-between gap-6">
+              <div className="border-b border-slate-200/90 pb-4">
+                <span className="text-xs font-bold text-slate-500 tracking-wider uppercase block">
+                  {locale === 'he' ? 'עמודי התווך' : locale === 'fr' ? 'Piliers Clés' : 'Core Pillars'}
+                </span>
+                <h2 className="text-xl font-black text-[#0a0563] tracking-tight mt-1">
+                  {locale === 'he' ? 'עקרונות הליבה של הממ״ח' : locale === 'fr' ? 'Principes Fondamentaux' : 'Core Principles'}
+                </h2>
+              </div>
+
+              <div className="space-y-4 flex-1 flex flex-col justify-center">
+                {CORE_PRINCIPLES.map((item, idx) => {
+                  const IconComp = item.icon;
+                  const title = locale === 'he' ? item.titleHe : locale === 'fr' ? item.titleFr : item.titleEn;
+                  const desc = locale === 'he' ? item.descHe : locale === 'fr' ? item.descFr : item.descEn;
+
+                  return (
+                    <div
+                      key={idx}
+                      style={{ borderInlineStartColor: item.color }}
+                      className="bg-white border border-slate-200/90 border-s-4 rounded-md p-4 space-y-1.5"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          style={{ color: item.color }}
+                          className="shrink-0"
+                        >
+                          <IconComp className="w-4 h-4" />
+                        </span>
+                        <h3 className="text-sm sm:text-base font-black text-[#0a0563] leading-snug">
+                          {title}
+                        </h3>
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {desc}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </motion.div>
 
         </div>
       </div>
-
-      {/* Signature Spectrum Strip at bottom border of Hero */}
-      <div className="h-1.5 w-full logo-rainbow-strip absolute bottom-0 left-0 right-0 z-20" />
     </section>
   );
 }

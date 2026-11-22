@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nContext';
 
 export function Footer() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   return (
-    <footer className="mt-20 border-t border-slate-800 bg-[#0a0447] text-white">
-      <div className="h-1.5 w-full logo-rainbow-strip" />
+    <footer className="mt-20 border-t border-slate-200/90 bg-[#0a0447] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
         {/* Main Footer Grid */}
@@ -18,11 +17,11 @@ export function Footer() {
           {/* Col 1: Brand & About */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="bg-white p-2.5 rounded-xl shadow-xs">
+              <div className="bg-white p-2 rounded-md border border-slate-200/90">
                 <img
                   src="/logo.png"
                   alt={t('footer.aboutTitle')}
-                  className="h-14 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               </div>
               <div>
@@ -38,7 +37,7 @@ export function Footer() {
                 href="https://www.guidestar.org.il/organization/580758324"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-shimmer px-4 py-2 bg-brand-gold text-slate-950 font-bold rounded-lg text-xs hover:bg-yellow-400 transition-all"
+                className="px-4 py-2 bg-brand-gold text-slate-950 font-bold rounded-md text-xs hover:bg-amber-400 transition-colors"
               >
                 {t('footer.guidestar')}
               </a>
@@ -98,6 +97,14 @@ export function Footer() {
           </div>
         </div>
 
+      </div>
+
+      {/* 4-Segment Sharp Brand Strip */}
+      <div className="grid grid-cols-4 h-1.5 w-full">
+        <div className="bg-[#0a0563]" />
+        <div className="bg-[#2596b8]" />
+        <div className="bg-[#65b933]" />
+        <div className="bg-[#4c0d69]" />
       </div>
     </footer>
   );

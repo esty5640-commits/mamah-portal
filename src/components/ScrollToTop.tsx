@@ -31,13 +31,13 @@ export function ScrollToTop() {
     <AnimatePresence>
       {visible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          initial={{ opacity: 0, scale: 0.85, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, y: 20 }}
-          whileHover={{ scale: 1.12, y: -3 }}
-          whileTap={{ scale: 0.9 }}
+          exit={{ opacity: 0, scale: 0.85, y: 12 }}
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.95 }}
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 z-50 p-3.5 bg-brand-navy hover:bg-brand-navyLight text-white rounded-full shadow-elevated border-2 border-white/20 transition-colors flex items-center justify-center cursor-pointer group"
+          className="fixed bottom-6 left-6 z-50 w-10 h-10 bg-[#0a0563] hover:bg-[#110771] text-white rounded-md border border-white/20 transition-colors flex items-center justify-center cursor-pointer group"
           title="חזרה לראש העמוד"
           aria-label="חזרה לראש העמוד"
         >

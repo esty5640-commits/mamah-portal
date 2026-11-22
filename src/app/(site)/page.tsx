@@ -150,11 +150,13 @@ export default async function HomePage() {
         <AnimatedActivities activities={activities} />
 
         {/* SECTION 4: CONTACT & INQUIRIES */}
-        <section id="contact" className="space-y-8 border-t border-slate-200/80 pt-16">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">04 // אנחנו כאן בשבילכם</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight">מוקד סיוע ופניות הורים</h2>
-            <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
+        <section id="contact" className="space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/90 pb-6">
+            <div>
+              <span className="text-sm sm:text-base text-[#0a0563] font-bold tracking-wider block">04 // אנחנו כאן בשבילכם</span>
+              <h2 className="text-3xl sm:text-4xl font-black text-[#0a0563] tracking-tight mt-1">מוקד סיוע ופניות הורים</h2>
+            </div>
+            <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
               מתמודדים עם קושי ברישום ברשות המקומית? מעוניינים להקים מוסד ממ״ח? השאירו פרטים ונחזור אליכם בהקדם.
             </p>
           </div>
