@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { fetchKindergartensFromGoogleSheets } from '@/lib/sheets';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 export async function GET() {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
   try {
     const kindergartens = await fetchKindergartensFromGoogleSheets();
     return NextResponse.json(kindergartens, {

@@ -1,12 +1,24 @@
 import React from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
+import { AdminGuardView } from '@/components/AdminGuardView';
+import { getAuthStatus } from '@/lib/adminAuth';
 import { getAllLandingPages } from '@/lib/landingPages';
-import { Sparkles, ExternalLink, Settings, FileText, ArrowLeft } from 'lucide-react';
+import { Sparkles, ExternalLink, Settings, FileText } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LandingPagesIndexPage() {
+  const { user, isAdmin } = await getAuthStatus();
+
+  if (!user) {
+    return <AdminGuardView mode="login" />;
+  }
+
+  if (!isAdmin) {
+    return <AdminGuardView mode="forbidden" userEmail={user.email} />;
+  }
+
   const pages = await getAllLandingPages();
   const publishedPages = pages.filter((p) => p.status === 'published');
 

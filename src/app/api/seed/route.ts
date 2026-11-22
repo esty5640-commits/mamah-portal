@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { seedDatabase } from '@/lib/seed';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export async function GET() {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
   try {
     const res = await seedDatabase();
     return NextResponse.json({ success: true, message: 'Database seeded successfully', res });

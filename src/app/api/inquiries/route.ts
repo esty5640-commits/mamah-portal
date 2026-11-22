@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export async function POST(req: Request) {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
   try {
     const body = await req.json();
     const payload = await getPayload({ config: configPromise });

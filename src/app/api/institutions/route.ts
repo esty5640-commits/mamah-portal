@@ -3,11 +3,14 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { fetchInstitutionsFromGoogleSheets, getInstitutionLogo } from '@/lib/sheets';
 import { institutionsList } from '@/data/institutions';
+import { requireAdminApi } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 export async function GET() {
+  const authError = await requireAdminApi();
+  if (authError) return authError;
   // 1. Live Google Sheets Data (Single Source of Truth)
   try {
     const liveInstitutions = await fetchInstitutionsFromGoogleSheets();
