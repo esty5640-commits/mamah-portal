@@ -46,11 +46,23 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
 
   return (
     <section className="relative w-full min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-7rem)] flex flex-col justify-center overflow-hidden bg-brand-navyDark">
-      {/* Gradient Background using the active colors of the website */}
+      {/* Background Video spanning full width and full height */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover scale-125 object-[center_45%]"
+      >
+        <source src="/video.mp4" type="video/mp4" />
+      </video>
+
+      {/* 0.8 Transparent Gradient Overlay using the active colors of the website */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
         style={{
-          background: 'linear-gradient(135deg, rgba(9, 3, 66, 0.95) 0%, rgba(17, 7, 113, 0.92) 35%, rgba(78, 10, 108, 0.88) 70%, rgba(48, 154, 192, 0.85) 100%)',
+          background: 'linear-gradient(135deg, rgba(9, 3, 66, 0.85) 0%, rgba(17, 7, 113, 0.80) 35%, rgba(78, 10, 108, 0.80) 70%, rgba(48, 154, 192, 0.78) 100%)',
         }}
       />
 
