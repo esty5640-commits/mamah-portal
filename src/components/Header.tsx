@@ -127,15 +127,13 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/90">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
 
-        {/* Square Logo Box */}
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-md border border-slate-200/90 bg-white p-1.5 flex items-center justify-center overflow-hidden transition-colors group-hover:border-[#0a0563]/40">
-            <img
-              src="/logo.png"
-              alt={t('common.siteTitle')}
-              className="w-full h-full object-contain"
-            />
-          </div>
+        {/* Logo */}
+        <Link href="/" className="flex items-center h-full py-1 group shrink-0">
+          <img
+            src="/logo.png"
+            alt={t('common.siteTitle')}
+            className="h-full w-auto object-contain"
+          />
         </Link>
 
         {/* Desktop Navigation Tabs */}
@@ -221,14 +219,6 @@ export function Header() {
               );
             })}
           </div>
-
-          {/* Sharp Rectangular Action Button */}
-          <Link
-            href="/contact/parents"
-            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 bg-[#0a0563] hover:bg-[#110771] text-white text-xs sm:text-sm font-bold rounded-md whitespace-nowrap transition-colors"
-          >
-            <span className="whitespace-nowrap">{t('common.hotlineButton')}</span>
-          </Link>
 
           {/* Mobile Hamburger Button */}
           <button
@@ -318,13 +308,6 @@ export function Header() {
             })}
 
             <div className="pt-4 flex flex-col gap-3">
-              <Link
-                href="/contact/parents"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-3 bg-[#0a0563] hover:bg-[#110771] text-white text-sm font-bold rounded-md transition-colors"
-              >
-                {t('nav.contactParents')} ({t('common.hotlineButton')})
-              </Link>
               <a
                 href="https://www.guidestar.org.il/organization/580758324"
                 target="_blank"
