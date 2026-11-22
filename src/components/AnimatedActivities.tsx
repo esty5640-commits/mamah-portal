@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, Sparkles, HeartHandshake, Users, Award, Scale } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 const ACTIVITY_ICONS = [BookOpen, Sparkles, HeartHandshake, Users, Award, Scale];
 
@@ -26,6 +27,18 @@ interface AnimatedActivitiesProps {
 }
 
 export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
+  const { t, dict, locale, dir } = useI18n();
+
+  const localizedActivities = useMemo(() => {
+    if (locale === 'he') return activities;
+    return activities.map((a, idx) => {
+      const translated = dict.activitiesSection.items[idx];
+      return translated
+        ? { ...a, title: translated.title, desc: translated.desc }
+        : a;
+    });
+  }, [locale, activities, dict]);
+
   const container = {
     hidden: { opacity: 0 },
     visible: {
@@ -49,18 +62,18 @@ export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
     <section id="activities" className="space-y-8">
       {/* Header with slide-in */}
       <motion.div
-        initial={{ opacity: 0, x: 20 }}
+        initial={{ opacity: 0, x: dir === 'rtl' ? 20 : -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
         transition={{ duration: 0.6 }}
         className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6"
       >
         <div>
-          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">03 // תחומי פעילות מקצועיים</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">פעילויות אגודת ידידי הממ״ח</h2>
+          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">{t('activitiesSection.tag')}</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">{t('activitiesSection.title')}</h2>
         </div>
         <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
-          מעטפת של ליווי הורים, ייעוץ משפטי, לובינג בכנסת והכשרת ועדי הורים מוסדיים.
+          {t('activitiesSection.subtitle')}
         </p>
       </motion.div>
 
@@ -72,7 +85,7 @@ export function AnimatedActivities({ activities }: AnimatedActivitiesProps) {
         whileInView="visible"
         viewport={{ once: true, margin: '-40px' }}
       >
-        {activities.map((a, idx) => {
+        {localizedActivities.map((a, idx) => {
           const colorConfig = COLOR_CLASSES[a.color] || COLOR_CLASSES.purple;
           const IconComp = ACTIVITY_ICONS[idx % ACTIVITY_ICONS.length];
           return (

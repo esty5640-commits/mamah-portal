@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from '@/i18n/I18nContext';
 import { 
   BookOpen, 
   Users, 
@@ -47,6 +48,7 @@ const COLOR_CONFIGS: Record<string, { fill: string; gradStart: string; gradEnd: 
 };
 
 export function InteractivePieChart({ stats }: InteractivePieChartProps) {
+  const { t } = useI18n();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -269,17 +271,17 @@ export function InteractivePieChart({ stats }: InteractivePieChartProps) {
                   >
                     <motion.img 
                       src="/logo.png" 
-                      alt="אגודת ידידי הממ״ח" 
+                      alt={t('common.siteTitle')} 
                       className="h-14 sm:h-16 w-auto object-contain drop-shadow-sm"
                       animate={{ y: [0, -4, 0] }}
                       transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                     />
                     <div className="mt-2 flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-full shadow-sm border border-slate-100">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse" />
-                      <span className="text-[10px] font-bold text-brand-navy tracking-tight">נתוני מפתח</span>
+                      <span className="text-[10px] font-bold text-brand-navy tracking-tight">{t('pieChart.keyMetrics')}</span>
                     </div>
                     <span className="text-[10px] text-slate-400 font-medium mt-1">
-                      לחצו על גזר לצפייה
+                      {t('pieChart.clickSlice')}
                     </span>
                   </motion.div>
                 )}
@@ -325,7 +327,7 @@ export function InteractivePieChart({ stats }: InteractivePieChartProps) {
                   {activeStat.label}: <span dir="ltr" className="font-black text-brand-gold text-sm bg-black/20 px-2 py-0.5 rounded-md">{activeStat.number}{activeStat.suffix || ''}</span>
                 </motion.span>
               </AnimatePresence>
-            ) : 'לחצו על גזר לחשיפת הנתונים'}
+            ) : t('pieChart.clickSlicePrompt')}
           </span>
         </div>
       </motion.div>

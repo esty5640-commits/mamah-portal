@@ -6,7 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Send, HeartHandshake, ArrowLeft, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 
-export function ContactForm() {
+interface ContactFormProps {
+  showSectionHeader?: boolean;
+}
+
+export function ContactForm({ showSectionHeader = false }: ContactFormProps) {
   const { t, dir, locale } = useI18n();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,7 +40,7 @@ export function ContactForm() {
     }
   };
 
-  return (
+  const formContent = (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -51,41 +55,21 @@ export function ContactForm() {
             <HeartHandshake className="w-6 h-6" />
           </div>
           <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-            {locale === 'he'
-              ? 'ליווי אישי להורים ויוזמות הקמה'
-              : locale === 'fr'
-              ? 'Accompagnement des parents'
-              : 'Personal Parent Support'}
+            {t('contactSection.anchorTitle')}
           </h3>
           <p className="text-sm sm:text-base text-white/90 leading-relaxed">
-            {locale === 'he'
-              ? 'צוות המוקד מלווה הורים מול הרשויות המקומיות, מסייע בהגשת ערעורים ובליווי קבוצות הורים להקמת מוסדות חדשים.'
-              : locale === 'fr'
-              ? 'Notre équipe accompagne les parents auprès des municipalités, des recours et de la création de nouveaux établissements.'
-              : 'Our team supports parents with municipal registration, appeals, and establishing new schools.'}
+            {t('contactSection.anchorDesc')}
           </p>
         </div>
 
         <div className="space-y-3 pt-4 border-t border-white/15 text-sm text-white/90">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-white shrink-0" />
-            <span>
-              {locale === 'he'
-                ? 'ייעוץ פדגוגי ומשפטי דיסקרטי'
-                : locale === 'fr'
-                ? 'Conseil pédagogique et juridique confidentiel'
-                : 'Confidential educational & legal guidance'}
-            </span>
+            <span>{t('contactSection.anchorBullet1')}</span>
           </div>
           <div className="flex items-center gap-2.5">
             <Clock className="w-4 h-4 text-white shrink-0" />
-            <span>
-              {locale === 'he'
-                ? 'מענה מהיר תוך ימי עסקים ספורים'
-                : locale === 'fr'
-                ? 'Réponse rapide sous quelques jours ouvrés'
-                : 'Prompt response within a few business days'}
-            </span>
+            <span>{t('contactSection.anchorBullet2')}</span>
           </div>
         </div>
 
@@ -93,13 +77,7 @@ export function ContactForm() {
           href="/contact/parents"
           className="inline-flex items-center justify-between px-4 py-3 bg-white/15 hover:bg-white/25 text-white font-bold text-sm rounded-md transition-colors"
         >
-          <span>
-            {locale === 'he'
-              ? 'לדף מוקד הפניות המלא'
-              : locale === 'fr'
-              ? 'Page complète de la permanence'
-              : 'Full Hotline Page'}
-          </span>
+          <span>{t('contactSection.anchorLinkText')}</span>
           {dir === 'rtl' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
         </Link>
       </div>
@@ -131,7 +109,7 @@ export function ContactForm() {
                 }}
                 className="mt-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-[#0a0563] rounded-md text-sm sm:text-base font-bold transition-colors cursor-pointer"
               >
-                {locale === 'he' ? 'שליחת פנייה נוספת' : locale === 'fr' ? 'Envoyer une autre demande' : 'Submit Another Inquiry'}
+                {t('contactSection.submitAnother')}
               </button>
             </motion.div>
           ) : (
@@ -159,7 +137,7 @@ export function ContactForm() {
                     <input
                       value={formData.studentName}
                       onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
-                      placeholder={locale === 'he' ? 'שם הילד/ה' : 'Student Name'}
+                      placeholder={locale === 'he' ? 'שם הילד/ה' : locale === 'fr' ? 'Nom de l\'élève' : 'Student Name'}
                       className="w-full p-3 bg-slate-50 border border-slate-200/90 rounded-md text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0a0563]/15 focus:border-[#0a0563] transition-colors"
                     />
                   </div>
@@ -183,7 +161,7 @@ export function ContactForm() {
                       required
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      placeholder={locale === 'he' ? 'ירושלים / בית שמש...' : 'City'}
+                      placeholder={locale === 'he' ? 'ירושלים / בית שמש...' : locale === 'fr' ? 'Jérusalem / Bet Shemesh...' : 'Jerusalem / Beit Shemesh...'}
                       className="w-full p-3 bg-slate-50 border border-slate-200/90 rounded-md text-base text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0a0563]/15 focus:border-[#0a0563] transition-colors"
                     />
                   </div>
@@ -221,5 +199,25 @@ export function ContactForm() {
         </AnimatePresence>
       </div>
     </motion.div>
+  );
+
+  if (!showSectionHeader) {
+    return formContent;
+  }
+
+  return (
+    <section id="contact" className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/90 pb-6">
+        <div>
+          <span className="text-sm sm:text-base text-[#0a0563] font-bold tracking-wider block">{t('contactSection.tag')}</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-[#0a0563] tracking-tight mt-1">{t('contactSection.title')}</h2>
+        </div>
+        <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
+          {t('contactSection.subtitle')}
+        </p>
+      </div>
+
+      {formContent}
+    </section>
   );
 }

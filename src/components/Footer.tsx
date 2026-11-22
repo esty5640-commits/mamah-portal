@@ -92,8 +92,8 @@ export function Footer() {
             <Link href="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
             <Link href="/accessibility" className="hover:text-white transition-colors">{t('footer.accessibility')}</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">{t('footer.privacy')}</Link>
-            <Link href="/lp" className="hover:text-white transition-colors">דפי נחיתה ורישום</Link>
-            <Link href="/landing-pages/manage" className="hover:text-brand-gold text-slate-300 font-bold transition-colors">ניהול דפי נחיתה</Link>
+            <Link href="/lp" className="hover:text-white transition-colors">{t('footer.landingPages')}</Link>
+            <Link href="/landing-pages/manage" className="hover:text-brand-gold text-slate-300 font-bold transition-colors">{t('footer.manageLandingPages')}</Link>
           </div>
         </div>
 

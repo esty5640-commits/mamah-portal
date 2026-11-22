@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { InteractivePieChart } from './InteractivePieChart';
 import { useI18n } from '@/i18n/I18nContext';
@@ -23,7 +23,29 @@ interface AnimatedHeroProps {
 }
 
 export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
-  const { locale, dir } = useI18n();
+  const { t, dict, locale, dir } = useI18n();
+
+  const localizedHero = useMemo(() => {
+    if (locale === 'he') return hero;
+    return {
+      badge: t('hero.homeBadge'),
+      titleLine1: t('hero.homeTitleLine1'),
+      highlightText: t('hero.homeHighlightText'),
+      titleLine2: t('hero.homeTitleLine2'),
+      subtitle: t('hero.homeSubtitle'),
+    };
+  }, [locale, hero, t]);
+
+  const localizedStats = useMemo(() => {
+    if (locale === 'he') return stats;
+    return stats.map((s, idx) => {
+      const translated = dict.pieChart.statsItems[idx];
+      return translated
+        ? { ...s, label: translated.label, sublabel: translated.sublabel }
+        : s;
+    });
+  }, [locale, stats, dict]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -80,7 +102,7 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
 
           {/* Right Column (Col 7 in RTL): Hero text & CTAs */}
           <motion.div
-            className="lg:col-span-7 text-center lg:text-right space-y-5 sm:space-y-6"
+            className={`lg:col-span-7 text-center ${dir === 'rtl' ? 'lg:text-right' : 'lg:text-left'} space-y-5 sm:space-y-6`}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -88,7 +110,7 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
             {/* Tag */}
             <motion.div variants={itemVariants} className="inline-block">
               <div className="inline-flex items-center gap-2.5 border border-white/30 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-md bg-white/15 backdrop-blur-md">
-                <span>00 // {hero.badge}</span>
+                <span>00 // {localizedHero.badge}</span>
               </div>
             </motion.div>
 
@@ -97,11 +119,11 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
               variants={itemVariants}
               className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-black tracking-tight leading-[1.2] text-white drop-shadow-lg"
             >
-              {hero.titleLine1}<br />
+              {localizedHero.titleLine1}<br />
               <span className="relative inline-block text-brand-gold drop-shadow-md">
-                {hero.highlightText}
+                {localizedHero.highlightText}
               </span>{' '}
-              <span className="inline-block whitespace-nowrap text-white/95">{hero.titleLine2}</span>
+              <span className="inline-block whitespace-nowrap text-white/95">{localizedHero.titleLine2}</span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -109,18 +131,18 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
               variants={itemVariants}
               className="text-base sm:text-lg lg:text-xl text-slate-100/95 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal drop-shadow-md"
             >
-              {hero.subtitle}
+              {localizedHero.subtitle}
             </motion.p>
 
             {/* CTA Buttons */}
-            <motion.div variants={itemVariants} className={`flex flex-wrap items-center justify-center ${dir === 'rtl' ? 'lg:justify-start' : 'lg:justify-start'} gap-4 pt-2`}>
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
               <motion.a
                 href="#directory"
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.97 }}
                 className="px-7 py-3.5 sm:py-4 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-md text-base sm:text-lg inline-flex items-center gap-2.5 transition-all"
               >
-                <span>{locale === 'he' ? 'איתור מוסד חינוכי באינדקס' : locale === 'fr' ? 'Trouver une école dans l\'annuaire' : 'Locate a School in Directory'}</span>
+                <span>{t('hero.locateSchoolBtn')}</span>
                 <motion.span
                   animate={{ y: [0, 4, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
@@ -134,7 +156,7 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
                 whileTap={{ scale: 0.97 }}
                 className="px-6 py-3.5 sm:py-4 border border-white/40 hover:border-white text-white bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-md text-base sm:text-lg font-bold transition-all"
               >
-                <span>{locale === 'he' ? 'פנייה ישירה למוקד ההורים' : locale === 'fr' ? 'Contacter la permanence parents' : 'Direct Inquiry to Parents Hotline'}</span>
+                <span>{t('hero.contactHotlineBtn')}</span>
               </motion.a>
             </motion.div>
           </motion.div>
@@ -146,7 +168,7 @@ export function AnimatedHero({ hero, stats }: AnimatedHeroProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <InteractivePieChart stats={stats} />
+            <InteractivePieChart stats={localizedStats} />
           </motion.div>
 
         </div>

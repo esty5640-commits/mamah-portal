@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, TrendingUp, Users } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 const PILLAR_ICONS = [ShieldCheck, TrendingUp, Users];
 
@@ -26,6 +27,18 @@ interface AnimatedPillarsProps {
 }
 
 export function AnimatedPillars({ pillars }: AnimatedPillarsProps) {
+  const { t, dict, locale, dir } = useI18n();
+
+  const localizedPillars = useMemo(() => {
+    if (locale === 'he') return pillars;
+    return pillars.map((p, idx) => {
+      const translated = dict.pillarsSection.items[idx];
+      return translated
+        ? { ...p, title: translated.title, description: translated.description }
+        : p;
+    });
+  }, [locale, pillars, dict]);
+
   const container = {
     hidden: { opacity: 0 },
     visible: {
@@ -49,18 +62,18 @@ export function AnimatedPillars({ pillars }: AnimatedPillarsProps) {
     <section id="about" className="space-y-8">
       {/* Header with slide-in */}
       <motion.div
-        initial={{ opacity: 0, x: 20 }}
+        initial={{ opacity: 0, x: dir === 'rtl' ? 20 : -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
         transition={{ duration: 0.6 }}
         className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6"
       >
         <div>
-          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">01 // מהות ומדיניות</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">מה זה ממ״ח? החינוך הממלכתי-חרדי</h2>
+          <span className="text-sm sm:text-base text-brand-navy font-bold tracking-wider block">{t('pillarsSection.tag')}</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-brand-navy tracking-tight mt-1">{t('pillarsSection.title')}</h2>
         </div>
         <p className="text-base sm:text-lg text-slate-700 max-w-lg leading-relaxed">
-          מסגרת חינוכית רשמית של מדינת ישראל המשלבת קודש ולימודי חול ברמה הגבוהה ביותר.
+          {t('pillarsSection.subtitle')}
         </p>
       </motion.div>
 
@@ -72,7 +85,7 @@ export function AnimatedPillars({ pillars }: AnimatedPillarsProps) {
         whileInView="visible"
         viewport={{ once: true, margin: '-40px' }}
       >
-        {pillars.map((p, idx) => {
+        {localizedPillars.map((p, idx) => {
           const colorConfig = COLOR_CLASSES[p.color] || COLOR_CLASSES.purple;
           const IconComp = PILLAR_ICONS[idx % PILLAR_ICONS.length];
           return (
