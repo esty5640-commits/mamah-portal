@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   Mail,
   Phone,
@@ -10,12 +11,11 @@ import {
   Send,
   CheckCircle2,
   HeartHandshake,
-  ArrowLeft,
-  Building2,
   FileText
 } from 'lucide-react';
 
 export default function ContactPage() {
+  const { t, dir } = useI18n();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -56,13 +56,13 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-gold text-xs font-bold border border-white/20">
             <Mail className="w-3.5 h-3.5" />
-            <span>הנהלת האגודה ומשרדיה</span>
+            <span>{t('pages.contactGeneral.badge')}</span>
           </span>
           <h1 className="text-3xl sm:text-5xl font-black">
-            יצירת קשר כללית
+            {t('pages.contactGeneral.title')}
           </h1>
           <p className="text-base sm:text-lg text-slate-200 max-w-2xl mx-auto">
-            לפניות כלליות, תקשורת, שיתופי פעולה ותרומות לאגודת ידידי הממ״ח
+            {t('pages.contactGeneral.subtitle')}
           </p>
         </div>
       </section>
@@ -71,17 +71,17 @@ export default function ContactPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-12">
 
         {/* Prominent Banner directing parents to parents hotline */}
-        <div className="bg-gradient-to-r from-brand-navy to-brand-navyDark text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-r-8 border-brand-gold">
-          <div className="space-y-2 text-center md:text-right">
+        <div className={`bg-gradient-to-r from-brand-navy to-brand-navyDark text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 ${dir === 'rtl' ? 'border-r-8' : 'border-l-8'} border-brand-gold`}>
+          <div className={`space-y-2 text-center ${dir === 'rtl' ? 'md:text-right' : 'md:text-left'}`}>
             <div className="flex items-center justify-center md:justify-start gap-2 text-brand-gold text-xs font-black uppercase">
               <HeartHandshake className="w-4 h-4" />
-              <span>הורים לתלמידים? מחפשים סיוע ברישום או מול הרשות?</span>
+              <span>{t('pages.contactGeneral.parentsBannerTag')}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black">
-              עברו למוקד פניות הורים הייעודי
+              {t('pages.contactGeneral.parentsBannerTitle')}
             </h2>
             <p className="text-sm text-slate-300 max-w-xl">
-              לטיפול פרטני בסירובי רישום, ערעורים, סיוע משפטי וליווי להקמת מוסד חדש – מוקד ההורים מעניק מענה מותאם וממוקד.
+              {t('pages.contactGeneral.parentsBannerDesc')}
             </p>
           </div>
 
@@ -89,7 +89,7 @@ export default function ContactPage() {
             href="/contact/parents"
             className="btn-shimmer px-6 py-3.5 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm shrink-0 shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
           >
-            <span>מעבר לטופס פניות הורים</span>
+            <span>{t('pages.contactGeneral.parentsBannerBtn')}</span>
           </Link>
         </div>
 
@@ -99,7 +99,7 @@ export default function ContactPage() {
           {/* Details (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-6">
-              <h3 className="text-xl font-black text-brand-navy">ערוצי התקשרות עם האגודה</h3>
+              <h3 className="text-xl font-black text-brand-navy">{t('pages.contactGeneral.channelsTitle')}</h3>
 
               <div className="space-y-4 text-sm text-slate-700">
                 <div className="flex items-start gap-3">
@@ -107,8 +107,8 @@ export default function ContactPage() {
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block">כתובת משרדים:</span>
-                    <span className="font-bold text-slate-900">רחוב כנפי נשרים 15, גבעת שאול, ירושלים</span>
+                    <span className="text-xs text-slate-400 font-bold block">{t('pages.contactGeneral.officeAddressLabel')}</span>
+                    <span className="font-bold text-slate-900">{t('pages.contactGeneral.officeAddress')}</span>
                   </div>
                 </div>
 
@@ -117,7 +117,7 @@ export default function ContactPage() {
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block">טלפון משרד:</span>
+                    <span className="text-xs text-slate-400 font-bold block">{t('pages.contactGeneral.officePhoneLabel')}</span>
                     <a href="tel:025000000" className="font-bold text-slate-900 hover:text-brand-navy" dir="ltr">
                       02-5000000
                     </a>
@@ -129,7 +129,7 @@ export default function ContactPage() {
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block">דוא״ל ראשי:</span>
+                    <span className="text-xs text-slate-400 font-bold block">{t('pages.contactGeneral.mainEmailLabel')}</span>
                     <a href="mailto:contact@mamah.org.il" className="font-bold text-slate-900 hover:text-brand-navy" dir="ltr">
                       contact@mamah.org.il
                     </a>
@@ -141,14 +141,14 @@ export default function ContactPage() {
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block">כתובת למשלוח דואר:</span>
-                    <span className="font-bold text-slate-900">ת.ד 34122, ירושלים מיקוד 9134101</span>
+                    <span className="text-xs text-slate-400 font-bold block">{t('pages.contactGeneral.postalLabel')}</span>
+                    <span className="font-bold text-slate-900">{t('pages.contactGeneral.postalAddress')}</span>
                   </div>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-slate-200">
-                <span className="text-xs text-slate-500 block">עמותה רשומה בישראל: ע״ר 580758324</span>
+                <span className="text-xs text-slate-500 block">{t('pages.contactGeneral.associationReg')}</span>
               </div>
             </div>
           </div>
@@ -160,29 +160,29 @@ export default function ContactPage() {
                 <div className="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-black text-emerald-950">הודעתכם התקבלה!</h3>
+                <h3 className="text-2xl font-black text-emerald-950">{t('pages.contactGeneral.successTitle')}</h3>
                 <p className="text-sm text-emerald-800">
-                  נציג הנהלת האגודה יחזור אליכם בהקדם האפשרי.
+                  {t('pages.contactGeneral.successDesc')}
                 </p>
                 <button
                   type="button"
                   onClick={() => { setSubmitted(false); setFormData({ fullName: '', phone: '', email: '', message: '' }); }}
                   className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 transition-colors"
                 >
-                  שליחת הודעה נוספת
+                  {t('pages.contactGeneral.sendAnother')}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
-                <h3 className="text-xl font-black text-slate-900">טופס יצירת קשר כללי</h3>
+                <h3 className="text-xl font-black text-slate-900">{t('pages.contactGeneral.formTitle')}</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">שם מלא *</label>
+                    <label className="text-xs font-bold text-slate-700 block">{t('pages.contactGeneral.fullNameLabel')}</label>
                     <input
                       type="text"
                       required
-                      placeholder="שם מלא"
+                      placeholder={t('pages.contactGeneral.fullNamePlaceholder')}
                       value={formData.fullName}
                       onChange={e => setFormData({ ...formData, fullName: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none"
@@ -190,7 +190,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">טלפון *</label>
+                    <label className="text-xs font-bold text-slate-700 block">{t('pages.contactGeneral.phoneLabel')}</label>
                     <input
                       type="tel"
                       required
@@ -198,29 +198,29 @@ export default function ContactPage() {
                       placeholder="050-0000000"
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none text-right"
+                      className={`w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">דוא״ל</label>
+                  <label className="text-xs font-bold text-slate-700 block">{t('pages.contactGeneral.emailLabel')}</label>
                   <input
                     type="email"
                     dir="ltr"
                     placeholder="email@example.com"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none text-right"
+                    className={`w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">ההודעה *</label>
+                  <label className="text-xs font-bold text-slate-700 block">{t('pages.contactGeneral.messageLabel')}</label>
                   <textarea
                     required
                     rows={4}
-                    placeholder="כתבו כאן את פנייתכם להנהלת האגודה..."
+                    placeholder={t('pages.contactGeneral.messagePlaceholder')}
                     value={formData.message}
                     onChange={e => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-brand-navy outline-none resize-y"
@@ -233,7 +233,7 @@ export default function ContactPage() {
                   className="btn-shimmer px-7 py-3.5 bg-brand-navy hover:bg-brand-navyLight text-white font-bold rounded-xl text-sm shadow flex items-center gap-2"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{loading ? 'שולח...' : 'שליחת הודעה'}</span>
+                  <span>{loading ? t('pages.contactGeneral.sending') : t('pages.contactGeneral.sendBtn')}</span>
                 </button>
               </form>
             )}

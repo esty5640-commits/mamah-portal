@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SiteShell } from '@/components/SiteShell';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   HeartHandshake,
   Phone,
@@ -11,11 +12,10 @@ import {
   Send,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
-  ArrowRight
 } from 'lucide-react';
 
 export default function ParentsInquiryPage() {
+  const { t, dir } = useI18n();
   const [formData, setFormData] = useState({
     parentName: '',
     studentName: '',
@@ -35,7 +35,7 @@ export default function ParentsInquiryPage() {
     setError(null);
 
     if (!formData.parentName.trim() || !formData.phone.trim() || !formData.inquiryDetails.trim()) {
-      setError('אנא מלאו את כל שדות החובה המסומנים בכוכבית (*)');
+      setError(t('pages.contactParents.errorRequired'));
       return;
     }
 
@@ -53,10 +53,10 @@ export default function ParentsInquiryPage() {
       if (res.ok) {
         setSubmitted(true);
       } else {
-        setError('אירעה שגיאה בשליחת הטופס. אנא נסו שוב או פנו אלינו בוואטסאפ.');
+        setError(t('pages.contactParents.errorSubmit'));
       }
     } catch (err) {
-      setError('אירעה שגיאת תקשורת. אנא נסו שוב או פנו ישירות למוקד.');
+      setError(t('pages.contactParents.errorNetwork'));
     } finally {
       setLoading(false);
     }
@@ -69,13 +69,13 @@ export default function ParentsInquiryPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-gold text-xs font-bold border border-white/20">
             <HeartHandshake className="w-3.5 h-3.5" />
-            <span>מוקד סיוע וליווי הורים</span>
+            <span>{t('pages.contactParents.badge')}</span>
           </span>
           <h1 className="text-3xl sm:text-5xl font-black">
-            פניות הורים
+            {t('pages.contactParents.title')}
           </h1>
           <p className="text-base sm:text-lg text-slate-200 max-w-2xl mx-auto">
-            נתקלתם בקושי ברישום? אפליה? צורך בערעור מול הרשות המקומית או פתיחת מוסד חדש? אנחנו כאן לסייע לכם ללא עלות.
+            {t('pages.contactParents.subtitle')}
           </p>
         </div>
       </section>
@@ -86,7 +86,7 @@ export default function ParentsInquiryPage() {
         {/* Contact Channels Card */}
         <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-4">
           <h2 className="text-lg font-black text-brand-navy">
-            דרכי פנייה נוספות מלבד הטופס:
+            {t('pages.contactParents.channelsTitle')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-semibold">
             <a
@@ -99,8 +99,8 @@ export default function ParentsInquiryPage() {
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs text-slate-400 block font-normal">הודעה מהירה:</span>
-                <span className="text-slate-900 group-hover:text-emerald-700">וואטסאפ מוקד ההורים</span>
+                <span className="text-xs text-slate-400 block font-normal">{t('pages.contactParents.whatsappLabel')}</span>
+                <span className="text-slate-900 group-hover:text-emerald-700">{t('pages.contactParents.whatsappTitle')}</span>
               </div>
             </a>
 
@@ -112,7 +112,7 @@ export default function ParentsInquiryPage() {
                 <Phone className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs text-slate-400 block font-normal">מוקד טלפוני:</span>
+                <span className="text-xs text-slate-400 block font-normal">{t('pages.contactParents.phoneLabel')}</span>
                 <span className="text-slate-900 group-hover:text-brand-navy" dir="ltr">02-5000000</span>
               </div>
             </a>
@@ -125,7 +125,7 @@ export default function ParentsInquiryPage() {
                 <Mail className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs text-slate-400 block font-normal">דואר אלקטרוני:</span>
+                <span className="text-xs text-slate-400 block font-normal">{t('pages.contactParents.emailLabel')}</span>
                 <span className="text-slate-900 group-hover:text-sky-700" dir="ltr">contact@mamah.org.il</span>
               </div>
             </a>
@@ -140,10 +140,10 @@ export default function ParentsInquiryPage() {
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl sm:text-3xl font-black text-emerald-950">
-                פנייתכם התקבלה בהצלחה במוקד!
+                {t('pages.contactParents.successTitle')}
               </h2>
               <p className="text-base text-emerald-800 max-w-lg mx-auto">
-                <strong>מה הולך לקרות עכשיו?</strong> רכז מוקד ההורים יבחן את פרטי הפנייה ויחזור אליכם טלפונית תוך 24-48 שעות עסקים עם הנחיות מדויקות להמשך הטיפול.
+                <strong>{t('pages.contactParents.successDescPrefix')}</strong> {t('pages.contactParents.successDesc')}
               </p>
             </div>
             <div className="pt-4 flex justify-center gap-4">
@@ -163,13 +163,13 @@ export default function ParentsInquiryPage() {
                 }}
                 className="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm shadow hover:bg-emerald-700 transition-colors"
               >
-                שליחת פנייה נוספת
+                {t('pages.contactParents.sendAnother')}
               </button>
               <Link
                 href="/institutions"
                 className="px-6 py-2.5 bg-white border border-emerald-300 text-emerald-900 font-bold rounded-xl text-sm hover:bg-emerald-100 transition-colors"
               >
-                חזרה לאינדקס המוסדות
+                {t('pages.contactParents.backToDirectory')}
               </Link>
             </div>
           </div>
@@ -177,10 +177,10 @@ export default function ParentsInquiryPage() {
           <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg space-y-6">
             <div className="border-b border-slate-100 pb-4">
               <h2 className="text-xl font-black text-slate-900">
-                טופס פנייה מפורט למוקד הסיוע
+                {t('pages.contactParents.formTitle')}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                אנא מלאו את מירב הפרטים כדי שנוכל להעניק לכם מענה מהיר ומדויק
+                {t('pages.contactParents.formSubtitle')}
               </p>
             </div>
 
@@ -196,12 +196,12 @@ export default function ParentsInquiryPage() {
               {/* Parent Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  שם ההורה <span className="text-red-500">*</span>
+                  {t('pages.contactParents.parentNameLabel')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="שם פרטי ומשפחה"
+                  placeholder={t('pages.contactParents.parentNamePlaceholder')}
                   value={formData.parentName}
                   onChange={e => setFormData({ ...formData, parentName: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all"
@@ -211,11 +211,11 @@ export default function ParentsInquiryPage() {
               {/* Student Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  שם התלמיד/ה
+                  {t('pages.contactParents.studentNameLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder="שם התלמיד/ה ושכבת גיל"
+                  placeholder={t('pages.contactParents.studentNamePlaceholder')}
                   value={formData.studentName}
                   onChange={e => setFormData({ ...formData, studentName: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all"
@@ -225,11 +225,11 @@ export default function ParentsInquiryPage() {
               {/* Institution Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  שם המוסד הרלוונטי
+                  {t('pages.contactParents.institutionLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder="למשל: ת״ת בית שמש, גן בנות ירושלים"
+                  placeholder={t('pages.contactParents.institutionPlaceholder')}
                   value={formData.institutionName}
                   onChange={e => setFormData({ ...formData, institutionName: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all"
@@ -239,11 +239,11 @@ export default function ParentsInquiryPage() {
               {/* Institution City */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  עיר המוסד / מגורים
+                  {t('pages.contactParents.cityLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder="למשל: ירושלים, בית שמש, פתח תקווה"
+                  placeholder={t('pages.contactParents.cityPlaceholder')}
                   value={formData.institutionCity}
                   onChange={e => setFormData({ ...formData, institutionCity: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all"
@@ -253,7 +253,7 @@ export default function ParentsInquiryPage() {
               {/* Phone */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  מספר טלפון ליצירת קשר <span className="text-red-500">*</span>
+                  {t('pages.contactParents.phoneFieldLabel')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -262,14 +262,14 @@ export default function ParentsInquiryPage() {
                   placeholder="050-0000000"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all text-right"
+                  className={`w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                 />
               </div>
 
               {/* Email */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  כתובת דוא״ל
+                  {t('pages.contactParents.emailFieldLabel')}
                 </label>
                 <input
                   type="email"
@@ -277,7 +277,7 @@ export default function ParentsInquiryPage() {
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all text-right"
+                  className={`w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                 />
               </div>
 
@@ -286,12 +286,12 @@ export default function ParentsInquiryPage() {
             {/* Inquiry Details */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 block">
-                פירוט הפנייה (נא לפרט ככל הניתן) <span className="text-red-500">*</span>
+                {t('pages.contactParents.detailsLabel')} <span className="text-red-500">*</span>
               </label>
               <textarea
                 required
                 rows={5}
-                placeholder="תארו את המקרה: האם קיבלתם סירוב רישום? מהי תגובת הרשות? האם מדובר ביוזמה להקמת מוסד חדש?"
+                placeholder={t('pages.contactParents.detailsPlaceholder')}
                 value={formData.inquiryDetails}
                 onChange={e => setFormData({ ...formData, inquiryDetails: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20 outline-none text-sm transition-all resize-y"
@@ -306,11 +306,11 @@ export default function ParentsInquiryPage() {
                 className="btn-shimmer px-8 py-4 bg-brand-gold hover:bg-amber-400 text-slate-950 font-black rounded-xl text-base shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
-                <span>{loading ? 'שולח פנייה למוקד...' : 'שליחת פנייה למוקד ההורים'}</span>
+                <span>{loading ? t('pages.contactParents.submitting') : t('pages.contactParents.submitBtn')}</span>
               </button>
 
               <span className="text-xs text-slate-400 font-medium hidden sm:inline">
-                המידע מאובטח ונשמר בדיסקרטיות מלאה
+                {t('pages.contactParents.securityNote')}
               </span>
             </div>
           </form>
